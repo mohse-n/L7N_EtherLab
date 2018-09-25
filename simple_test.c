@@ -19,5 +19,5 @@ sc = ecrt_master_slave_config(
         uint32_t product_code /**< Expected product code. */
         );
 /* See line 524 of ethercat/master/slave_config.c */
-ecrt_slave_config_sync_manager(sc, 2, EC_DIR_INPUT, EC_WD_ENABLE )
+ecrt_slave_config_sync_manager(sc, 2, EC_DIR_OUTPUT, EC_WD_ENABLE )
 ecrt_slave_config_sync_manager(sc, 3, EC_DIR_INPUT, EC_WD_DISABLE )
