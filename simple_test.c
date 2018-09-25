@@ -59,7 +59,32 @@ const static ec_pdo_entry_reg_t gkDomain1Regs[] = {
 	/* In the operational mode (motion loop) */
 	EC_WRITE_U16(gkDomain1PD + gkOffOControl, 0xF)
 
-	
+					/* Another example of domain defintion */
+					
+/* Alias is always zero, slave numbers start from 1 */
+					
+#define MotorSlavePos0 0, 0
+#define MotorSlavePos1 0, 1
+const static ec_pdo_entry_reg_t domainOutput_regs_0[] = {
+ { MotorSlavePos0, MBDHT2510BA1, 0x6040, 0, &mbdh_cntlwd_0 },
+ { MotorSlavePos0, MBDHT2510BA1, 0x6060, 0, &mbdh_modeop_0 },
+ { MotorSlavePos0, MBDHT2510BA1, 0x607A, 0, &mbdh_tarpos_0 },
+ { MotorSlavePos0, MBDHT2510BA1, 0x60B8, 0, &mbdh_tpbfnc_0 },
+ {}
+};
+
+
+const static ec_pdo_entry_reg_t domainInput_regs_1[] = {
+ { MotorSlavePos1, MBDHT2510BA1, 0x603f, 0, &mbdh_errcod_1 },
+ { MotorSlavePos1, MBDHT2510BA1, 0x6041, 0, &mbdh_statwd_1 },
+ { MotorSlavePos1, MBDHT2510BA1, 0x6061, 0, &mbdh_modedp_1 },
+ { MotorSlavePos1, MBDHT2510BA1, 0x6064, 0, &mbdh_actpos_1 },
+ { MotorSlavePos1, MBDHT2510BA1, 0x60B9, 0, &mbdh_tpdsta_1 },
+ { MotorSlavePos1, MBDHT2510BA1, 0x60BA, 0, &mbdh_tpbpos_1 },
+ { MotorSlavePos1, MBDHT2510BA1, 0x60F4, 0, &mbdh_errval_1 },
+ { MotorSlavePos1, MBDHT2510BA1, 0x60FD, 0, &mbdh_digiin_1 },
+ {}
+};
 	
 	
 	
