@@ -1,4 +1,4 @@
-
+#include "ecrt.h"
 sc = ecrt_master_slave_config( ... )
 /* See line 524 of ethercat/master/slave_config.c */
 ecrt_slave_config_sync_manager(sc, 2, EC_DIR_INPUT, ? )
