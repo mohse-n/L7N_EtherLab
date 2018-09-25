@@ -9,6 +9,24 @@ int ecrt_slave_config_sdo16(
         );
 
 
+typedef struct {
+    uint16_t alias; /**< Slave alias address. */
+    uint16_t position; /**< Slave position. */
+    uint32_t vendor_id; /**< Slave vendor ID. */
+    uint32_t product_code; /**< Slave product code. */
+    uint16_t index; /**< PDO entry index. */
+    uint8_t subindex; /**< PDO entry subindex. */
+    unsigned int *offset; /**< Pointer to a variable to store the PDO entry's
+                       (byte-)offset in the process data. */
+    unsigned int *bit_position; /**< Pointer to a variable to store a bit
+                                  position (0-7) within the \a offset. Can be
+                                  NULL, in which case an error is raised if the
+                                  PDO entry does not byte-align. */
+} ec_pdo_entry_reg_t;
+
+
+
+
 
 /* See line 665 of ethercat/include/ecrt.h */
 sc = ecrt_master_slave_config(
