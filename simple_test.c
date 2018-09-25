@@ -1,6 +1,6 @@
 #include "ecrt.h"
 
-
+/* Write to OD entrties using this function */
 int ecrt_slave_config_sdo16(
         ec_slave_config_t *sc, /**< Slave configuration */
         uint16_t sdo_index, /**< Index of the SDO to configure. */
@@ -9,6 +9,11 @@ int ecrt_slave_config_sdo16(
         );
 
 
+	
+	
+	
+/* Defining PDOs in the program */
+	
 typedef struct {
     uint16_t alias; /**< Slave alias address. */
     uint16_t position; /**< Slave position. */
@@ -25,7 +30,33 @@ typedef struct {
 } ec_pdo_entry_reg_t;
 
 
+static uint32_t gkOffOControl;
 
+
+/* Note that the last one is empty */
+const static ec_pdo_entry_reg_t gkDomain1Regs[] = {
+    {0, gkDriveNum, 0x00007595, 0x00000000, 0x6040, 0, &gkOffOControl},
+    {0, gkDriveNum, 0x00007595, 0x00000000, 0x607a, 0, &gkOffOPos},
+    {0, gkDriveNum, 0x00007595, 0x00000000, 0x6041, 0, &gkOffIStatus},
+    {0, gkDriveNum, 0x00007595, 0x00000000, 0x6062, 0, &gkOffDPos},
+    {0, gkDriveNum, 0x00007595, 0x00000000, 0x6064, 0, &gkOffIPos},
+    {0, gkDriveNum, 0x00007595, 0x00000000, 0x606b, 0, &gkOffDVel},
+    {0, gkDriveNum, 0x00007595, 0x00000000, 0x606c, 0, &gkOffIVel},
+    {0, gkDriveNum, 0x00007595, 0x00000000, 0x6081, 0, &gkOffPVel},
+    {0, gkDriveNum, 0x00007595, 0x00000000, 0x6060, 0, &gkOffOMode},
+    {0, gkDriveNum, 0x00007595, 0x00000000, 0x6061, 0, &gkOffIMode},
+    {0, gkDriveNum, 0x00007595, 0x00000000, 0x60ff, 0, &gkOffTVel},
+    {0, gkDriveNum, 0x00007595, 0x00000000, 0x6077, 0, &gkOffITorq},
+    {}
+};
+	
+	/* In the operational mode (motion loop) */
+	EC_WRITE_U16(gkDomain1PD + gkOffOControl, 0xF)
+
+	
+	
+	
+	
 
 
 /* See line 665 of ethercat/include/ecrt.h */
