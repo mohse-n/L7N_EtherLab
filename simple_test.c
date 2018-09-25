@@ -1,5 +1,15 @@
 #include "ecrt.h"
 
+
+int ecrt_slave_config_sdo16(
+        ec_slave_config_t *sc, /**< Slave configuration */
+        uint16_t sdo_index, /**< Index of the SDO to configure. */
+        uint8_t sdo_subindex, /**< Subindex of the SDO to configure. */
+        uint16_t value /**< Value to set. */
+        );
+
+
+
 /* See line 665 of ethercat/include/ecrt.h */
 sc = ecrt_master_slave_config(
         ec_master_t *master, /**< EtherCAT master */
