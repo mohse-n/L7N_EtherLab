@@ -58,6 +58,7 @@ const static ec_pdo_entry_reg_t gkDomain1Regs[] = {
 	
 	/* In the operational mode (motion loop) */
 	EC_WRITE_U16(gkDomain1PD + gkOffOControl, 0xF)
+	EC_WRITE_S32(gkDomain1PD + gkOffOPos, cmdpos);
 
 					/* Another example of domain defintion */
 					
