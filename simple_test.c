@@ -31,7 +31,8 @@ typedef struct {
 
 
 static uint32_t gkOffOControl;
-
+static uint8_t* gkDomain1PD = NULL;
+static ec_domain_t*         gkDomain1 = NULL;
 
 /* Note that the last one is empty */
 const static ec_pdo_entry_reg_t gkDomain1Regs[] = {
@@ -49,6 +50,11 @@ const static ec_pdo_entry_reg_t gkDomain1Regs[] = {
     {0, gkDriveNum, 0x00007595, 0x00000000, 0x6077, 0, &gkOffITorq},
     {}
 };
+
+	    if (!(gkDomain1PD = ecrt_domain_data(gkDomain1))) {
+      fprintf(stderr,"Domain data initialization failed.\n");
+      return -1;
+    }
 	
 	/* In the operational mode (motion loop) */
 	EC_WRITE_U16(gkDomain1PD + gkOffOControl, 0xF)
