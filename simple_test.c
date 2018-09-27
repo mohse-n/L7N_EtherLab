@@ -11,6 +11,5 @@ int main(int argc, char **argv)
 	master = ecrt_request_master(0);
 	if (!master)
 		printf("Requesting master failed\n");
-	/* This thread sleeps untill a signal is delivered that either terminates it or causes the invocation of a signal-catching function */
-	pause();
+
 }
