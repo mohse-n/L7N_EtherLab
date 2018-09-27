@@ -3,6 +3,15 @@
 #include <stdio.h>
 #include "ecrt.h"
 
+void ODwrite(ec_master_t* master, uint16_t slavePos, uint16_t index, uint8_t subIndex, uint8_t objectValue)
+{
+	
+	uint8_t retVal = ecrt_master_sdo_download(master, slavePos, index, subIndex, &objectValue, sizeof(objectValue), NULL);
+	/* retVal != 0: Failure */
+	if (retVal)
+		printf("OD write unsuccessful\n");
+}
+
 int main(int argc, char **argv)
 {
 
@@ -12,10 +21,7 @@ int main(int argc, char **argv)
 	if (!master)
 		printf("Requesting master failed\n");
 	
-	uint8_t controlWord = 0xF;
-	uint8_t retVal;
+	ODwrite(master, 0, 0x6040, 0x00, 0xF);
 	
-	retVal = ecrt_master_sdo_download(master, 0, 0x6040, 0x00, &controlWord, sizeof(controlWord), NULL)
-	if (!retVal)
-		printf("OD write successful\n");
+	return 0;
 }
