@@ -157,3 +157,9 @@ typedef enum {
     EC_SLAVE_STATE_ACK_ERR = 0x10
     /**< Acknowledge/Error bit (no actual state) */
 } ec_slave_state_t;
+
+
+/* Request OP state for all configured slaves */
+void ec_master_request_op(
+        ec_master_t *master /**< EtherCAT master. */
+        )
