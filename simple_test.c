@@ -73,6 +73,33 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	
+
+	unsigned int offset_controlWord, offset_targetPos, , offset_statusWord, offset_actPos;
+	
+	ec_pdo_entry_reg_t domain1_regs[] =
+	{
+	{0, 0, 0x00007595, 0x00000000, 0x6040, 0x00, &offset_controlWord},
+	{0, 0, 0x00007595, 0x00000000, 0x607a, 0x00, &offset_targetPos  },
+	{0, 0, 0x00007595, 0x00000000, 0x6041, 0x00, &offset_statusWord },
+	{0, 0, 0x00007595, 0x00000000, 0x6064, 0x00, &offset_actPos     },
+	{}
+	};
+	
+	ec_domain_t* domain1 = ecrt_master_create_domain(master);
+	
+	/* Registers PDOs for a domain */
+	/* Returns 0 on success */
+	if (ecrt_domain_reg_pdo_entry_list(domain1, domain1_regs))
+	{
+		printf("PDO entry registration failed\n");
+		return -1;
+	}
+	
+
+		
+	
+	
+	
 	
 	
 	
