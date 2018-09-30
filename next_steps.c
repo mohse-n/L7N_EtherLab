@@ -106,20 +106,7 @@ ecrt_slave_config_sync_manager(sc, 3, EC_DIR_INPUT, EC_WD_DISABLE )
 
 
 
-/**
- * Request a slave state and resets the error flag.
- */
-
-void ec_slave_request_state(ec_slave_t *slave, /**< EtherCAT slave */
-                            ec_slave_state_t state /**< new state */
-                            )
-{
-    slave->requested_state = state;
-    slave->error_flag = 0;
-}
-
-
-
+/* Requests a state for a slave */
 
 void ec_slave_set_state(ec_slave_t *slave, /**< EtherCAT slave */
         ec_slave_state_t new_state /**< new application state */
@@ -137,6 +124,25 @@ void ec_slave_set_state(ec_slave_t *slave, /**< EtherCAT slave */
     }
     
     
+    /**
+ * Request a slave state AND resets the error flag.
+ */
+
+void ec_slave_request_state(ec_slave_t *slave, /**< EtherCAT slave */
+                            ec_slave_state_t state /**< new state */
+                            )
+{
+    slave->requested_state = state;
+    slave->error_flag = 0;
+}
+    
+    
+
+    
+   /* Request OP state for ALL configured slaves */
+void ec_master_request_op(
+        ec_master_t *master /**< EtherCAT master. */
+        ) 
     
     
     /** State of an EtherCAT slave.
@@ -159,10 +165,7 @@ typedef enum {
 } ec_slave_state_t;
 
 
-/* Request OP state for all configured slaves */
-void ec_master_request_op(
-        ec_master_t *master /**< EtherCAT master. */
-        )
+
 	
 	
 	
