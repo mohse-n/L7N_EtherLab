@@ -67,6 +67,11 @@ int main(int argc, char **argv)
 	
 	/***************************************************/
 	
+	if (ecrt_slave_config_pdos(drive0, EC_END, slave_0_syncs))
+	{
+		printf("Failed to configure PDOs\n");
+		return -1;
+	}
 	
 	
 	
