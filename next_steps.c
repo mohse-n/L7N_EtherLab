@@ -163,3 +163,17 @@ typedef enum {
 void ec_master_request_op(
         ec_master_t *master /**< EtherCAT master. */
         )
+	
+	
+	
+	
+	
+	void check_master_state(void)
+{
+    ec_master_state_t ms;
+
+    ecrt_master_state(master, &ms);
+    
+    if (ms.al_states != master_state.al_states)
+        printf("AL states: 0x%02X.\n", ms.al_states);
+}
