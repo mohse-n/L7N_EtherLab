@@ -102,3 +102,36 @@ sc = ecrt_master_slave_config(
 /* See line 524 of ethercat/master/slave_config.c */
 ecrt_slave_config_sync_manager(sc, 2, EC_DIR_OUTPUT, EC_WD_ENABLE )
 ecrt_slave_config_sync_manager(sc, 3, EC_DIR_INPUT, EC_WD_DISABLE )
+
+
+
+
+/**
+ * Request a slave state and resets the error flag.
+ */
+
+void ec_slave_request_state(ec_slave_t *slave, /**< EtherCAT slave */
+                            ec_slave_state_t state /**< new state */
+                            )
+{
+    slave->requested_state = state;
+    slave->error_flag = 0;
+}
+
+
+
+
+void ec_slave_set_state(ec_slave_t *slave, /**< EtherCAT slave */
+        ec_slave_state_t new_state /**< new application state */
+        )
+{
+    if (new_state != slave->current_state) {
+        if (slave->master->debug_level) {
+            char old_state[EC_STATE_STRING_SIZE],
+                cur_state[EC_STATE_STRING_SIZE];
+            ec_state_string(slave->current_state, old_state, 0);
+            ec_state_string(new_state, cur_state, 0);
+            EC_SLAVE_DBG(slave, 0, "%s -> %s.\n", old_state, cur_state);
+        }
+        slave->current_state = new_state;
+    }
