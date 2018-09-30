@@ -172,8 +172,25 @@ void ec_master_request_op(
 {
     ec_master_state_t ms;
 
-    ecrt_master_state(master, &ms);
+    /* master has been previously defined as a global variable */
+    ecrt_master_state(master, &ms);ط
     
     if (ms.al_states != master_state.al_states)
         printf("AL states: 0x%02X.\n", ms.al_states);
 }
+
+typedef struct {
+    unsigned int slaves_responding; /**< Sum of responding slaves on all
+                                      Ethernet devices. */
+    unsigned int al_states : 4; /**< Application-layer states of all slaves.
+                                  The states are coded in the lower 4 bits.
+                                  If a bit is set, it means that at least one
+                                  slave in the bus is in the corresponding
+                                  state:
+                                  - Bit 0: \a INIT
+                                  - Bit 1: \a PREOP
+                                  - Bit 2: \a SAFEOP
+                                  - Bit 3: \a OP */
+    unsigned int link_up : 1; /**< \a true, if at least one Ethernet link is
+                                up. */
+} ec_master_state_t;
