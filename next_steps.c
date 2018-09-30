@@ -185,6 +185,9 @@ typedef enum {
 typedef struct {
     unsigned int slaves_responding; /**< Sum of responding slaves on all
                                       Ethernet devices. */
+	/* Bit field: only consumes 4 bits of space */
+	/* For instance, unsigned int trueFalse :1 is optimized allocated 1 bit of space (by compiler) */
+	/* Also uint8_t foo : 4 and unsigned int foo : 4 both occupy the same number of bits (4) */
     unsigned int al_states : 4; /**< Application-layer states of all slaves.
                                   The states are coded in the lower 4 bits.
                                   If a bit is set, it means that at least one
