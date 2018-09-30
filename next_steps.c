@@ -135,3 +135,25 @@ void ec_slave_set_state(ec_slave_t *slave, /**< EtherCAT slave */
         }
         slave->current_state = new_state;
     }
+    
+    
+    
+    
+    /** State of an EtherCAT slave.
+ */
+typedef enum {
+    EC_SLAVE_STATE_UNKNOWN = 0x00,
+    /**< unknown state */
+    EC_SLAVE_STATE_INIT = 0x01,
+    /**< INIT state (no mailbox communication, no IO) */
+    EC_SLAVE_STATE_PREOP = 0x02,
+    /**< PREOP state (mailbox communication, no IO) */
+    EC_SLAVE_STATE_BOOT = 0x03,
+    /**< Bootstrap state (mailbox communication, firmware update) */
+    EC_SLAVE_STATE_SAFEOP = 0x04,
+    /**< SAFEOP (mailbox communication and input update) */
+    EC_SLAVE_STATE_OP = 0x08,
+    /**< OP (mailbox communication and input/output update) */
+    EC_SLAVE_STATE_ACK_ERR = 0x10
+    /**< Acknowledge/Error bit (no actual state) */
+} ec_slave_state_t;
