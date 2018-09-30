@@ -85,6 +85,8 @@ int main(int argc, char **argv)
 	{}
 	};
 	
+	/* Creates a new process data domain. */
+	/* For process data exchange, at least one process data domain is needed */
 	ec_domain_t* domain1 = ecrt_master_create_domain(master);
 	
 	/* Registers PDOs for a domain */
@@ -94,6 +96,8 @@ int main(int argc, char **argv)
 		printf("PDO entry registration failed\n");
 		return -1;
 	}
+	
+	
 	
 
 		
