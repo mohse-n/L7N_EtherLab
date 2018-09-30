@@ -200,3 +200,14 @@ typedef struct {
     unsigned int link_up : 1; /**< \a true, if at least one Ethernet link is
                                 up. */
 } ec_master_state_t;
+
+
+
+
+/***********************/
+if (...)
+	goto out_stop_task;
+
+out_stop_task:
+    rt_task_delete(&task);
+/***********************/
