@@ -97,13 +97,30 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	
+	/* Up to this point, we have only requested the master. See log messages */
 	
+	printf("Activating master...\n");
+	/* Important points from ecrt.h 
+	   - This function tells the master that the configuration phase is finished and
+	     the real-time operation will begin. 
+	   - It tells the master state machine that the bus configuration is now to be applied.
+	   - After this function has been called, the real-time application is in charge of cylically
+	     calling ecrt_master_send() and ecrt_master_receive(). Before calling this function, the 
+	     master thread is responsible for that. 
+	   - This method allocated memory and should not be called in real-time context.
+	*/
+	     
+	if (ecrt_master_activate(master))
+		return -1;
+
+	
+	uint8_t* domain1_pd;
+	/* Returns a pointer to (I think) first byte of PDO data of the domain */
+	if (!(domain1_pd = ecrt_domain_data(domain1)))
+		return -1;
 	
 
 		
-	
-	
-	
 	
 	
 	
