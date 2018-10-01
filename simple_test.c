@@ -104,6 +104,8 @@ int main(int argc, char **argv)
 	   - This function tells the master that the configuration phase is finished and
 	     the real-time operation will begin. 
 	   - It tells the master state machine that the bus configuration is now to be applied.
+	   - By calling the ecrt master activate() method, all slaves are configured according to
+             the prior method calls and are brought into OP state.
 	   - After this function has been called, the real-time application is in charge of cylically
 	     calling ecrt_master_send() and ecrt_master_receive(). Before calling this function, the 
 	     master thread is responsible for that. 
