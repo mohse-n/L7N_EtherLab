@@ -5,7 +5,7 @@
 
 void ODwrite(ec_master_t* master, uint16_t slavePos, uint16_t index, uint8_t subIndex, uint8_t objectValue)
 {
-	
+	/* Blocks until a reponse is received */
 	uint8_t retVal = ecrt_master_sdo_download(master, slavePos, index, subIndex, &objectValue, sizeof(objectValue), NULL);
 	/* retVal != 0: Failure */
 	if (retVal)
