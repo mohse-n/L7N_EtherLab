@@ -192,8 +192,8 @@ int main(int argc, char **argv)
 	
 
 	/* The slaves (drives) enter OP mode after exchanging a few frames */
-	/* To do: add a mechanism for checking state of the slaves in the 
-	   loop, so that after they have all reached OP state we break out of the loop 
+	/* We could add a mechanism for checking state of the slaves in the 
+	   loop, so that after they have all reached OP state we break out of the it. 
 	*/
 	for (int i = 0; i <= 1000; i++)
 	{
