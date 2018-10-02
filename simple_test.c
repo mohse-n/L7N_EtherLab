@@ -29,14 +29,15 @@ int main(int argc, char **argv)
 	if (!master)
 		printf("Requesting master failed\n");
 	
-	//ODwrite(master, 0, 0x6040, 0x00, 0xF);
+	ODwrite(master, 0, 0x6040, 0x00, 0xF);
+	ODwrite(master, 0, 0x6060, 0x00, 0x8);
 	
 	uint16_t alias0 = 0;
 	uint16_t position0 = 0;
 	uint32_t vendor_id0 = 0x00007595;
 	uint32_t product_code0 = 0x00000000;
 	
-	/* Creates and returns a slave configuration object, ec_slave_config_t*, for the given alias and position */
+	/* Creates and returns a slave configuration object, ec_slave_config_t*, for the given alias and position. */
 	/* Returns NULL in case of error and pointer to the configuration struct otherwise */
 	ec_slave_config_t* drive0 = ecrt_master_slave_config(master, alias0, position0, vendor_id0, produc_code0);
 	
@@ -94,11 +95,11 @@ int main(int argc, char **argv)
 	};
 	
 	/* Creates a new process data domain. */
-	/* For process data exchange, at least one process data domain is needed */
+	/* For process data exchange, at least one process data domain is needed. */
 	ec_domain_t* domain1 = ecrt_master_create_domain(master);
 	
-	/* Registers PDOs for a domain */
-	/* Returns 0 on success */
+	/* Registers PDOs for a domain. */
+	/* Returns 0 on success. */
 	if (ecrt_domain_reg_pdo_entry_list(domain1, domain1_regs))
 	{
 		printf("PDO entry registration failed\n");
@@ -143,8 +144,9 @@ int main(int argc, char **argv)
 		ecrt_master_receive(master);
 		/* Evaluates the working counters of the received datagrams and outputs statistics,
 		   if necessary.
-		   This function is NOT essential to the receive/send procedure and can be 
-		   commented out */
+		   This function is NOT essential to the receive/process/send procedure and can be 
+		   commented out 
+		*/
 		ecrt_domain_process(domain1);
 		/********************************************************************************/
 		
@@ -155,17 +157,19 @@ int main(int argc, char **argv)
 		targetPos = actPos + ENCODER_RES;
 		
 		/* Write PDOs to the datagram */
-		EC_WRITE_U8  (domain1_pd + offset_controlWord, 15 );
+		EC_WRITE_U8  (domain1_pd + offset_controlWord, 0xF );
 		EC_WRITE_S32 (domain1_pd + offset_targetPos  , targetPos);
 		
 		/********************************************************************************/
 		/* Queues all domain datagrams in the master's datagram queue. 
 		   Call this function to mark the domain's datagrams for exchanging at the
-		   next call of ecrt_master_send() */
+		   next call of ecrt_master_send() 
+		*/
 		ecrt_domain_queue(domain1);
 		/* Sends all datagrams in the queue.
 		   This method takes all datagrams that have been queued for transmission,
-		   puts them into frames, and passes them to the Ethernet device for sending. */
+		   puts them into frames, and passes them to the Ethernet device for sending. 
+		*/
 		ecrt_master_send(master);
 		
 		i = i + 1;
