@@ -117,14 +117,21 @@ int main(int argc, char **argv)
 
 	
 	uint8_t* domain1_pd;
-	/* Returns a pointer to (I think) first byte of PDO data of the domain */
+	/* Returns a pointer to (I think) the first byte of PDO data of the domain */
 	if (!(domain1_pd = ecrt_domain_data(domain1)))
 		return -1;
 	
-
-		
-	
-	
+	int i = 0;
+	/* After a few frames the slave (drive) enters OP mode */
+	while (i <= 1000)
+	{
+		ecrt_master_receive(master);
+		ecrt_domain_process(domain1);
+		usleep(1000);
+		ecrt_domain_queue(domain1);
+		ecrt_master_send(master);
+		i = i + 1;
+	}
 	
 	return 0;
 }
