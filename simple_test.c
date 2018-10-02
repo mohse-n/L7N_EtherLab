@@ -190,11 +190,25 @@ int main(int argc, char **argv)
 	if (setpriority(PRIO_PROCESS, pid, -19))
 		printf("Warning: Failed to set priority\n");
 	
+
+	/* The slaves (drives) enter OP mode after exchanging a few frames */
+	/* To do: add a mechanism for checking state of the slaves in the 
+	   loop, so that after they have all reached OP state we break out of the loop 
+	*/
+	for (int i = 0; i <= 1000; i++)
+	{
+		ecrt_master_receive(master);
+		ecrt_domain_process(domain1);
 	
-	int i;
+		ecrt_domain_queue(domain1);
+		ecrt_master_send(master);
+		
+		usleep(1000);
+	}
+	
 	int32_t actPos0, targetPos0;
 	int32_t actPos1, targetPos1;
-	/* After a few frames the slave (drive) enters OP mode */
+	
 	for (i = 0; i <= 10000; i++)
 	{
 		/* Fetches received frames from the newtork device and processes the datagrams. */
