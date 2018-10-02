@@ -32,6 +32,9 @@ int main(int argc, char **argv)
 	ODwrite(master, 0, 0x6040, 0x00, 0xF);
 	ODwrite(master, 0, 0x6060, 0x00, 0x8);
 	
+	ODwrite(master, 1, 0x6040, 0x00, 0xF);
+	ODwrite(master, 1, 0x6060, 0x00, 0x8);
+	
 	uint16_t alias = 0;
 	uint16_t position0 = 0;
 	uint16_t position1 = 1;
@@ -114,7 +117,8 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
-	unsigned int offset_controlWord, offset_targetPos, offset_statusWord, offset_actPos;
+	unsigned int offset_controlWord0, offset_targetPos0, offset_statusWord0, offset_actPos0;
+	unsigned int offset_controlWord1, offset_targetPos1, offset_statusWord1, offset_actPos1;
 	
 	ec_pdo_entry_reg_t domain1_regs[] =
 	{
