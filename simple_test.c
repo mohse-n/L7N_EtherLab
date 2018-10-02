@@ -125,12 +125,29 @@ int main(int argc, char **argv)
 	/* After a few frames the slave (drive) enters OP mode */
 	while (i <= 1000)
 	{
+		/* Fetches received frames from the newtork device and processes the datagrams. */
 		ecrt_master_receive(master);
+		/* Evaluates the working counters of the received datagrams and outputs statistics,
+		   if necessary.
+		   This function is NOT essential to the receive/send procedure and can be 
+		   commented out */
 		ecrt_domain_process(domain1);
-		usleep(1000);
+		
+		
+		
+		
+		
+		/* Queues all domain datagrams in the master's datagram queue. 
+		   Call this function to mark the domain's datagrams for exchanging at the
+		   next call of ecrt_master_send() */
 		ecrt_domain_queue(domain1);
+		/* Sends all datagrams in the queue.
+		   This method takes all datagrams that have been queued for transmission,
+		   puts them into frames, and passes them to the Ethernet device for sending. */
 		ecrt_master_send(master);
+		
 		i = i + 1;
+		usleep(300);
 	}
 	
 	return 0;
