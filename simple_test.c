@@ -39,7 +39,7 @@ int main(int argc, char **argv)
 	
 	/* Creates and returns a slave configuration object, ec_slave_config_t*, for the given alias and position. */
 	/* Returns NULL in case of error and pointer to the configuration struct otherwise */
-	ec_slave_config_t* drive0 = ecrt_master_slave_config(master, alias0, position0, vendor_id0, produc_code0);
+	ec_slave_config_t* drive0 = ecrt_master_slave_config(master, alias0, position0, vendor_id0, product_code0);
 	
 	/* If the drive0 = NULL */
 	if (!drive0)
@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 	}
 	
 
-	unsigned int offset_controlWord, offset_targetPos, , offset_statusWord, offset_actPos;
+	unsigned int offset_controlWord, offset_targetPos, offset_statusWord, offset_actPos;
 	
 	ec_pdo_entry_reg_t domain1_regs[] =
 	{
