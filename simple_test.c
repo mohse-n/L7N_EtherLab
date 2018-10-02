@@ -1,7 +1,15 @@
 
 #include <string.h>
 #include <stdio.h>
+/* For using usleep */
+#include <unistd.h>
 #include "ecrt.h"
+
+
+
+/* One motor revolution increments the encoder by 2^19 -1 */
+#define ENCODER_RES 524287
+
 
 void ODwrite(ec_master_t* master, uint16_t slavePos, uint16_t index, uint8_t subIndex, uint8_t objectValue)
 {
@@ -121,9 +129,15 @@ int main(int argc, char **argv)
 	if (!(domain1_pd = ecrt_domain_data(domain1)))
 		return -1;
 	
+	
 	int i = 0;
+	int32_t actPos;
+	int32_t targetPos;
+	
+	
+	
 	/* After a few frames the slave (drive) enters OP mode */
-	while (i <= 1000)
+	while (i <= 10000)
 	{
 		/* Fetches received frames from the newtork device and processes the datagrams. */
 		ecrt_master_receive(master);
@@ -132,6 +146,11 @@ int main(int argc, char **argv)
 		   This function is NOT essential to the receive/send procedure and can be 
 		   commented out */
 		ecrt_domain_process(domain1);
+		
+		
+		
+		
+		
 		
 		
 		
