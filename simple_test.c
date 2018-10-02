@@ -172,9 +172,8 @@ int main(int argc, char **argv)
 	
 	
 	int i = 0;
-	int32_t actPos0, actPos1;
-	int32_t targetPos0, targetPos1;
-	
+	int32_t actPos0, targetPos0;
+	int32_t actPos1, targetPos1;
 	
 	
 	/* After a few frames the slave (drive) enters OP mode */
@@ -192,13 +191,18 @@ int main(int argc, char **argv)
 		
 		/* Read PDOs from the datagram */
 		actPos0 = EC_READ_S32(domain1_pd + offset_actPos0);
+		actPos1 = EC_READ_S32(domain1_pd + offset_actPos1);
 		
 		/* Process the received data */
 		targetPos0 = actPos0 + ENCODER_RES;
+		targetPos1 = actPos1 - ENCODER_RES;
 		
 		/* Write PDOs to the datagram */
 		EC_WRITE_U8  (domain1_pd + offset_controlWord0, 0xF );
 		EC_WRITE_S32 (domain1_pd + offset_targetPos0  , targetPos0);
+		
+		EC_WRITE_U8  (domain1_pd + offset_controlWord1, 0xF );
+		EC_WRITE_S32 (domain1_pd + offset_targetPos1  , targetPos1);
 		
 		/********************************************************************************/
 		/* Queues all domain datagrams in the master's datagram queue. 
