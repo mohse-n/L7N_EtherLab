@@ -191,13 +191,11 @@ int main(int argc, char **argv)
 		printf("Warning: Failed to set priority\n");
 	
 	
-	int i = 0;
+	int i;
 	int32_t actPos0, targetPos0;
 	int32_t actPos1, targetPos1;
-	
-	
 	/* After a few frames the slave (drive) enters OP mode */
-	while (i <= 10000)
+	for (i = 0; i <= 10000; i++)
 	{
 		/* Fetches received frames from the newtork device and processes the datagrams. */
 		ecrt_master_receive(master);
@@ -236,7 +234,6 @@ int main(int argc, char **argv)
 		*/
 		ecrt_master_send(master);
 		
-		i = i + 1;
 		usleep(300);
 	}
 	
