@@ -1,9 +1,13 @@
 
+#include "ecrt.h"
+
 #include <string.h>
 #include <stdio.h>
 /* For using usleep */
 #include <unistd.h>
-#include "ecrt.h"
+/* For setting process's priority */
+#include <sys/resource.h>
+
 
 
 
@@ -169,6 +173,12 @@ int main(int argc, char **argv)
 	/* Returns a pointer to (I think) the first byte of PDO data of the domain */
 	if (!(domain1_pd = ecrt_domain_data(domain1)))
 		return -1;
+	
+	/* Set priority to highest value for userspace programs */
+	/* Why not earlier in the code? */
+	pid_t pid = getpid();
+	if (setpriority(PRIO_PROCESS, pid, -19))
+		printf("Warning: Failed to set priority\n");
 	
 	
 	int i = 0;
