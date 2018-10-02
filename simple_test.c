@@ -146,16 +146,19 @@ int main(int argc, char **argv)
 		   This function is NOT essential to the receive/send procedure and can be 
 		   commented out */
 		ecrt_domain_process(domain1);
+		/********************************************************************************/
 		
+		/* Read PDOs from the datagram */
+		actPos = EC_READ_S32(domain1_pd + offset_actPos);
 		
+		/* Process the received data */
+		targetPos = actPos + ENCODER_RES;
 		
+		/* Write PDOs to the datagram */
+		EC_WRITE_U8  (domain1_pd + offset_controlWord, 15 );
+		EC_WRITE_S32 (domain1_pd + offset_targetPos  , targetPos);
 		
-		
-		
-		
-		
-		
-		
+		/********************************************************************************/
 		/* Queues all domain datagrams in the master's datagram queue. 
 		   Call this function to mark the domain's datagrams for exchanging at the
 		   next call of ecrt_master_send() */
