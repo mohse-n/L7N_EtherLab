@@ -5,9 +5,10 @@
 #include <stdio.h>
 /* For using usleep */
 #include <unistd.h>
-/* For setting process's priority */
+/* For setting the process's priority (setpriority) */
 #include <sys/resource.h>
-
+/* For locking the program in RAM (mlockall) to prevent swapping */
+#include <sys/mman.h>
 
 
 
@@ -49,6 +50,15 @@ int main(int argc, char **argv)
 	/* Returns NULL (0) in case of error and pointer to the configuration struct otherwise */
 	ec_slave_config_t* drive0 = ecrt_master_slave_config(master, alias, position0, vendor_id, product_code);
 	ec_slave_config_t* drive1 = ecrt_master_slave_config(master, alias, position1, vendor_id, product_code);
+	
+	/* Lock the program into RAM and prevent swapping */
+	/* Why here though? */
+	if (mlockall(MCL_CURRENT | MCL_FUTURE) == -1)
+	{
+		printf("mlockall failed");
+		return -1;
+	}
+	
 	
 	/* If the drive0 = NULL or drive1 = NULL */
 	if (!drive0 || !drive1)
