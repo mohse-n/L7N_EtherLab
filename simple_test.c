@@ -3,8 +3,6 @@
 
 #include <string.h>
 #include <stdio.h>
-/* For using usleep */
-#include <unistd.h>
 /* For setting the process's priority (setpriority) */
 #include <sys/resource.h>
 /* For locking the program in RAM (mlockall) to prevent swapping */
@@ -178,6 +176,7 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	
+	
 	ecrt_slave_config_dc(drive0, 0x0300, PERIOD_NS, 125000, 0, 0);
 	ecrt_slave_config_dc(drive1, 0x0300, PERIOD_NS, 125000, 0, 0);
 	
@@ -210,16 +209,31 @@ int main(int argc, char **argv)
 	   loop, so that after they have all reached OP state we break out of the it. 
 	*/
 	int i = 0;
-	while (i <= 2000)
+	unsigned int sync_ref_counter = 0;
+	struct timespec wakeupTime, time;
+	struct timespec cycleTime = {0, PERIOD_NS};
+	clock_gettime(CLOCK_REALTIME, &wakeupTime);
+	
+	while (i <= 10000)
 	{
+		wakeupTime = timespec_add(wakeupTime, cycleTime);
+		clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &wakeupTime, NULL);
+		
 		ecrt_master_receive(master);
 		ecrt_domain_process(domain1);
+		
 	
 		ecrt_domain_queue(domain1);
+		
+		/* Distributed clocks */
+		clock_gettime(CLOCK_REALTIME, &time);
+		ecrt_master_application_time(master, TIMESPEC2NS(time));
+		ecrt_master_sync_reference_clock(master);
+		ecrt_master_sync_slave_clocks(master);
+		
 		ecrt_master_send(master);
 		
 		i = i + 1;
-		usleep(300);
 	}
 	
 	int32_t actPos0, targetPos0;
@@ -228,6 +242,9 @@ int main(int argc, char **argv)
 	
 	while (i <= 10000)
 	{
+		/* Sleep for adjusting the update frequency */
+		wakeupTime = timespec_add(wakeupTime, cycleTime);
+		clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &wakeupTime, NULL);
 		/* Fetches received frames from the newtork device and processes the datagrams. */
 		ecrt_master_receive(master);
 		/* Evaluates the working counters of the received datagrams and outputs statistics,
@@ -259,6 +276,13 @@ int main(int argc, char **argv)
 		   next call of ecrt_master_send() 
 		*/
 		ecrt_domain_queue(domain1);
+		
+		/* Distributed clocks */
+		clock_gettime(CLOCK_REALTIME, &time);
+		ecrt_master_application_time(master, TIMESPEC2NS(time));
+		ecrt_master_sync_reference_clock(master);
+		ecrt_master_sync_slave_clocks(master);
+		
 		/* Sends all datagrams in the queue.
 		   This method takes all datagrams that have been queued for transmission,
 		   puts them into frames, and passes them to the Ethernet device for sending. 
@@ -266,7 +290,6 @@ int main(int argc, char **argv)
 		ecrt_master_send(master);
 		
 		i = i + 1;
-		usleep(300);
 	}
 	
 	return 0;
