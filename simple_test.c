@@ -37,6 +37,17 @@ void initDrive(ec_master_t* master, uint16_t slavePos)
 
 int main(int argc, char **argv)
 {
+	/* Set priority to highest value for userspace programs */
+	pid_t pid = getpid();
+	if (setpriority(PRIO_PROCESS, pid, -19))
+		printf("Warning: Failed to set priority\n");
+	
+	/* Lock the program into RAM and prevent swapping */
+	if (mlockall(MCL_CURRENT | MCL_FUTURE) == -1)
+	{
+		printf("mlockall failed");
+		return -1;
+	}
 
 	ec_master_t* master;
 	/* Reserve the first master (0) (/etc/init.d/ethercat start) for this program */
@@ -57,14 +68,6 @@ int main(int argc, char **argv)
 	/* Returns NULL (0) in case of error and pointer to the configuration struct otherwise */
 	ec_slave_config_t* drive0 = ecrt_master_slave_config(master, alias, position0, vendor_id, product_code);
 	ec_slave_config_t* drive1 = ecrt_master_slave_config(master, alias, position1, vendor_id, product_code);
-	
-	/* Lock the program into RAM and prevent swapping */
-	/* Why here though? */
-	if (mlockall(MCL_CURRENT | MCL_FUTURE) == -1)
-	{
-		printf("mlockall failed");
-		return -1;
-	}
 	
 	
 	/* If the drive0 = NULL or drive1 = NULL */
@@ -191,13 +194,7 @@ int main(int argc, char **argv)
 	if (!(domain1_pd = ecrt_domain_data(domain1)))
 		return -1;
 	
-	/* Set priority to highest value for userspace programs */
-	/* Why not earlier in the code? */
-	pid_t pid = getpid();
-	if (setpriority(PRIO_PROCESS, pid, -19))
-		printf("Warning: Failed to set priority\n");
 	
-
 	/* The slaves (drives) enter OP mode after exchanging a few frames */
 	/* We could add a mechanism for checking state of the slaves in the 
 	   loop, so that after they have all reached OP state we break out of the it. 
