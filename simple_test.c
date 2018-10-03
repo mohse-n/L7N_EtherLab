@@ -9,11 +9,19 @@
 #include <sys/resource.h>
 /* For locking the program in RAM (mlockall) to prevent swapping */
 #include <sys/mman.h>
+/* clock_gettime, struct timespec, etc. */
+#include <time.h>
 
 
 
 /* One motor revolution increments the encoder by 2^19 -1 */
 #define ENCODER_RES 524287
+/* Definitions necessary for distributed clock */
+#define NSEC_PER_SEC (1000000000L)
+#define FREQUENCY 1000
+#define PERIOD_NS (NSEC_PER_SEC / FREQUENCY)
+#define TIMESPEC2NS(T) ((uint64_t) (T).tv_sec * NSEC_PER_SEC + (T).tv_nsec
+
 
 
 void ODwrite(ec_master_t* master, uint16_t slavePos, uint16_t index, uint8_t subIndex, uint8_t objectValue)
@@ -170,8 +178,10 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	
-	/* Up to this point, we have only requested the master. See log messages */
+	ecrt_slave_config_dc(drive0, 0x0300, PERIOD_NS, 125000, 0, 0);
+	ecrt_slave_config_dc(drive1, 0x0300, PERIOD_NS, 125000, 0, 0);
 	
+	/* Up to this point, we have only requested the master. See log messages */
 	printf("Activating master...\n");
 	/* Important points from ecrt.h 
 	   - This function tells the master that the configuration phase is finished and
