@@ -25,6 +25,16 @@ void ODwrite(ec_master_t* master, uint16_t slavePos, uint16_t index, uint8_t sub
 		printf("OD write unsuccessful\n");
 }
 
+void initDrive(ec_master_t* master, uint16_t slavePos)
+{
+	/* Reset alarm */
+	ODwrite(master, slavePos, 0x6040, 0x00, 128);
+	/* Servo on and operational */
+	ODwrite(master, slavePos, 0x6040, 0x00, 0xF);
+	/* Mode of operation, CSP */
+	ODwrite(master, slavePos, 0x6060, 0x00, 0x8);
+}
+
 int main(int argc, char **argv)
 {
 
@@ -34,11 +44,8 @@ int main(int argc, char **argv)
 	if (!master)
 		printf("Requesting master failed\n");
 	
-	ODwrite(master, 0, 0x6040, 0x00, 0xF);
-	ODwrite(master, 0, 0x6060, 0x00, 0x8);
-	
-	ODwrite(master, 1, 0x6040, 0x00, 0xF);
-	ODwrite(master, 1, 0x6060, 0x00, 0x8);
+	initDrive(0);
+	initDrive(1);
 	
 	uint16_t alias = 0;
 	uint16_t position0 = 0;
