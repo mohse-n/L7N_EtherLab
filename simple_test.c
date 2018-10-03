@@ -41,6 +41,27 @@ void initDrive(ec_master_t* master, uint16_t slavePos)
 	ODwrite(master, slavePos, 0x6060, 0x00, 0x8);
 }
 
+/* Copy-pasted from dc_user/main.c */
+struct timespec timespec_add(struct timespec time1, struct timespec time2)
+{
+	struct timespec result;
+
+	if ((time1.tv_nsec + time2.tv_nsec) >= NSEC_PER_SEC) 
+	{
+		result.tv_sec = time1.tv_sec + time2.tv_sec + 1;
+		result.tv_nsec = time1.tv_nsec + time2.tv_nsec - NSEC_PER_SEC;
+	} 
+	else 
+	{
+		result.tv_sec = time1.tv_sec + time2.tv_sec;
+		result.tv_nsec = time1.tv_nsec + time2.tv_nsec;
+	}
+
+	return result;
+}
+
+
+
 int main(int argc, char **argv)
 {
 	/* Set priority to highest value for userspace programs */
