@@ -82,8 +82,8 @@ int main(int argc, char **argv)
 	if (!master)
 		printf("Requesting master failed\n");
 	
-	initDrive(0);
-	initDrive(1);
+	initDrive(master, 0);
+	initDrive(master, 1);
 	
 	uint16_t alias = 0;
 	uint16_t position0 = 0;
