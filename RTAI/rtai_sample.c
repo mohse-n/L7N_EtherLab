@@ -1,5 +1,8 @@
 #include "../../include/ecrt.h"
 
+#include <linux/module.h>
+
+#include <rtai_sched.h>
 
 
 
