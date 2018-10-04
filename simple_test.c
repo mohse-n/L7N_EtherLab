@@ -254,12 +254,14 @@ int main(int argc, char **argv)
 	
 	while (i <= 10000)
 	{
+		
 		wakeupTime = timespec_add(wakeupTime, cycleTime);
 		clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &wakeupTime, NULL);
 		
 		ecrt_master_receive(master);
 		ecrt_domain_process(domain1);
 		
+		i = i + 1;
 	
 		ecrt_domain_queue(domain1);
 		
@@ -270,15 +272,13 @@ int main(int argc, char **argv)
 		ecrt_master_sync_slave_clocks(master);
 		
 		ecrt_master_send(master);
-		
-		i = i + 1;
+	
 	}
 	
 	int32_t actPos0, targetPos0;
 	int32_t actPos1, targetPos1;
-	i = 0;
 	
-	while (i <= 10000)
+	while (1)
 	{
 		/* Sleep for adjusting the update frequency */
 		wakeupTime = timespec_add(wakeupTime, cycleTime);
@@ -326,8 +326,7 @@ int main(int argc, char **argv)
 		   puts them into frames, and passes them to the Ethernet device for sending. 
 		*/
 		ecrt_master_send(master);
-		
-		i = i + 1;
+	
 	}
 	
 	return 0;
