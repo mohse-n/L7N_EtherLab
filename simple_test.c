@@ -5,6 +5,9 @@
 #include <stdio.h>
 /* For setting the process's priority (setpriority) */
 #include <sys/resource.h>
+/* For pid_t and getpid() */
+#include <unistd.h>
+#include <sys/types.h>
 /* For locking the program in RAM (mlockall) to prevent swapping */
 #include <sys/mman.h>
 /* clock_gettime, struct timespec, etc. */
