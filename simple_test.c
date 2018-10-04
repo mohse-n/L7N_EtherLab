@@ -63,6 +63,16 @@ struct timespec timespec_add(struct timespec time1, struct timespec time2)
 	return result;
 }
 
+ec_master_t* master;
+
+void signal_handler(int sig)
+{
+	printf("\nReleasing master...\n);
+	ecrt_release_master(master);
+	pid_t pid = getpid();
+	kill(pid, SIGKILL);
+}
+
 
 
 int main(int argc, char **argv)
@@ -79,7 +89,8 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
-	ec_master_t* master;
+	signal(SIGINT, signal_handler);
+	
 	/* Reserve the first master (0) (/etc/init.d/ethercat start) for this program */
 	master = ecrt_request_master(0);
 	if (!master)
