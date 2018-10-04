@@ -63,6 +63,9 @@ struct timespec timespec_add(struct timespec time1, struct timespec time2)
 	return result;
 }
 
+/* We have to pass "master" to ecrt_release_master in signal_handler, but it is not possible
+   to define one with more than one argument. Therefore, master should be a global variable. 
+*/
 ec_master_t* master;
 
 void signal_handler(int sig)
