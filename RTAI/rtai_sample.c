@@ -79,4 +79,44 @@ static ec_sync_info_t slave_1_syncs[] =
 	
 	/***************************************************/
 
+/* Why define data? */
+void run(long data)
+{
+	while(1)
+	{
+		
+	}
+	
+}
+
+	/***************************************************/
+	
+int __init init_mod(void)
+{
+	
+	
+	
+}
+
+
+void __exit cleanup_mod(void)
+{
+	
+	
+	
+}
+	
+	/***************************************************/
+	
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Mohsen Alizadeh Noghani");
+MODULE_DESCRIPTION("EtherLab RTAI sample module");
+
+module_init(init_mod);
+module_exit(cleanup_mod);
+	
+	
+	
+	
+	
 
