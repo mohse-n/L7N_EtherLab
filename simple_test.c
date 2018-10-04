@@ -21,7 +21,7 @@
 #define NSEC_PER_SEC (1000000000L)
 #define FREQUENCY 1000
 #define PERIOD_NS (NSEC_PER_SEC / FREQUENCY)
-#define TIMESPEC2NS(T) ((uint64_t) (T).tv_sec * NSEC_PER_SEC + (T).tv_nsec
+#define TIMESPEC2NS(T) ((uint64_t) (T).tv_sec * NSEC_PER_SEC + (T).tv_nsec)
 
 
 
