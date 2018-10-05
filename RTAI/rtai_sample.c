@@ -117,7 +117,7 @@ void initDrive(ec_master_t* master, uint16_t slavePos)
 
 /***************************************************/	
 
-/* Why define data? */
+/* The partent task can send 1 interger value (data) to the new task */
 void run(long data)
 {
 	while(1)
@@ -262,7 +262,14 @@ int __init init_mod(void)
 	printk(KERN_INFO PFX "RT timer started with %i/%i ticks.\n", (int) tick_period, (int) requested_ticks);
 	
 	
-	/* Add comment about rt_task_init arguments */
+	/* rt_task_init(struct rt_task_struct *task, 
+			void(*rt_thread)(int)	   ,	Pointer to function (= name of the function)
+			int data		   ,	The partent task can send 1 interger value to the new task
+			int stack_size		   ,	
+			int priority	           ,	
+			int uses_fpu	           ,
+			void (*signal)(void))	   );
+	*/
 	if (rt_task_init(&task, run, 0, 2000, 0, 1, NULL)) 
 	{
 		printk(KERN_ERR PFX "Failed to init RTAI task!\n");
@@ -272,8 +279,7 @@ int __init init_mod(void)
 	
 	RTIME now = rt_get_time();
 	/* rt_task_make_periodic(struct rt_task_struct *task, RTIME start_time, RTIME period) */
-	/* Start the task with update rate of tick_period 
-	
+	/* At now + tick_period, start the task with update rate of tick_period */
 	if (rt_task_make_periodic(&task, now + tick_period, tick_period)) 
 	{
 		printk(KERN_ERR PFX "Failed to run RTAI task!\n");
