@@ -112,14 +112,14 @@ int __init init_mod(void)
 
 	if (ecrt_slave_config_pdos(drive0, EC_END, slave_0_syncs))
 	{
-		printf("Failed to configure slave 0 PDOs\n");
-		return -1;
+		printk(KERN_ERR PFX "Failed to configure slave 1 PDOs\n");
+		goto out_release_master;
 	}
 	
 	if (ecrt_slave_config_pdos(drive1, EC_END, slave_1_syncs))
 	{
-		printf("Failed to configure slave 1 PDOs\n");
-		return -1;
+		printk(KERN_ERR PFX "Failed to configure slave 1 PDOs\n");
+		goto out_release_master;
 	}
 
 	/* Creates a new process data domain. */
@@ -128,16 +128,16 @@ int __init init_mod(void)
 	
 	if (!domain1) 
 	{
-        printk(KERN_ERR PFX "Domain creation failed!\n");
-        goto out_release_master;
+		printk(KERN_ERR PFX "Domain creation failed!\n");
+		goto out_release_master;
 	}
 	
 	/* Registers PDOs for a domain. */
 	/* Returns 0 on success. */
 	if (ecrt_domain_reg_pdo_entry_list(domain1, domain1_regs))
 	{
-		printf("PDO entry registration failed\n");
-		return -1;
+		printk(KERN_ERR PFX "PDO entry registration failed!\n");
+		goto out_release_master;
 	}
 	
 	
