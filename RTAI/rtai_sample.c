@@ -167,8 +167,16 @@ int __init init_mod(void)
 	
 	/* RT timer */
 	RTIME requested_ticks = nano2count(TIMERTICKS);
+	/* Add comment about start_rt_timer arguments */
 	RTIME tick_period = start_rt_timer(requested_ticks);
 	printk(KERN_INFO PFX "RT timer started with %i/%i ticks.\n", (int) tick_period, (int) requested_ticks);
+	
+	/* Add comment about rt_task_init arguments */
+	if (rt_task_init(&task, run, 0, 2000, 0, 1, NULL)) 
+	{
+		printk(KERN_ERR PFX "Failed to init RTAI task!\n");
+		goto out_stop_timer;
+	}
 	
 	
 }
