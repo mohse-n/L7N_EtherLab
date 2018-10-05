@@ -94,6 +94,15 @@ void run(long data)
 	while(1)
 	{
 		
+		ecrt_master_receive(master);
+		ecrt_domain_process(domain1);
+		
+		
+		
+		
+		ecrt_domain_queue(domain1);
+		ecrt_master_send(master);
+		
 	}
 	
 }
