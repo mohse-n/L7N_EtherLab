@@ -165,11 +165,13 @@ int __init init_mod(void)
 	/* Returns a pointer to (I think) the first byte of PDO data of the domain */
 	domain1_pd = ecrt_domain_data(domain1);
 	
+	
 	/* RT timer */
 	RTIME requested_ticks = nano2count(TIMERTICKS);
 	/* Add comment about start_rt_timer arguments */
 	RTIME tick_period = start_rt_timer(requested_ticks);
 	printk(KERN_INFO PFX "RT timer started with %i/%i ticks.\n", (int) tick_period, (int) requested_ticks);
+	
 	
 	/* Add comment about rt_task_init arguments */
 	if (rt_task_init(&task, run, 0, 2000, 0, 1, NULL)) 
@@ -178,6 +180,18 @@ int __init init_mod(void)
 		goto out_stop_timer;
 	}
 	
+	
+	RTIME now = rt_get_time();
+	/* Added comment about rt_task_make_periodic */
+	if (rt_task_make_periodic(&task, now + tick_period, tick_period)) 
+	{
+        printk(KERN_ERR PFX "Failed to run RTAI task!\n");
+        goto out_stop_task;
+	}
+	
+	
+	printk(KERN_INFO PFX "Initialized.\n");
+	return 0;
 	
 }
 
