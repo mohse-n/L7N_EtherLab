@@ -91,6 +91,30 @@ const static ec_pdo_entry_reg_t domain1_regs[] =
 
 /***************************************************/	
 
+void ODwrite(ec_master_t* master, uint16_t slavePos, uint16_t index, uint8_t subIndex, uint8_t objectValue)
+{
+	/* Blocks until a reponse is received */
+	uint8_t retVal = ecrt_master_sdo_download(master, slavePos, index, subIndex, &objectValue, sizeof(objectValue), NULL);
+	/* retVal != 0: Failure */
+	if (retVal)
+		printk(KERN_ERR PFX "OD write unsuccessful\n");
+}
+
+void initDrive(ec_master_t* master, uint16_t slavePos)
+{
+	/* Reset alarm */
+	ODwrite(master, slavePos, 0x6040, 0x00, 128);
+	/* Servo on and operational */
+	ODwrite(master, slavePos, 0x6040, 0x00, 0xF);
+	/* Mode of operation, CSP */
+	ODwrite(master, slavePos, 0x6060, 0x00, 0x8);
+}
+
+/***************************************************/	
+
+
+
+
 /* Why define data? */
 void run(long data)
 {
