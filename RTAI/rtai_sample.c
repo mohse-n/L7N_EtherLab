@@ -16,6 +16,8 @@ static uint8_t* domain1_pd;
 static ec_slave_config_t* drive0 = NULL;
 static ec_slave_config_t* drive1 = NULL;
 
+static cycles_t t_last_cycle = 0
+
 /* Structures obtained from $ethercat cstruct -p 0 */
 /***************************************************/
 
@@ -94,6 +96,8 @@ void run(long data)
 	while(1)
 	{
 		
+		t_last_cycle = get_cycles();
+	
 		ecrt_master_receive(master);
 		ecrt_domain_process(domain1);
 		
@@ -102,6 +106,8 @@ void run(long data)
 		
 		ecrt_domain_queue(domain1);
 		ecrt_master_send(master);
+		
+		 rt_task_wait_period();
 		
 	}
 	
