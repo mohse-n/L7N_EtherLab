@@ -112,9 +112,6 @@ void initDrive(ec_master_t* master, uint16_t slavePos)
 
 /***************************************************/	
 
-
-
-
 /* Why define data? */
 void run(long data)
 {
@@ -153,7 +150,7 @@ void run(long data)
 	
 }
 
-	/***************************************************/
+/***************************************************/
 	
 int __init init_mod(void)
 {
@@ -169,6 +166,9 @@ int __init init_mod(void)
 		printk(KERN_ERR PFX "Requesting master 0 failed!\n");
 		goto out_return;
 	}
+	
+	initDrive(master, 0);
+	initDrive(master, 1);
 
 	uint16_t alias = 0;
 	uint16_t position0 = 0;
@@ -274,7 +274,7 @@ void __exit cleanup_mod(void)
 	printk(KERN_INFO PFX "Unloading.\n");
 }
 	
-	/***************************************************/
+/***************************************************/
 	
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Mohsen Alizadeh Noghani");
