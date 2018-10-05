@@ -183,13 +183,20 @@ int __init init_mod(void)
 
 	if (ecrt_slave_config_pdos(drive0, EC_END, slave_0_syncs))
 	{
-		printk(KERN_ERR PFX "Failed to configure slave 1 PDOs\n");
+		printk(KERN_ERR PFX "Failed to configure slave 0 PDOs\n");
 		goto out_release_master;
 	}
 	
 	if (ecrt_slave_config_pdos(drive1, EC_END, slave_1_syncs))
 	{
 		printk(KERN_ERR PFX "Failed to configure slave 1 PDOs\n");
+		goto out_release_master;
+	}
+	
+	/* If the drive0 = NULL or drive1 = NULL */
+	if (!drive0 || !drive1)
+	{
+		printk(KERN_ERR PFX "Failed to get slave configuration\n");
 		goto out_release_master;
 	}
 
