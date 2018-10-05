@@ -246,13 +246,13 @@ int main(int argc, char **argv)
 	/* We could add a mechanism for checking state of the slaves in the 
 	   loop, so that after they have all reached OP state we break out of the it. 
 	*/
-	int i = 0;
-	unsigned int sync_ref_counter = 0;
+	ec_slave_config_state_t slaveState0;
+	ec_slave_config_state_t slaveState1;
 	struct timespec wakeupTime, time;
 	struct timespec cycleTime = {0, PERIOD_NS};
 	clock_gettime(CLOCK_REALTIME, &wakeupTime);
 	
-	while (i <= 10000)
+	while (1)
 	{
 		
 		wakeupTime = timespec_add(wakeupTime, cycleTime);
@@ -261,7 +261,14 @@ int main(int argc, char **argv)
 		ecrt_master_receive(master);
 		ecrt_domain_process(domain1);
 		
-		i = i + 1;
+		ecrt_slave_config_state(drive0, &slaveState0);
+		ecrt_slave_config_state(drive1, &slaveState1);
+		
+		if (slaveState0.operational && slaveState1.operational)
+		{
+			printf("All slaves have reached OP state\n");
+			break;
+		}
 	
 		ecrt_domain_queue(domain1);
 		
