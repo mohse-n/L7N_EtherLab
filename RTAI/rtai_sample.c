@@ -127,6 +127,7 @@ void run(long data)
 	
 		/********************************************************************************/
 		
+		/* If all slave are in operational state, exchange PDO data */
 		if (opFlag)
 		{
 			/* Read PDOs from the datagram */
@@ -153,6 +154,7 @@ void run(long data)
 			if (slaveState0.operational && slaveState1.operational)
 			{
 				printk(KERN_ERR PFX "All slaves have reached OP state\n");
+				/* If all slaves have reache OP state, set the flag to 1 */
 				opFlag = 1;
 			}
 		}
@@ -179,7 +181,7 @@ int __init init_mod(void)
 	
 	/* Reserve the first master (0) (/etc/init.d/ethercat start) for this program */
 	master = ecrt_request_master(0);
-	/* Value return in out_return */
+	/* Returned value of out_return */
 	int ret = -1;
 	
 	if (!master) 
@@ -249,6 +251,8 @@ int __init init_mod(void)
 	/* Returns a pointer to (I think) the first byte of PDO data of the domain */
 	domain1_pd = ecrt_domain_data(domain1);
 	
+	/* Normally, we would start frame exchange at this point (see user/main.c) */
+	/*******************************   RTAI config   ********************************/
 	
 	/* RTIME is defined as long long (typedef long long RTIME).
 	   #define TIMERTICKS (1000000000 / FREQUENCY) (ticks in nanoseconds).
@@ -279,6 +283,7 @@ int __init init_mod(void)
 	
 	
 	RTIME now = rt_get_time();
+	
 	/* rt_task_make_periodic(struct rt_task_struct *task, RTIME start_time, RTIME period) */
 	/* At now + tick_period, start the task with update rate of tick_period */
 	if (rt_task_make_periodic(&task, now + tick_period, tick_period)) 
