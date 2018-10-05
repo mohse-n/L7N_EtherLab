@@ -14,6 +14,7 @@ static ec_slave_config_t* drive1 = NULL;
 
 /* Structures obtained from $ethercat cstruct -p 0 */
 /***************************************************/
+
 /* Slave 0's structures */
 static ec_pdo_entry_info_t slave_0_pdo_entries[] = 
 {
@@ -80,6 +81,7 @@ const static ec_pdo_entry_reg_t domain1_regs[] =
 	{0, 1, 0x00007595, 0x00000000, 0x6064, 0x00, &offset_actPos1     },
 	{}
 };
+
 /***************************************************/	
 
 /* Why define data? */
@@ -118,7 +120,25 @@ int __init init_mod(void)
 	{
 		printf("Failed to configure slave 1 PDOs\n");
 		return -1;
-	}	
+	}
+
+	/* Creates a new process data domain. */
+	/* For process data exchange, at least one process data domain is needed. */
+	domain1 = ecrt_master_create_domain(master);
+	
+	if (!domain1) 
+	{
+        printk(KERN_ERR PFX "Domain creation failed!\n");
+        goto out_release_master;
+	}
+	
+	/* Registers PDOs for a domain. */
+	/* Returns 0 on success. */
+	if (ecrt_domain_reg_pdo_entry_list(domain1, domain1_regs))
+	{
+		printf("PDO entry registration failed\n");
+		return -1;
+	}
 	
 	
 }
