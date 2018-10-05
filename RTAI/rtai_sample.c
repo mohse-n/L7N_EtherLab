@@ -161,7 +161,11 @@ void run(long data)
 		
 		ecrt_domain_queue(domain1);
 		ecrt_master_send(master);
-		
+			
+		/* Wait till the next period.
+		   - rt_task_wait_period suspends the execution of the currently running real time task until the next period is reached.
+		   - The task must have been previously marked for a periodic execution by calling rt_task_make_periodic().
+		*/
 		rt_task_wait_period();
 		
 	}
@@ -261,7 +265,7 @@ int __init init_mod(void)
 	
 	/* rt_task_init(struct rt_task_struct *task, 
 			void(*rt_thread)(int)	   ,	Pointer to function (= name of the function)
-			int data		   ,	The partent task can send 1 interger value to the new task
+			int data		   ,	The partent task can send 1 integer value to the new task
 			int stack_size		   ,	
 			int priority	           ,	
 			int uses_fpu	           ,
