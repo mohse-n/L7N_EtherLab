@@ -98,6 +98,18 @@ void run(long data)
 	
 int __init init_mod(void)
 {
+	
+	/* Reserve the first master (0) (/etc/init.d/ethercat start) for this program */
+	master = ecrt_request_master(0);
+	/* Value return in out_return */
+	int ret = -1;
+	
+	if (!master) 
+	{
+		ret = -EBUSY;
+		printk(KERN_ERR PFX "Requesting master 0 failed!\n");
+		goto out_return;
+	}
 
 	uint16_t alias = 0;
 	uint16_t position0 = 0;
