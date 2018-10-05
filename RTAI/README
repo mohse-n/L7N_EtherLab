@@ -2,3 +2,5 @@ Basic structure of an EtherLab RTAI program:
 1- Definition and initialization of variables
 2- Definition of the cyclic task (run)
 3- Kernel module stuff: __init and __exit and module info
+__________________________________________________________________________
+See RTAI documentation (availabe online and in the tarball) and IgH EtherCAT Master 1.1 Documentation for comments about the RTAI API.
