@@ -2,7 +2,10 @@
 
 #include <linux/module.h>
 
+#include <rtai_sched.h>
 
+#define FREQUENCY 2000
+#define TIMERTICKS (1000000000 / FREQUENCY)
 
 
 static ec_master_t* master;
