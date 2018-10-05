@@ -7,8 +7,10 @@
 
 #define FREQUENCY 2000
 #define TIMERTICKS (1000000000 / FREQUENCY)
+#define PFX "ec_rtai_sample: "
 /* One motor revolution increments the encoder by 2^19 -1 */
 #define ENCODER_RES 524287
+
 
 static ec_master_t* master;
 static ec_domain_t* domain1 = NULL;
