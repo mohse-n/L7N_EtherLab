@@ -193,6 +193,17 @@ int __init init_mod(void)
 	printk(KERN_INFO PFX "Initialized.\n");
 	return 0;
 	
+	out_stop_task:
+		rt_task_delete(&task);
+	out_stop_timer:
+		stop_rt_timer();
+	out_release_master:
+		printk(KERN_ERR PFX "Releasing master...\n");
+		ecrt_release_master(master);
+	out_return:
+		printk(KERN_ERR PFX "Failed to load. Aborting.\n");
+		return ret;
+	
 }
 
 
