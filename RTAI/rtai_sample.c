@@ -213,7 +213,7 @@ int __init init_mod(void)
 		goto out_release_master;
 	}
 	
-	/* If the drive0 = NULL or drive1 = NULL */
+	/* If drive0 = NULL or drive1 = NULL */
 	if (!drive0 || !drive1)
 	{
 		printk(KERN_ERR PFX "Failed to get slave configuration\n");
@@ -248,9 +248,15 @@ int __init init_mod(void)
 	domain1_pd = ecrt_domain_data(domain1);
 	
 	
-	/* RT timer */
+	/* RTIME is defined as long long (typedef long long RTIME).
+	   #define TIMERTICKS (1000000000 / FREQUENCY) (ticks in nanoseconds).
+	*/
 	RTIME requested_ticks = nano2count(TIMERTICKS);
-	/* Add comment about start_rt_timer arguments */
+	
+	/* Start an RTAI timer.
+	   - A clock tick will last as the period set in start_rt_timer (requested_ticks).
+	   - tick period will be the “real” number of ticks used for the timer period (which can be different from the requested one).
+	*/
 	RTIME tick_period = start_rt_timer(requested_ticks);
 	printk(KERN_INFO PFX "RT timer started with %i/%i ticks.\n", (int) tick_period, (int) requested_ticks);
 	
@@ -264,11 +270,13 @@ int __init init_mod(void)
 	
 	
 	RTIME now = rt_get_time();
-	/* Added comment about rt_task_make_periodic */
+	/* rt_task_make_periodic(struct rt_task_struct *task, RTIME start_time, RTIME period) */
+	/* Start the task with update rate of tick_period 
+	
 	if (rt_task_make_periodic(&task, now + tick_period, tick_period)) 
 	{
-        printk(KERN_ERR PFX "Failed to run RTAI task!\n");
-        goto out_stop_task;
+		printk(KERN_ERR PFX "Failed to run RTAI task!\n");
+		goto out_stop_task;
 	}
 	
 	
