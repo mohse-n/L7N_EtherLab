@@ -140,6 +140,12 @@ int __init init_mod(void)
 		goto out_release_master;
 	}
 	
+	if (ecrt_master_activate(master)) 
+	{
+		printk(KERN_ERR PFX "Failed to activate master!\n");
+		goto out_release_master;
+	}
+	
 	
 }
 
