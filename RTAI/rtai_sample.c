@@ -22,7 +22,6 @@ static ec_slave_config_state_t slaveState0;
 static ec_slave_config_state_t slaveState1;
 
 static RT_TASK task;
-static cycles_t t_last_cycle = 0
 
 /* Structures obtained from $ethercat cstruct -p 0 */
 /***************************************************/
@@ -122,8 +121,6 @@ void run(long data)
 {
 	while(1)
 	{
-		
-		t_last_cycle = get_cycles();
 	
 		ecrt_master_receive(master);
 		ecrt_domain_process(domain1);
