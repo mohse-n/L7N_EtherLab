@@ -193,6 +193,7 @@ int __init init_mod(void)
 	printk(KERN_INFO PFX "Initialized.\n");
 	return 0;
 	
+	
 	out_stop_task:
 		rt_task_delete(&task);
 	out_stop_timer:
@@ -209,9 +210,13 @@ int __init init_mod(void)
 
 void __exit cleanup_mod(void)
 {
+	printk(KERN_INFO PFX "Stopping...\n");
+	 
+	rt_task_delete(&task);
+	stop_rt_timer();
+	ecrt_release_master(master);
 	
-	
-	
+	printk(KERN_INFO PFX "Unloading.\n");
 }
 	
 	/***************************************************/
