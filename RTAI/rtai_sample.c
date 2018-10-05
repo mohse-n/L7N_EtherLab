@@ -146,6 +146,9 @@ int __init init_mod(void)
 		goto out_release_master;
 	}
 	
+	/* Returns a pointer to (I think) the first byte of PDO data of the domain */
+	domain1_pd = ecrt_domain_data(domain1);
+	
 	
 }
 
