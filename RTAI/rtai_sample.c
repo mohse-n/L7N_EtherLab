@@ -95,7 +95,17 @@ void run(long data)
 	
 int __init init_mod(void)
 {
+
+	uint16_t alias = 0;
+	uint16_t position0 = 0;
+	uint16_t position1 = 1;
+	uint32_t vendor_id = 0x00007595;
+	uint32_t product_code = 0x00000000;
 	
+	/* Creates and returns a slave configuration object, ec_slave_config_t*, for the given alias and position. */
+	/* Returns NULL (0) in case of error and pointer to the configuration struct otherwise */
+	ec_slave_config_t* drive0 = ecrt_master_slave_config(master, alias, position0, vendor_id, product_code);
+	ec_slave_config_t* drive1 = ecrt_master_slave_config(master, alias, position1, vendor_id, product_code);	
 	
 	
 }
