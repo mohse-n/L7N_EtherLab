@@ -2,6 +2,7 @@
 
 #include <linux/module.h>
 
+/* Need this for nano2count */
 #include <rtai_sched.h>
 
 #define FREQUENCY 2000
@@ -163,6 +164,11 @@ int __init init_mod(void)
 	
 	/* Returns a pointer to (I think) the first byte of PDO data of the domain */
 	domain1_pd = ecrt_domain_data(domain1);
+	
+	/* RT timer */
+	RTIME requested_ticks = nano2count(TIMERTICKS);
+	RTIME tick_period = start_rt_timer(requested_ticks);
+	printk(KERN_INFO PFX "RT timer started with %i/%i ticks.\n", (int) tick_period, (int) requested_ticks);
 	
 	
 }
