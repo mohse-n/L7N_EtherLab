@@ -17,6 +17,10 @@ static uint8_t* domain1_pd;
 static ec_slave_config_t* drive0 = NULL;
 static ec_slave_config_t* drive1 = NULL;
 
+static uint8_t opFlag = 0;
+static ec_slave_config_state_t slaveState0;
+static ec_slave_config_state_t slaveState1;
+
 static cycles_t t_last_cycle = 0
 
 /* Structures obtained from $ethercat cstruct -p 0 */
@@ -122,29 +126,45 @@ void run(long data)
 	
 		ecrt_master_receive(master);
 		ecrt_domain_process(domain1);
-		
-		/* Should add an if statement to skip this if not all slaves have reached OP? */
+	
 		/********************************************************************************/
-		/* Read PDOs from the datagram */
-		actPos0 = EC_READ_S32(domain1_pd + offset_actPos0);
-		actPos1 = EC_READ_S32(domain1_pd + offset_actPos1);
 		
-		/* Process the received data */
-		targetPos0 = actPos0 + ENCODER_RES;
-		targetPos1 = actPos1 - ENCODER_RES;
+		if (opFlag)
+		{
+			/* Read PDOs from the datagram */
+			actPos0 = EC_READ_S32(domain1_pd + offset_actPos0);
+			actPos1 = EC_READ_S32(domain1_pd + offset_actPos1);
 		
-		/* Write PDOs to the datagram */
-		EC_WRITE_U8  (domain1_pd + offset_controlWord0, 0xF );
-		EC_WRITE_S32 (domain1_pd + offset_targetPos0  , targetPos0);
+			/* Process the received data */
+			targetPos0 = actPos0 + ENCODER_RES;
+			targetPos1 = actPos1 - ENCODER_RES;
 		
-		EC_WRITE_U8  (domain1_pd + offset_controlWord1, 0xF );
-		EC_WRITE_S32 (domain1_pd + offset_targetPos1  , targetPos1);
+			/* Write PDOs to the datagram */
+			EC_WRITE_U8  (domain1_pd + offset_controlWord0, 0xF );
+			EC_WRITE_S32 (domain1_pd + offset_targetPos0  , targetPos0);
+		
+			EC_WRITE_U8  (domain1_pd + offset_controlWord1, 0xF );
+			EC_WRITE_S32 (domain1_pd + offset_targetPos1  , targetPos1);
+		
+		}
+		else
+		{
+			ecrt_slave_config_state(drive0, &slaveState0);
+			ecrt_slave_config_state(drive1, &slaveState1);
+		
+			if (slaveState0.operational && slaveState1.operational)
+			{
+				printk(KERN_ERR PFX "All slaves have reached OP state\n");
+				opFlag = 1;
+			}
+		}
 		
 		/********************************************************************************/
+		
 		ecrt_domain_queue(domain1);
 		ecrt_master_send(master);
 		
-		 rt_task_wait_period();
+		rt_task_wait_period();
 		
 	}
 	
