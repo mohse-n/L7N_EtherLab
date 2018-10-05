@@ -7,7 +7,8 @@
 
 #define FREQUENCY 2000
 #define TIMERTICKS (1000000000 / FREQUENCY)
-
+/* One motor revolution increments the encoder by 2^19 -1 */
+#define ENCODER_RES 524287
 
 static ec_master_t* master;
 static ec_domain_t* domain1 = NULL;
@@ -101,9 +102,24 @@ void run(long data)
 		ecrt_master_receive(master);
 		ecrt_domain_process(domain1);
 		
+		/* Should add an if statement to skip this if not all slaves have reached OP? */
+		/********************************************************************************/
+		/* Read PDOs from the datagram */
+		actPos0 = EC_READ_S32(domain1_pd + offset_actPos0);
+		actPos1 = EC_READ_S32(domain1_pd + offset_actPos1);
 		
+		/* Process the received data */
+		targetPos0 = actPos0 + ENCODER_RES;
+		targetPos1 = actPos1 - ENCODER_RES;
 		
+		/* Write PDOs to the datagram */
+		EC_WRITE_U8  (domain1_pd + offset_controlWord0, 0xF );
+		EC_WRITE_S32 (domain1_pd + offset_targetPos0  , targetPos0);
 		
+		EC_WRITE_U8  (domain1_pd + offset_controlWord1, 0xF );
+		EC_WRITE_S32 (domain1_pd + offset_targetPos1  , targetPos1);
+		
+		/********************************************************************************/
 		ecrt_domain_queue(domain1);
 		ecrt_master_send(master);
 		
