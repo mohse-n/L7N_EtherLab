@@ -1,7 +1,7 @@
 Basic structure of an EtherLab RTAI program:  
-1- Definition and initialization of variables  
-2- Definition of the cyclic task (run)  
-3- Kernel module stuff: __init and __exit and module info  
+1. Definition and initialization of variables  
+2. Definition of the cyclic task (run)  
+3. Kernel module stuff: __init and __exit and module info  
 ___
 
 See RTAI documentation (available online and in the tarball) and [IgH EtherCAT Master 1.1 Documentation](https://www.etherlab.org/download/ethercat/igh-ethercat-master-1.1.pdf) for comments on the RTAI API.
@@ -17,13 +17,14 @@ Since we're going to write IgH EtherCAT Master (from here on called IgH EtherCAT
 The current IgH EtherCAT version is 1.5.2 and can be downloaded from the [website](https://www.etherlab.org/en/ethercat/index.php).  
 **Note:** The [SourceForge repository](https://sourceforge.net/projects/etherlabmaster) is regularly updated and is much more recent, but during this walkthrough, we stick to the tried-and-tested versions due to better stability and support from the community.  
 Looking at the "devices" folder, we can see the modified (and original) drivers and their associated kernel version.
-For instance,    
-r8169-3.4-ethercat.c
-is the modified driver for Realtek8169 family of network cards for kernel 3.4.x .
+For instance,  
+r8169-3.4-ethercat.c  
+is the modified driver for Realtek8169 family of network cards for kernel 3.4.x . Keep 3.4 in mind and move on to RTAI.  
 **Note:** Drivers for the more recent kernels exist on the [SourceForge repository](https://sourceforge.net/projects/etherlabmaster) and Gavin Lambert's [unofficial patchset](https://sourceforge.net/u/uecasm/etherlab-patches/ci/default/tree/#readme).  
-
-
-
+#### RTAI
+ Now we should look for a version of RTAI that has a patch for kernel 3.4.x . This has to be checked by downloading the package and looking in the directory  
+/base/arch/x86/patches  
+**Note:** You can download RTAI from either its [homepage](https://www.rtai.org/) (for recent versions) or [the repository](https://www.rtai.org/userfiles/downloads/RTAI/).
 
 ### 2. Download the required files
 
