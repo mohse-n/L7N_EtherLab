@@ -9,7 +9,12 @@ ___
 ## RTAI Installtion Guide:
 **Note:** This guide is derived from mainly [ShabbyX's](https://github.com/ShabbyX/RTAI/blob/master/README.INSTALL) and the official [guide](https://www.rtai.org/userfiles/downloads/RTAILAB/RTAI-TARGET-HOWTO.txt) on RTAI website (which is quite old).
 ### 1. Decide on a kernel version
+There are two versions to take into account for detemining the kernel version:  
+* **Igh EtherCAT Master:** The package has modified network card drivers only for specific versions of the kernel. 
+* **RTAI**: Kernel patches are available for some kernels and not others. Also to consider is the fact that newer releases (e.g. RTAI 5.1) are not widely adopted and therefore not thoroughly tested and debugged.   
 
+Since we're going to write IgH EtherCAT Master (from here on called IgH EtherCAT) programs, we start from there.  
+The current IgH EtherCAT version is 1.5.2 and can be downloaded from the [website](https://www.etherlab.org/en/ethercat/index.php).
 
 
 ### 2. Download the required files
