@@ -7,7 +7,7 @@ ___
 See RTAI documentation (available online and in the tarball) and [IgH EtherCAT Master 1.1 Documentation](https://www.etherlab.org/download/ethercat/igh-ethercat-master-1.1.pdf) for comments on the RTAI API.
 ___
 ## RTAI Installtion Guide:
-**Note:** This guide is derived from mainly [ShabbyX's](https://github.com/ShabbyX/RTAI/blob/master/README.INSTALL) and the official [guide](https://www.rtai.org/userfiles/downloads/RTAILAB/RTAI-TARGET-HOWTO.txt) on RTAI website (which is quite old).
+**Note:** This guide is derived from mainly [ShabbyX's](https://github.com/ShabbyX/RTAI/blob/master/README.INSTALL) and the [guide](https://www.rtai.org/userfiles/downloads/RTAILAB/RTAI-TARGET-HOWTO.txt) on RTAI website (which is quite old).
 ### 1. Decide on a kernel version
 There are two versions to take into account for detemining the kernel version:  
 * **Igh EtherCAT Master:** The package has modified network card drivers only for specific versions of the kernel. 
@@ -24,8 +24,12 @@ is the modified driver for Realtek8169 family of network cards for kernel 3.4.x 
 #### RTAI
  Now we should look for a version of RTAI that has a patch for kernel 3.4.x . This has to be checked by downloading the package and looking in the directory  
 /base/arch/x86/patches  
-**Note:** You can download RTAI from either its [homepage](https://www.rtai.org/) (for recent versions) or [the repository](https://www.rtai.org/userfiles/downloads/RTAI/).
-
+In my case, I downloaded RTAI 4.0 and there were two .patch files for 3.4.x kernels:
+hal-linux-3.4.6-x86-4.patch  
+hal-linux-3.4.67-x86-4.patch
+Now we have to choose one.  
+**Note:** You can download RTAI from either its [homepage](https://www.rtai.org/) (for recent versions) or [the repository](https://www.rtai.org/userfiles/downloads/RTAI/).  
+This [guide](https://www.rtai.org/userfiles/downloads/RTAILAB/RTAI-TARGET-HOWTO.txt) recommends picking the base version (i.e. 3.4.6) in the cases similar to ours. (It should be noted that the Linux versioning system might has probably change quite a bit from 2006, rendering the advice irrelevent.)  
 ### 2. Download the required files
 
 
