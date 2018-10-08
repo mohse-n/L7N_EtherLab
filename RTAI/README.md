@@ -25,8 +25,8 @@ is the modified driver for Realtek8169 family of network cards for kernel 3.4.x 
 Now we should look for a version of RTAI that has a patch for kernel 3.4.x . The existence of .patch file should be checked by downloading the package and looking in the directory  
 /base/arch/x86/patches  
 In my case, I downloaded RTAI 4.0 and there were two .patch files for 3.4.x kernels:  
-'hal-linux-3.4.6-x86-4.patch'  
-'hal-linux-3.4.67-x86-4.patch'   
+hal-linux-3.4.6-x86-4.patch     
+hal-linux-3.4.67-x86-4.patch  
 Thus, we basically have to decide between kernel 3.4.6 and 3.4.67. The latter is only incrementally better than the former, but fewer bugs is almost always a good thing.   
 On the other hand, I wouldn't want to run into potential issues because the IgH Master driver is untested for, say, 3.4.67. I went with the base version (3.4.6).  
 **Note:** You can download RTAI from either its [homepage](https://www.rtai.org/) (for recent versions) or [the repository](https://www.rtai.org/userfiles/downloads/RTAI/).  
