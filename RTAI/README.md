@@ -7,6 +7,6 @@ __________________________________________________________________________
 See RTAI documentation (availabe online and in the tarball) and IgH EtherCAT Master 1.1 Documentation for comments on the RTAI API.
 __________________________________________________________________________
 # RTAI Installion Guide:
-Note: This guide is drived from mainly ShabbyX's and the official guide on RTAI website (which is quite old).
+Note: This guide is drived from mainly [ShabbyX's](https://github.com/ShabbyX/RTAI/blob/master/README.INSTALL) and the official [guide](https://www.rtai.org/userfiles/downloads/RTAILAB/RTAI-TARGET-HOWTO.txt) on RTAI website (which is quite old).
 
 
