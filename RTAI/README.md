@@ -13,7 +13,7 @@ There are two versions to take into account for detemining the kernel version:
 * **Igh EtherCAT Master:** The package has modified network card drivers only for specific versions of the kernel. 
 * **RTAI**: Kernel patches are available for some kernels and not others. Also to consider is the fact that newer releases (e.g. RTAI 5.1) are not widely adopted and therefore not thoroughly tested and debugged.   
 #### Igh EtherCAT Master
-Since we're going to write IgH EtherCAT Master (from here on called IgH EtherCAT) programs, we start from there and proceed accordingly. 
+Since we're going to write IgH EtherCAT Master (from here on called IgH Master) programs, we start from there and proceed accordingly. 
 The current IgH EtherCAT version is 1.5.2 and can be downloaded from the [website](https://www.etherlab.org/en/ethercat/index.php).  
 **Note:** The [SourceForge repository](https://sourceforge.net/projects/etherlabmaster) is regularly updated and is much more recent, but during this walkthrough, we stick to the tried-and-tested versions due to better stability and support from the community.  
 Looking at the "devices" folder, we can see the modified (and original) drivers and their associated kernel versions.
@@ -27,7 +27,8 @@ Now we should look for a version of RTAI that has a patch for kernel 3.4.x . The
 In my case, I downloaded RTAI 4.0 and there were two .patch files for 3.4.x kernels:
 hal-linux-3.4.6-x86-4.patch  
 hal-linux-3.4.67-x86-4.patch  
-Thus, we basically have to decide between kernel 3.4.6 and 3.4.67. The latter is only incrementally better than the former, but fewer bugs is almost always a good thing. I went with 3.4.67.   
+Thus, we basically have to decide between kernel 3.4.6 and 3.4.67. The latter is only incrementally better than the former, but fewer bugs is almost always a good thing.   
+On the other hand, I wouldn't want to run into potential issues because the IgH Master driver is untested for, say, 3.4.67. I went with the base version (3.4.6).  
 **Note:** You can download RTAI from either its [homepage](https://www.rtai.org/) (for recent versions) or [the repository](https://www.rtai.org/userfiles/downloads/RTAI/).  
   
 ### 2. Download the required files
