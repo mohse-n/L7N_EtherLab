@@ -8,7 +8,7 @@ See RTAI documentation (available online and in the tarball) and [IgH EtherCAT M
 ___
 ## RTAI Installtion Guide:
 ### 1. Decide on a kernel version
-There are two versions to take into account for detemining the kernel version:  
+There are two versions to take into account when detemining the kernel version:  
 * **Igh EtherCAT Master:** The package has modified network card drivers only for specific versions of the kernel. 
 * **RTAI**: Kernel patches are available for some kernels and not others. Also to consider is the fact that newer releases (e.g. RTAI 5.1) are not widely adopted and therefore not thoroughly tested and debugged.   
 #### Igh EtherCAT Master
