@@ -7,7 +7,7 @@ ___
 See RTAI documentation (available online and in the tarball) and [IgH EtherCAT Master 1.1 Documentation](https://www.etherlab.org/download/ethercat/igh-ethercat-master-1.1.pdf) for comments on the RTAI API.
 ___
 ## RTAI Installtion Guide:
-**Note:** This guide is derived mainly from Juan Serna's execellent tutorial (the only one on the internet that actually worked for me).
+**Note:** This guide is derived mainly from Juan Serna's excellent [tutorial](https://sites.google.com/site/thefreakengineer/tutorials/rtai-5-0-1-lubuntu-14-04-x64) (the only one on the internet that actually worked for me).
 ### 1. Decide on a kernel version
 There are two versions to take into account when detemining the kernel version:  
 * **Igh EtherCAT Master:** The package has modified network card drivers only for specific versions of the kernel. 
@@ -29,12 +29,31 @@ hal-linux-3.4.6-x86-4.patch
 hal-linux-3.4.67-x86-4.patch  
 Thus, we basically have to decide between kernel 3.4.6 and 3.4.67. The latter is only incrementally better than the former, but fewer bugs is almost always a good thing.   
 On the other hand, I wouldn't want to run into potential issues because the IgH Master driver is untested for, say, 3.4.67. I went with the base version (3.4.6).  
-**Note:** You can download RTAI from either its [homepage](https://www.rtai.org/) (for recent versions) or [the repository](https://www.rtai.org/userfiles/downloads/RTAI/).  
-  
 ### 2. Download the required files
-
-
-
+```bash
+sudo -s
+```
+We use cURL for downloading RTAI and Linux kernel.
+```bash
+apt-get install curl
+```
+Kernels have to exist at '/usr/src', and we're going to download everything in that directory.
+```bash
+apt-get install curl
+```
+Download the appropriate version of RTAI,
+```bash
+curl -L https://www.rtai.org/userfiles/downloads/RTAI/rtai-4.0.tar.bz2 | tar xj
+```
+Download the associated kernel,
+```bash
+curl -L https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.4.6.tar.xz | tar xJ
+```
+We are going start from the default kernel configuration when building the RTAI-patched kernel. This way we'll be sure that the only cause of possbile failure in kernel boot process is the modification that **we** have made.
+**Note:** Entering the right URL below requires a visit to http://kernel.ubuntu.com/~kernel-ppa/mainline.
+```bash
+curl -L http://kernel.ubuntu.com/~kernel-ppa/mainline/v3.4.6-quantal/linux-image-3.4.6-030406-generic_3.4.6-030406.201207191609_amd64.deb -o linux-image-3.4.6-generic-amd64.deb
+```
 
 ### 3. Patch and build the kernel
 
