@@ -69,13 +69,25 @@ apt-get install cvs subversion build-essential git-core g++-multilib gcc-multili
 apt-get install libtool automake libncurses5-dev kernel-package
 ```
 ```bash
-apt-get install default-jre docbook-xsl fop libncurses5 libpcre3 libpvm3 libquadmath0 libsaxon-java libskinlf-java libstdc++6 libtinfo5 libxml2 tcl8.5 tk8.5 zlib1g libgcc1 libc6 libblas-dev gfortran liblapack-dev libssl-dev portaudio19-dev portaudio19-doc
+apt-get install docbook-xsl fop libncurses5 libpcre3 libpvm3 libquadmath0 libsaxon-java libskinlf-java libstdc++6 libtinfo5 libxml2 tcl8.5 tk8.5 zlib1g libgcc1 libc6 libblas-dev gfortran liblapack-dev libssl-dev portaudio19-dev portaudio19-doc
 ```
 
-### 3. Patch and build the kernel
-
-
-
+### 3. Patch, configure, and build the kernel
+Replace the default .config file with the configuration file of the associated Ubuntu kernel,
+```bash
+cp /usr/src/linux-image-3.4.6-generic-amd64/boot/config-3.4.6-030406-generic /usr/src/linux-3.4.6/.config
+```
+Apply the RTAI patch to the kernel source files,
+```bash
+cd /usr/src/linux-3.4.6
+```
+```bash
+patch -p1 < /usr/src/rtai-4.0/base/arch/x86/patches/hal-linux-3.4.6-x86-4.patch
+```
+Now we're ready to configure the kernel.
+```bash
+make menuconfig
+```
 ### 4. Install RTAI in userspace
 
 
