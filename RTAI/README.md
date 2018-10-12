@@ -94,14 +94,20 @@ make menuconfig
 4. Enable “Processor type and features > Symmetric multi-processing support"
 5. Under “Power management and ACPI options”, disable anything that you're able to, including "CPU Frequency Scaling" and "CPU idle PM support".
 6. Under "Power management and ACPI options > ACPI", disable everything you can except “Power Management Timer Support” and "Button".  
-7. Select "Exit" and save.
-Now you should be able to compile kernel. Note than since many, many device drivers are enable and will be compiled, completion of the installation process takes a significant amount of time (with i3-4700, it take about an hour).
+7. Select "Exit" and save.  
+
+Now we should be able to compile the kernel. Note than since many, many device drivers are enable and will be compiled, completion of the installation process takes a significant amount of time (with i3-4700, it take about an hour).
 ```bash
 make -j `getconf _NPROCESSORS_ONLN` deb-pkg LOCALVERSION=-rtai
 ```
+Extract RTAI-patchd kernel's image and headers.
+```bash
+dpkg -i linux-image-3.4.6-rtai_3.4.6-rtai-1_amd64.deb
+```
+The bootloader should be automatically configured. Therefore, at this point, if we reboot, we can choose the RTAI kernel from Advanced Options.
 ### 4. Install RTAI in userspace
 
-
+cd /usr/src/rtai-4.0
 
 
 
