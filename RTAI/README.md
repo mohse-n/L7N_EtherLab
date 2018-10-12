@@ -54,6 +54,23 @@ We are going start from the default kernel configuration when building the RTAI-
 ```bash
 curl -L http://kernel.ubuntu.com/~kernel-ppa/mainline/v3.4.6-quantal/linux-image-3.4.6-030406-generic_3.4.6-030406.201207191609_amd64.deb -o linux-image-3.4.6-generic-amd64.deb
 ```
+Extract the .deb package. Unfortunately, dpkg doesn't support multithreading, so this and similar steps often take longer that you expect.
+```bash
+dpkg-deb -x linux-image-3.4.6-generic-amd64.deb linux-image-3.4.6-generic-amd64
+```
+Install the dependencies. I'm not certain if this is the minimal set of dependencies and perhaps some could be removed, but these worked for me.
+```bash
+apt-get update
+```
+```bash
+apt-get install cvs subversion build-essential git-core g++-multilib gcc-multilib
+```
+```bash
+apt-get install libtool automake libncurses5-dev kernel-package
+```
+```bash
+apt-get install default-jre docbook-xsl fop libncurses5 libpcre3 libpvm3 libquadmath0 libsaxon-java libskinlf-java libstdc++6 libtinfo5 libxml2 tcl8.5 tk8.5 zlib1g libgcc1 libc6 libblas-dev gfortran liblapack-dev libssl-dev portaudio19-dev portaudio19-doc
+```
 
 ### 3. Patch and build the kernel
 
