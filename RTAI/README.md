@@ -95,6 +95,10 @@ make menuconfig
 5. Under “Power management and ACPI options”, disable anything that you're able to, including "CPU Frequency Scaling" and "CPU idle PM support".
 6. Under "Power management and ACPI options > ACPI", disable everything you can except “Power Management Timer Support” and "Button".  
 7. Select "Exit" and save.
+Now you should be able to compile kernel. Note than since many, many device drivers are enable and will be compiled, completion of the installation process takes a significant amount of time (with i3-4700, it take about an hour).
+```bash
+make -j `getconf _NPROCESSORS_ONLN` deb-pkg LOCALVERSION=-rtai
+```
 ### 4. Install RTAI in userspace
 
 
