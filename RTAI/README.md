@@ -7,6 +7,7 @@ ___
 See RTAI documentation (available online and in the tarball) and [IgH EtherCAT Master 1.1 Documentation](https://www.etherlab.org/download/ethercat/igh-ethercat-master-1.1.pdf) for comments on the RTAI API.
 ___
 ## RTAI Installtion Guide:
+**Note:** This guide is derived mainly from Juan Serna's execellent tutorial (the only one on the internet that actually worked for me).
 ### 1. Decide on a kernel version
 There are two versions to take into account when detemining the kernel version:  
 * **Igh EtherCAT Master:** The package has modified network card drivers only for specific versions of the kernel. 
