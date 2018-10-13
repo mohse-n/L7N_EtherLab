@@ -39,7 +39,25 @@ make modules_install
 ```bash
 depmod
 ```
-
+There are some parameters associated with the master module (e.g. NIC MAC address, driver to use). We specify these in a file we put in /etc/sysconfig. 
+```bash
+sudo mkdir /etc/sysconfig/
+```
+```bash
+sudo cp /opt/etherlab/etc/sysconfig/ethercat /etc/sysconfig/
+```
+```bash
+sudo nano /etc/sysconfig/ethercat
+```
+Run ifconfig (in another terminal and copy the MAC address of eth0). Paste it between the quotes in front of MASTER0_DEVICE.  
+```bash
+MASTER0_DEVICE="00:05:9a:3c:7a:00"
+```
+The field in front of DEVICE_MODULES is the name of the driver which the master modules will use. Since we compiled with --enable-r8169, we will use the modified r8169 driver for the best performance. 
+```bash
+DEVICE_MODULES=“r8619"
+```
+**Note:** If your network card isn't supported by EtherLab, or EtherLab doesn't support your kernel version, DEVICE_MODULES=“generic".
 
 
 
