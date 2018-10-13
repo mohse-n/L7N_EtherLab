@@ -13,7 +13,7 @@ There are two versions to take into account when detemining the kernel version:
 * **Igh EtherCAT Master:** The package has modified network card drivers only for specific versions of the kernel. 
 * **RTAI**: Kernel patches are available for some kernels and not others. Also to consider is the fact that newer releases (e.g. RTAI 5.1) are not widely adopted and therefore not thoroughly tested and debugged.   
 #### Igh EtherCAT Master
-Since we're going to write IgH EtherCAT Master (from here on called IgH Master) programs, we start from there and proceed accordingly. 
+Since we're going to write IgH EtherCAT Master (from here on called IgH Master) programs, we consider its version first and proceed accordingly. 
 The current IgH EtherCAT version is 1.5.2 and can be downloaded from the [website](https://www.etherlab.org/en/ethercat/index.php).  
 **Note:** The [SourceForge repository](https://sourceforge.net/projects/etherlabmaster) is regularly updated and is much more recent, but during this walkthrough, we stick to the tried-and-tested versions due to better stability and support from the community.  
 Looking at the "devices" folder, we can see the modified (and original) drivers and their associated kernel versions.
