@@ -7,7 +7,7 @@ ___
 See RTAI documentation (available online and in the tarball) and [IgH EtherCAT Master 1.1 Documentation](https://www.etherlab.org/download/ethercat/igh-ethercat-master-1.1.pdf) for comments on the RTAI API.
 ___
 ## RTAI Installtion Guide:
-**Note:** This guide is derived mainly from Juan Serna's excellent [tutorial](https://sites.google.com/site/thefreakengineer/tutorials/rtai-5-0-1-lubuntu-14-04-x64) (the only one on the internet that actually worked for me).
+**Note:** This guide is derived mainly from Juan Serna's excellent [tutorial](https://sites.google.com/site/thefreakengineer/tutorials/rtai-5-0-1-lubuntu-14-04-x64) (the only one on the Internet that actually worked for me).
 ### 1. Decide on a kernel version
 There are two versions to take into account when detemining the kernel version:  
 * **Igh EtherCAT Master:** The package has modified network card drivers only for specific versions of the kernel. 
@@ -101,17 +101,31 @@ Now we should be able to compile the kernel. Note that since many, many device d
 ```bash
 make -j `getconf _NPROCESSORS_ONLN` deb-pkg LOCALVERSION=-rtai
 ```
-Extract RTAI-patchd kernel's image and headers.
+Extract RTAI-patched kernel's image and headers.
 ```bash
 dpkg -i linux-image-3.4.6-rtai_3.4.6-rtai-1_amd64.deb
 ```
 The bootloader should be automatically configured. Therefore, at this point, if we reboot, we can choose the RTAI kernel from Advanced Options.
 ### 4. Install RTAI in userspace
-
+```bash
 cd /usr/src/rtai-4.0
-
-
-
+```
+```bash
+make menuconfig
+```
+1. Specify where RTAI is to be installed and where it should look for the patched kernel.  
+Under "General > Installation directory" = /usr/realtime  
+Under "General > Linux source tree" = /usr/src/linux-3.4.6
+2. Choose "General > Inlining mode of user-space services > Eager inlining"
+3. Under "Machine > Number of CPUs (SMP-only)" = 2 (for my CPU)
+4. Disable "Add-ons > Real-time COMEDI support in user space"  
+Compile and install RTAI,
+```bash
+make -j `getconf _NPROCESSORS_ONLN`
+```
+```bash
+make install
+```
 ### 5. Run the latency test
 
 
