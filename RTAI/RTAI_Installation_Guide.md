@@ -1,11 +1,4 @@
-Basic structure of an EtherLab RTAI program:  
-1. Definition and initialization of variables  
-2. Definition of the cyclic task (run)  
-3. Kernel module stuff: __init and __exit and module info  
-___
 
-See RTAI documentation (available online and in the tarball) and [IgH EtherCAT Master 1.1 Documentation](https://www.etherlab.org/download/ethercat/igh-ethercat-master-1.1.pdf) for comments on the RTAI API.
-___
 ## RTAI Installtion Guide:
 **Note:** This guide is derived mainly from Juan Serna's excellent [tutorial](https://sites.google.com/site/thefreakengineer/tutorials/rtai-5-0-1-lubuntu-14-04-x64) (the only one on the Internet that actually worked for me).
 ### 1. Decide on a kernel version
