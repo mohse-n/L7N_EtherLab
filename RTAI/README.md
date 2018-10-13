@@ -144,3 +144,5 @@ To start the user space latency test:
 cd /usr/realtime/testsuite/user/latency
 ./run
 ```
+### 6. Install IgH EtherCAT Master
+See [README.md](https://github.com/mohse-n/L7N_EtherLab).
