@@ -1,6 +1,4 @@
-## IgH EtherCAT Master Installation Guide: 
-
-**Note:** Credit for this guide should be given to the [one](http://lists.etherlab.org/pipermail/etherlab-users/2015/002820.html) sent to EtherLab mailing list by Thomas Bitsky.  
+## IgH EtherCAT Master Installation Guide:   
 ---
 Download the 1.5.2 tarball from [here](http://www.etherlab.org/en/ethercat/). 
 Extract and move it to /usr/local/src. Here I'm assuming you have extracted it in the home directory.
