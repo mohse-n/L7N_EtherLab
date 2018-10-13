@@ -118,7 +118,7 @@ void initDrive(ec_master_t* master, uint16_t slavePos)
 
 /***************************************************/	
 
-/* The partent task can send 1 interger value (data) to the new task */
+/* The parent task can send 1 interger value (data) to the new task */
 void run(long data)
 {
 	while(1)
@@ -286,8 +286,8 @@ int __init init_mod(void)
 	
 	RTIME now = rt_get_time();
 	
-	/* rt_task_make_periodic(struct rt_task_struct *task, RTIME start_time, RTIME period) */
-	/* At now + tick_period, start the task with update rate of tick_period */
+	/* rt_task_make_periodic (struct rt_task_struct *task, RTIME start_time, RTIME period) */
+	/* At "now + tick_period", start the task with update rate of "tick_period" */
 	if (rt_task_make_periodic(&task, now + tick_period, tick_period)) 
 	{
 		printk(KERN_ERR PFX "Failed to run RTAI task!\n");
