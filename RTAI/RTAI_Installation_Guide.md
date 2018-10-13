@@ -126,7 +126,23 @@ make -j `getconf _NPROCESSORS_ONLN`
 ```bash
 make install
 ```
-### 5. Run the latency test
+### 5. Start the modules at startup  
+RTAI programs (themselves kernel modules) communicate with core RTAI modules. Thus, these have to loaded prior to loading an RTAI program. To automatically load the modules before startup, add just before "do_start",
+```bash
+/sbin/insmod /usr/realtime/modules/rtai_hal.ko
+/sbin/insmod /usr/realtime/modules/rtai_sched.ko
+/sbin/insmod /usr/realtime/modules/rtai_fifos.ko
+/sbin/insmod /usr/realtime/modules/rtai_sem.ko
+/sbin/insmod /usr/realtime/modules/rtai_mbx.ko
+/sbin/insmod /usr/realtime/modules/rtai_msg.ko
+/sbin/insmod /usr/realtime/modules/rtai_netrpc.ko
+/sbin/insmod /usr/realtime/modules/rtai_shm.ko
+```
+Now reboot and then check if all the modules above are loaded,
+```bash
+lsmod | grep rtai
+```
+### 6. Run the latency test
 To start the kernel space test:
 ```bash
 cd /usr/realtime/testsuite/kern/latency
@@ -137,5 +153,5 @@ To start the user space latency test:
 cd /usr/realtime/testsuite/user/latency
 ./run
 ```
-### 6. Install IgH EtherCAT Master
+### 7. Install IgH EtherCAT Master
 See [README.md](https://github.com/mohse-n/L7N_EtherLab).
