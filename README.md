@@ -58,6 +58,29 @@ The field in front of DEVICE_MODULES is the name of the driver which the master 
 DEVICE_MODULES=“r8619"
 ```
 **Note:** If your network card isn't supported by EtherLab, or EtherLab doesn't support your kernel version, DEVICE_MODULES=“generic".
+Copy the initilization script,
+```bash
+sudo cp ./etc/init.d/ethercat /etc/init.d/
+```
+Give execution permission to all groups,
+```bash
+sudo chmod a+x /etc/init.d/ethercat
+```
+Make the ethercat command line tool available,
+```bash
+sudo ln -s /opt/etherlab/bin/ethercat /usr/local/bin/ethercat
+```
+The ethercat command line tool communicates with the master module as a character device, and we're going to give "normal" (non-root) users access to the this device (thus enabling them to use command line tools).
+Create 99-EtherCAT.rules file,
+```bash
+nano /etc/udev/rules.d/99-EtherCAT.rules
+```
+And add the following line to it,
+```bash
+KERNEL=="EtherCAT[0-9]*", MODE="0664"
+```
+
+
 
 
 
