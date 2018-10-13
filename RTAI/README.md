@@ -134,12 +134,12 @@ make -j `getconf _NPROCESSORS_ONLN`
 make install
 ```
 ### 5. Run the latency test
-Start the kernel space test:
+To start the kernel space test:
 ```bash
 cd /usr/realtime/testsuite/kern/latency
 ./run
 ```
-Start the user space latency test:
+To start the user space latency test:
 ```bash
 cd /usr/realtime/testsuite/user/latency
 ./run
