@@ -1,5 +1,6 @@
 ## IgH EtherCAT Master Installation Guide:   
----
+**Note:** This is basically [the one by Thomas Bitsky](http://lists.etherlab.org/pipermail/etherlab-users/2015/002820.html), with some comments added and some removed.  
+
 Download the 1.5.2 tarball from [here](http://www.etherlab.org/en/ethercat/). 
 Extract and move it to /usr/local/src. Here I'm assuming you have extracted it in the home directory.
 ```bash
@@ -78,6 +79,10 @@ nano /etc/udev/rules.d/99-EtherCAT.rules
 And add the following line to it,
 ```bash
 KERNEL=="EtherCAT[0-9]*", MODE="0664"
+```
+At this point, you should be able to start the master,
+```bash
+sudo /etc/init.d/ethercat start
 ```
 
 
