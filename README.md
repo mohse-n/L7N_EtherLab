@@ -16,12 +16,30 @@ Move into the source directory,
 ```bash
 cd ethercat
 ```
-Configure the Makefile
-**Note:** Be sure to apply the last configuration if have installed RTAI in /usr/realtime. If it's installed in a different directory, adjust the specified path accordingly. If you don't intend to compile RTAI codes at all, ignore this option.
-**Note:** We're going to use the modified Realtek8169 driver. Hence, the "--enable-r8169" option.  
+Configure the Makefile.  
+**Note:** Be sure to apply the last configuration if have installed RTAI in /usr/realtime. If it's installed in a different directory, adjust the specified path accordingly. If you don't intend to compile RTAI codes at all, ignore this option.  
+**Note:** We're going to use the modified Realtek8169 driver. Hence, the "--enable-r8169" option.   
+**Note:** See IgH EtherCAT Master 1.5.2 documentation for other options.  
 ```bash
 ./configure --enable-generic -–disable-8139too --enable-r8169 --with-rtai-dir=/usr/realtime
 ```
+Compile and install the modules,  
+```bash
+make
+```
+```bash
+make modules
+```
+```bash
+make install
+```
+```bash
+make modules_install
+```
+```bash
+depmod
+```
+
 
 
 
