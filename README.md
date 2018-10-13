@@ -8,7 +8,7 @@ Extract and move it to /usr/local/src. Here I'm assuming you have extracted it i
 sudo -s
 ```
 ```bash
-sudo mv ethercat-1.5.2 /usr/local/src/
+mv ethercat-1.5.2 /usr/local/src/
 ```
 Just for convenience (typing "ethercat" instead of "ethercat-1.5.2"), create a symbolic link,
 ```bash
