@@ -81,7 +81,7 @@ Now we're ready to configure the kernel.
 ```bash
 make menuconfig
 ```
-1. Disable "Enable loadable module support > Module versioning support "
+1. Disable "Enable loadable module support > Module versioning support " (IgH Master RTAI modules wouldn't compile otherwise)
 2. If you're using a 64-bit CPU: "Processor type and features > Processor family > Generic x86_64"
 3. Number of physical cores (i.e. don't account for hyperthreading): "Processor type and features > Maximum number of CPU’s > 2" (My PC had i3-4700, which has 2 physical cores)
 4. Disable “Processor type and features” > SMT (Hyperthreading) scheduler support”
