@@ -103,7 +103,13 @@ make -j `getconf _NPROCESSORS_ONLN` deb-pkg LOCALVERSION=-rtai
 ```
 Extract RTAI-patched kernel's image and headers.
 ```bash
+cd /usr/src
+```
+```bash
 dpkg -i linux-image-3.4.6-rtai_3.4.6-rtai-1_amd64.deb
+```
+```bash
+dpkg -i linux-headers-3.4.6-rtai_3.4.6-rtai-1_amd64.deb
 ```
 The bootloader should be automatically configured. Therefore, at this point, if we reboot, we can choose the RTAI kernel from Advanced Options.
 ### 4. Install RTAI in userspace
