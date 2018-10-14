@@ -1,3 +1,25 @@
+
+
+
+
+/* We have to pass "master" to ecrt_release_master in signal_handler, but it is not possible
+   to define one with more than one argument. Therefore, master should be a global variable. 
+*/
+ec_master_t* master;
+
+void signal_handler(int sig)
+{
+	printf("\nEnding the program...\n");
+	
+	rt_make_soft_real_time();
+        stop_rt_timer();
+	rt_task_delete(task);
+	ecrt_release_master(master);
+	
+	pid_t pid = getpid();
+	kill(pid, SIGKILL);
+}
+
 int main(int argc, char **argv)
 {
 	/* Lock the program into RAM and prevent swapping */
@@ -215,7 +237,4 @@ int main(int argc, char **argv)
 		ecrt_master_send(master);
 	}
 	
-	rt_make_soft_real_time();
-        stop_rt_timer();
-	rt_task_delete(task);
 }
