@@ -11,6 +11,8 @@
 #include <sys/mman.h>
 /* Header for handling signals (definition of SIGINT) */
 #include <signal.h>
+/* For sched_setscheduler(...) and sched_param */
+#include <sched.h>
 
 
 /* One motor revolution increments the encoder by 2^19 -1 */
@@ -216,12 +218,13 @@ int main(int argc, char **argv)
         param.sched_priority = sched_get_priority_max(SCHED_FIFO) - 1;
         if (sched_setscheduler(0, SCHED_FIFO, &param) == -1) 
 	{
-		printf("Error in setting the scheduler");
+		printf("Error in setting the scheduler\n");
 		return -1;
 	}
 	
-	task = rt_task_init(nam2num("ec_rtai_rtdm_example"), 0 /* priority */, 0 /* stack size */, 0 /* msg size */);
+	uint8_t opFlag = 0;
 	
+	task = rt_task_init(nam2num("ec_rtai_rtdm_example"), 0 /* priority */, 0 /* stack size */, 0 /* msg size */);
 	rt_set_periodic_mode();
 	period = (int) nano2count((RTIME) cycle_us * 1000);
 	start_rt_timer(period);
