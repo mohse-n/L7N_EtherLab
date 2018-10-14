@@ -51,7 +51,9 @@ void signal_handler(int sig)
 {
 	printf("\nEnding the program...\n");
 	
+	/* Return a hard real time Linux process, or pthread to the standard Linux behavior. */	
 	rt_make_soft_real_time();
+	
         stop_rt_timer();
 	rt_task_delete(task);
 	ecrt_release_master(master);
@@ -230,15 +232,31 @@ int main(int argc, char **argv)
 	ec_slave_config_state_t slaveState0;
 	ec_slave_config_state_t slaveState1;
 	
+	/* What does nam2num do? */
 	task = rt_task_init(nam2num("ec_rtai_rtdm_example"), 0 /* priority */, 0 /* stack size */, 0 /* msg size */);
+	/* "rt_set_periodic_mode" sets the periodic mode for the timer. It consists of a fixed frequency 
+	timing of the tasks in multiple of the period set with a call to "start_rt_timer".
+	*/
 	rt_set_periodic_mode();
 	period = (int) nano2count((RTIME) cycle_us * 1000);
+	/* Start an RTAI timer.
+	   - A clock tick will last as the period set in start_rt_timer (requested_ticks).
+	   - tick period will be the “real” number of ticks used for the timer period (which can be different from the requested one).
+	*/
 	start_rt_timer(period);
+		
+        /* Gives a this process, or pthread, hard real time execution capabilities allowing full kernel preemption. 
+	   Note that processes made hard real time should avoid making any Linux System call that can lead to a task switch. 
+	   After all, it doesn't make any sense to use a non-realtime OS (i.e. Linux) from a hard real-time process.
+	*/   
 	rt_make_hard_real_time();
+	/* rt_task_make_periodic (struct rt_task_struct *task, RTIME start_time, RTIME period) */
+	/* At "rt_get_time() + 10 * period", start the task with an update rate of "period" */
 	rt_task_make_periodic(task, rt_get_time() + 10 * period, period);
             
 	while(1)
 	{
+		/* Make the current process wait for the next periodic release point in the processor time line. */
 		rt_task_wait_period();
 	
 		ecrt_master_receive(master);
