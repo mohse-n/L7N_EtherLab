@@ -1,9 +1,22 @@
+#include "ecrt.h"
 
+#include <string.h>
+#include <stdio.h>
+/* For setting the process's priority (setpriority) */
+#include <sys/resource.h>
+/* For pid_t and getpid() */
+#include <unistd.h>
+#include <sys/types.h>
+/* For locking the program in RAM (mlockall) to prevent swapping */
+#include <sys/mman.h>
+/* Header for handling signals (definition of SIGINT) */
+#include <signal.h>
 
 
 /* One motor revolution increments the encoder by 2^19 -1 */
 #define ENCODER_RES 524287
 
+/* No reason to define this as global, other than accessibility */
 const static unsigned int cycle_us = 1000; /* 1 ms */
 
 void ODwrite(ec_master_t* master, uint16_t slavePos, uint16_t index, uint8_t subIndex, uint8_t objectValue)
