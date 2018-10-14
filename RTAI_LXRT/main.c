@@ -170,6 +170,7 @@ int main(int argc, char **argv)
             
 	while(1)
 	{
+		rt_task_wait_period();
 	
 		ecrt_master_receive(master);
 		ecrt_domain_process(domain1);
@@ -212,16 +213,9 @@ int main(int argc, char **argv)
 		
 		ecrt_domain_queue(domain1);
 		ecrt_master_send(master);
+	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	rt_make_soft_real_time();
+        stop_rt_timer();
+	rt_task_delete(task);
 }
