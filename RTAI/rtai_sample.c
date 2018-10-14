@@ -156,10 +156,10 @@ void run(long data)
 			ecrt_slave_config_state(drive0, &slaveState0);
 			ecrt_slave_config_state(drive1, &slaveState1);
 		
+			/* If all slaves have reache OP state, set the flag to 1 */
 			if (slaveState0.operational && slaveState1.operational)
 			{
 				printk(KERN_ERR PFX "All slaves have reached OP state\n");
-				/* If all slaves have reache OP state, set the flag to 1 */
 				opFlag = 1;
 			}
 		}
