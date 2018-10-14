@@ -183,7 +183,7 @@ int __init init_mod(void)
 	
 	/* Reserve the first master (0) (/etc/init.d/ethercat start) for this program */
 	master = ecrt_request_master(0);
-	/* Returned value of out_return */
+	/* Return value of out_return */
 	int ret = -1;
 	
 	if (!master) 

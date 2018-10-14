@@ -12,7 +12,8 @@
 #include <sys/mman.h>
 /* clock_gettime, struct timespec, etc. */
 #include <time.h>
-
+/* Header for handling signals (definition of SIGINT) */
+#include <signal.h>
 
 
 /* One motor revolution increments the encoder by 2^19 -1 */
@@ -70,7 +71,7 @@ ec_master_t* master;
 
 void signal_handler(int sig)
 {
-	printf("\nReleasing master...\n);
+	printf("\nReleasing master...\n");
 	ecrt_release_master(master);
 	pid_t pid = getpid();
 	kill(pid, SIGKILL);
