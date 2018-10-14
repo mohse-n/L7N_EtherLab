@@ -23,6 +23,9 @@ static uint8_t opFlag = 0;
 static ec_slave_config_state_t slaveState0;
 static ec_slave_config_state_t slaveState1;
 
+static int32_t actPos0, targetPos0;
+static int32_t actPos1, targetPos1;
+
 static RT_TASK task;
 
 /* Structures obtained from $ethercat cstruct -p 0 */
