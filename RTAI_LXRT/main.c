@@ -2,6 +2,26 @@
 
 
 
+
+void ODwrite(ec_master_t* master, uint16_t slavePos, uint16_t index, uint8_t subIndex, uint8_t objectValue)
+{
+	/* Blocks until a reponse is received */
+	uint8_t retVal = ecrt_master_sdo_download(master, slavePos, index, subIndex, &objectValue, sizeof(objectValue), NULL);
+	/* retVal != 0: Failure */
+	if (retVal)
+		printf("OD write unsuccessful\n");
+}
+
+void initDrive(ec_master_t* master, uint16_t slavePos)
+{
+	/* Reset alarm */
+	ODwrite(master, slavePos, 0x6040, 0x00, 128);
+	/* Servo on and operational */
+	ODwrite(master, slavePos, 0x6040, 0x00, 0xF);
+	/* Mode of operation, CSP */
+	ODwrite(master, slavePos, 0x6060, 0x00, 0x8);
+}
+
 /* We have to pass "master" to ecrt_release_master in signal_handler, but it is not possible
    to define one with more than one argument. Therefore, master should be a global variable. 
 */
