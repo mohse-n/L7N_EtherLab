@@ -62,6 +62,7 @@ void signal_handler(int sig)
 
 int main(int argc, char **argv)
 {
+	
 	/* Lock the program into RAM and prevent swapping */
 	if (mlockall(MCL_CURRENT | MCL_FUTURE) == -1)
 	{
@@ -282,5 +283,7 @@ int main(int argc, char **argv)
 		ecrt_domain_queue(domain1);
 		ecrt_master_send(master);
 	}
+	
+	return 0;
 	
 }
