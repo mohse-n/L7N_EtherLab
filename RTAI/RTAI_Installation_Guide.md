@@ -117,7 +117,8 @@ Under "General > Installation directory" = /usr/realtime
 Under "General > Linux source tree" = /usr/src/linux-3.4.6
 2. Choose "General > Inlining mode of user-space services > Eager inlining"
 3. Under "Machine > Number of CPUs (SMP-only)" = 2 (for my CPU)
-4. Disable "Add-ons > Real-time COMEDI support in user space"  
+4. Disable "Add-ons > Real-Time COMEDI support in user space"  
+5. (Only required for RTAI LXRT) Enable "Add-one > Real-Time Driver Model over RTAI" 
 
 Compile and install RTAI,
 ```bash
