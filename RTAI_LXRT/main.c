@@ -1,7 +1,10 @@
 
 
 
+/* One motor revolution increments the encoder by 2^19 -1 */
+#define ENCODER_RES 524287
 
+const static unsigned int cycle_us = 1000; /* 1 ms */
 
 void ODwrite(ec_master_t* master, uint16_t slavePos, uint16_t index, uint8_t subIndex, uint8_t objectValue)
 {
