@@ -152,7 +152,22 @@ int main(int argc, char **argv)
 	if (!(domain1_pd = ecrt_domain_data(domain1)))
 		return -1;
 	
+	struct sched_param param;
+        param.sched_priority = sched_get_priority_max(SCHED_FIFO) - 1;
+        if (sched_setscheduler(0, SCHED_FIFO, &param) == -1) 
+	{
+		printf("Error in setting the scheduler");
+		return -1;
+	}
 	
+	task = rt_task_init(nam2num("ec_rtai_rtdm_example"), 0 /* priority */, 0 /* stack size */, 0 /* msg size */);
+	
+	rt_set_periodic_mode();
+	period = (int) nano2count((RTIME) cycle_us * 1000);
+	start_rt_timer(period);
+	rt_make_hard_real_time();
+	rt_task_make_periodic(task, rt_get_time() + 10 * period, period);
+            
 	
 	
 	
