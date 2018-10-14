@@ -72,7 +72,7 @@ Make the ethercat command line tool available,
 ```bash
 sudo ln -s /opt/etherlab/bin/ethercat /usr/local/bin/ethercat
 ```
-The ethercat command line tool communicates with the master module as a character device, and we're going to give "normal" (non-root) users access to the this device (thus enabling them to use command line tools).
+The ethercat command line tool communicates with the master module as a character device, and we're going to give "normal" (non-root) users access to this device (thus enabling users to use command line tools).
 Create 99-EtherCAT.rules file,
 ```bash
 nano /etc/udev/rules.d/99-EtherCAT.rules
