@@ -6,6 +6,8 @@
    to define one with more than one argument. Therefore, master should be a global variable. 
 */
 ec_master_t* master;
+/* The same logic apples in case of defining task as global */
+RT_TASK* task;
 
 void signal_handler(int sig)
 {
