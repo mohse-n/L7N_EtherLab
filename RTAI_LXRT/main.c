@@ -222,7 +222,12 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	
+	/* The slaves (drives) enter OP mode after exchanging a few frames.
+	   By setting opFlag to 1, we start exchanging PDO's only after both slaves have reached operational state. 
+	*/
 	uint8_t opFlag = 0;
+	ec_slave_config_state_t slaveState0;
+	ec_slave_config_state_t slaveState1;
 	
 	task = rt_task_init(nam2num("ec_rtai_rtdm_example"), 0 /* priority */, 0 /* stack size */, 0 /* msg size */);
 	rt_set_periodic_mode();
