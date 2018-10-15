@@ -55,7 +55,7 @@ sudo cp /opt/etherlab/etc/sysconfig/ethercat /etc/sysconfig/
 ```bash
 sudo nano /etc/sysconfig/ethercat
 ```
-Run ifconfig (in another terminal and copy the MAC address of eth0). Paste it between the quotes in front of MASTER0_DEVICE.  
+Run "ifconfig" (in another terminal) and copy the MAC address of eth0. Paste it between the quotes in front of MASTER0_DEVICE.  
 ```bash
 MASTER0_DEVICE="00:05:9a:3c:7a:00"
 ```
