@@ -143,6 +143,12 @@ nano /etc/init.d/rc.local
 /sbin/insmod /usr/realtime/modules/rtai_netrpc.ko
 /sbin/insmod /usr/realtime/modules/rtai_shm.ko
 ```
+Additionally, to run LXRT programs, you should add,
+```bash
+/sbin/insmod /usr/realtime/modules/rtai_lxrt.ko
+/sbin/insmod /usr/realtime/modules/rtai_rtdm.ko
+```
+Save the changes and exit.  
 Now reboot and then check if all the modules above are loaded,
 ```bash
 lsmod | grep rtai
