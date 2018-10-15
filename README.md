@@ -12,6 +12,9 @@ mv ethercat-1.5.2 /usr/local/src/
 ```
 Just for convenience (typing "ethercat" instead of "ethercat-1.5.2"), create a symbolic link,
 ```bash
+cd /usr/local/src
+```
+```bash
 ln -s ethercat-1.5.2 ethercat
 ```
 Move into the source directory,
