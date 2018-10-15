@@ -1,5 +1,8 @@
 #include "ecrt.h"
 
+#include <rtai_lxrt.h>
+#include <rtdm/rtdm.h>
+
 #include <string.h>
 #include <stdio.h>
 /* For setting the process's priority (setpriority) */
