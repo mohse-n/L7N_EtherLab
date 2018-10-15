@@ -63,7 +63,10 @@ DEVICE_MODULES=“r8619"
 **Note:** If your network card isn't supported by EtherLab, or EtherLab doesn't support your kernel version, DEVICE_MODULES=“generic".
 Copy the initilization script,
 ```bash
-sudo cp ./etc/init.d/ethercat /etc/init.d/
+cd /opt/etherlab
+```
+```bash
+cp ./etc/init.d/ethercat /etc/init.d/
 ```
 Give execution permission to all groups,
 ```bash
