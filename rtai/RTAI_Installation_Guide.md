@@ -128,7 +128,11 @@ make -j `getconf _NPROCESSORS_ONLN`
 make install
 ```
 ### 5. Start the modules at startup  
-RTAI programs (themselves kernel modules) communicate with core RTAI modules. Thus, these have to loaded prior to loading an RTAI program. To automatically load the modules before startup, add just before "do_start",
+RTAI programs (themselves kernel modules) communicate with core RTAI modules. Thus, these have to loaded prior to loading an RTAI program. 
+To automatically load the modules before startup, add just before "do_start",
+```bash
+nano /etc/init.d/rc.local
+```
 ```bash
 /sbin/insmod /usr/realtime/modules/rtai_hal.ko
 /sbin/insmod /usr/realtime/modules/rtai_sched.ko
