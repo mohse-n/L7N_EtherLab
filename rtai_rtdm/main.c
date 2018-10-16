@@ -221,6 +221,11 @@ int main(int argc, char **argv)
 		return -1;
 	
 	struct sched_param param;
+	/* Advice from rt.wiki.kernel.org:
+	/* "Do not configure your application to run with priority 99. There are a few management threads
+	   which need to run with higher priority than your application, e.g. watchdogs threads."
+	   Therefore we set the priority to max - 1;
+	*/
         param.sched_priority = sched_get_priority_max(SCHED_FIFO) - 1;
         if (sched_setscheduler(0, SCHED_FIFO, &param) == -1) 
 	{
