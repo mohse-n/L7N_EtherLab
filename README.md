@@ -63,7 +63,7 @@ The field in front of DEVICE_MODULES is the name of the driver which the master 
 ```bash
 DEVICE_MODULES=“r8619"
 ```
-**Note:** If your network card isn't supported by EtherLab, or EtherLab doesn't support your kernel version, DEVICE_MODULES=“generic".
+**Note:** If your network card isn't supported by EtherLab, or EtherLab doesn't support your kernel version, DEVICE_MODULES=“generic".  
 Copy the initilization script,
 ```bash
 cd /opt/etherlab
