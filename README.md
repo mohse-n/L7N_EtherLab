@@ -1,7 +1,8 @@
 ## IgH EtherCAT Master Installation Guide:   
 **Note:** This guide is basically [the one by Thomas Bitsky](http://lists.etherlab.org/pipermail/etherlab-users/2015/002820.html), with some comments added and some removed.  
+___
 **Note:** RTAI installation guide is availabe in "RTAI" folder.
-
+___
 Download the 1.5.2 tarball from [here](http://www.etherlab.org/en/ethercat/). 
 Extract and move it to /usr/local/src. Here I'm assuming you have extracted it in the home directory.
 ```bash
@@ -22,10 +23,15 @@ Move into the source directory,
 cd ethercat
 ```
 Configure the Makefile.  
-**Note:** Be sure to apply the last option if have installed RTAI in /usr/realtime. If it's installed in a different directory, adjust the specified path accordingly. If you don't intend to compile RTAI codes at all, ignore this option.  
+___
+**Note:** Be sure to apply the last option if have installed RTAI in /usr/realtime. If it's installed in a different directory, adjust the specified path accordingly. If you don't intend to compile RTAI codes at all, ignore this option. 
+___
 **Note:** We're going to use the modified Realtek8169 driver. Hence, the "--enable-r8169" option.   
+___
 **Note:** We're also going to write LXRT programs (RTAI in user space).Therefore, "--enable-rtdm".  
+___
 **Note:** See IgH EtherCAT Master 1.5.2 documentation for other options.  
+___
 ```bash
 ./configure --enable-generic -–disable-8139too --enable-r8169 --enable-rtdm --with-rtai-dir=/usr/realtime
 ```
@@ -55,7 +61,7 @@ sudo cp /opt/etherlab/etc/sysconfig/ethercat /etc/sysconfig/
 ```bash
 sudo nano /etc/sysconfig/ethercat
 ```
-Run ifconfig (in another terminal and copy the MAC address of eth0). Paste it between the quotes in front of MASTER0_DEVICE.  
+Run "ifconfig" (in another terminal) and copy the MAC address of eth0. Paste it between the quotes in front of MASTER0_DEVICE.  
 ```bash
 MASTER0_DEVICE="00:05:9a:3c:7a:00"
 ```
@@ -63,7 +69,9 @@ The field in front of DEVICE_MODULES is the name of the driver which the master 
 ```bash
 DEVICE_MODULES=“r8619"
 ```
-**Note:** If your network card isn't supported by EtherLab, or EtherLab doesn't support your kernel version, DEVICE_MODULES=“generic".
+___
+**Note:** If your network card isn't supported by EtherLab, or EtherLab doesn't support your kernel version, DEVICE_MODULES=“generic".  
+___
 Copy the initilization script,
 ```bash
 cd /opt/etherlab
