@@ -12,6 +12,7 @@ Since we're going to write IgH EtherCAT Master (from here on called IgH Master) 
 The current IgH EtherCAT version is 1.5.2 and can be downloaded from the [website](https://www.etherlab.org/en/ethercat/index.php). 
 ___
 **Note:** The [SourceForge repository](https://sourceforge.net/projects/etherlabmaster) is regularly updated and is much more recent, but during this walkthrough, we stick to the tried-and-tested versions due to better stability and support from the community.  
+___
 Looking at the "devices" folder, we can see the modified (and original) drivers and their associated kernel versions.
 For instance,  
 r8169-3.4-ethercat.c  
