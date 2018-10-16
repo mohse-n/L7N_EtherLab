@@ -145,9 +145,9 @@ nano /etc/init.d/rc.local
 ```
 Additionally, to run LXRT programs, you should add,
 ```bash
-/sbin/insmod /usr/realtime/modules/rtai_lxrt.ko
 /sbin/insmod /usr/realtime/modules/rtai_rtdm.ko
 ```
+**Note:** [Only one RTAI scheduler exsits](https://mail.rtai.org/pipermail/rtai/2015-February/026696.html), namely rtai_sched. rtai_lxrt.ko is "linked to" (i.e. is a shortcut for) rtai_sched.ko.  
 Save the changes and exit.  
 Now reboot and then check if all the modules above are loaded,
 ```bash
