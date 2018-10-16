@@ -23,10 +23,15 @@ Move into the source directory,
 cd ethercat
 ```
 Configure the Makefile.  
-**Note:** Be sure to apply the last option if have installed RTAI in /usr/realtime. If it's installed in a different directory, adjust the specified path accordingly. If you don't intend to compile RTAI codes at all, ignore this option.  
+___
+**Note:** Be sure to apply the last option if have installed RTAI in /usr/realtime. If it's installed in a different directory, adjust the specified path accordingly. If you don't intend to compile RTAI codes at all, ignore this option. 
+___
 **Note:** We're going to use the modified Realtek8169 driver. Hence, the "--enable-r8169" option.   
+___
 **Note:** We're also going to write LXRT programs (RTAI in user space).Therefore, "--enable-rtdm".  
+___
 **Note:** See IgH EtherCAT Master 1.5.2 documentation for other options.  
+___
 ```bash
 ./configure --enable-generic -–disable-8139too --enable-r8169 --enable-rtdm --with-rtai-dir=/usr/realtime
 ```
@@ -64,7 +69,9 @@ The field in front of DEVICE_MODULES is the name of the driver which the master 
 ```bash
 DEVICE_MODULES=“r8619"
 ```
+___
 **Note:** If your network card isn't supported by EtherLab, or EtherLab doesn't support your kernel version, DEVICE_MODULES=“generic".  
+___
 Copy the initilization script,
 ```bash
 cd /opt/etherlab
