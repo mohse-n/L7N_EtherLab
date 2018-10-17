@@ -19,7 +19,7 @@ static uint8_t* domain1_pd;
 static ec_slave_config_t* drive0 = NULL;
 static ec_slave_config_t* drive1 = NULL;
 
-static uint8_t opFlag = 0;
+static uint32_t opFlag = 0;
 static ec_slave_config_state_t slaveState0;
 static ec_slave_config_state_t slaveState1;
 
@@ -133,7 +133,13 @@ void run(long data)
 		/********************************************************************************/
 		
 		/* If all slave are in operational state, exchange PDO data */
-		if (opFlag)
+		/* Why 5000? Well, after activating the master, it start applyting the specified
+		   configurations (SDOs that should be sent, PDOs that have been defined).
+		   Therefore it takes a few cycles for ALL the drives to reach OP and be able to 
+		   move the motors. During this time, we can send frames without RPDOs (e.g. target position).
+		   5000 is a purely an approximation and obtained with trial-and-error.
+		*/
+		if (opFlag >= 5000)
 		{
 			/* Read PDOs from the datagram */
 			actPos0 = EC_READ_S32(domain1_pd + offset_actPos0);
@@ -153,15 +159,8 @@ void run(long data)
 		}
 		else
 		{
-			ecrt_slave_config_state(drive0, &slaveState0);
-			ecrt_slave_config_state(drive1, &slaveState1);
-		
-			/* If all slaves have reache OP state, set the flag to 1 */
-			if (slaveState0.operational && slaveState1.operational)
-			{
-				printk(KERN_ERR PFX "All slaves have reached OP state\n");
-				opFlag = 1;
-			}
+			opFlag = opFlag + 1;
+
 		}
 		
 		/********************************************************************************/
