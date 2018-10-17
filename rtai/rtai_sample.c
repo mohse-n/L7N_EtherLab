@@ -102,8 +102,11 @@ const static ec_pdo_entry_reg_t domain1_regs[] =
 
 void ODwrite(ec_slave_config_t* slaveConfig, uint16_t index, uint8_t subIndex, uint8_t objectValue)
 {
-	/* Writing the value actually happens after activating the master. */ 
-	uint8_t retVal = ecrt_slave_config_sdo(slaveConfig, index, subIndex, &objectValue, sizeof(objectValue), NULL);
+	/* For some reason, using "ecrt_master_sdo_download" would result in a kerne oops 
+	   (Unable to handle kernel NULL pointer dereference).
+	   Writing the value actually happens after activating the master. See the answer to "Read from/write to the slave's object dictionary using SDOs" in the mailing list.
+	*/
+	uint8_t retVal = ecrt_slave_config_sdo(slaveConfig, index, subIndex, &objectValue, sizeof(objectValue));
 	/* retVal != 0: Failure */
 	if (retVal)
 		printk(KERN_ERR PFX "OD write request unsuccessful\n");
@@ -195,9 +198,6 @@ int __init init_mod(void)
 		goto out_return;
 	}
 	
-	initDrive(master, 0);
-	initDrive(master, 1);
-
 	uint16_t alias = 0;
 	uint16_t position0 = 0;
 	uint16_t position1 = 1;
@@ -215,6 +215,9 @@ int __init init_mod(void)
 		printk(KERN_ERR PFX "Failed to get slave configuration\n");
 		goto out_release_master;
 	}
+	
+	initDrive(drive0);
+	initDrive(drive1);
 
 	if (ecrt_slave_config_pdos(drive0, EC_END, slave_0_syncs))
 	{
