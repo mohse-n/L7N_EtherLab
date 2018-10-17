@@ -32,6 +32,7 @@ ___
 ___
 **Note:** See IgH EtherCAT Master 1.5.2 documentation for other options.  
 ___
+Make configure executable.
 ```bash
 chmod +x configure
 ```
