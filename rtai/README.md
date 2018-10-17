@@ -12,7 +12,7 @@ RTAI installation procedure is described in RTAI_Installation_Guide.md.
 
 ---
 
-To make the module, when your in /examples/rtai directory, run as superuser,
+To make the module, when in /examples/rtai directory, run as superuser,
 ```bash
 make modules
 ```
@@ -22,6 +22,6 @@ insmod ec_rtai_sample.ko
 ```
 And to remove the module,
 ```bash
-rmmod ec_rtai_sample.ko
+rmmod ec_rtai_sample
 ```
-**Note:** After is has been loaded, there is the possiblity of the module not exiting properly after it runs into a (minor) error (i.e. kernel oops). In such cases, the kenrel (computer) should be rebooted as there is no way of removing the module. 
+**Note:** After is has been loaded, there is the possiblity of the module not exiting properly if it runs into a (minor) error (i.e. a kernel oops). In such cases, the kenrel (computer) should be rebooted as there is no way of removing the module. 
