@@ -33,6 +33,9 @@ ___
 **Note:** See IgH EtherCAT Master 1.5.2 documentation for other options.  
 ___
 ```bash
+chmod +x configure
+```
+```bash
 ./configure --enable-generic -–disable-8139too --enable-r8169 --enable-rtdm --with-rtai-dir=/usr/realtime
 ```
 Compile and install the modules,  
