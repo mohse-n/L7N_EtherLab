@@ -100,23 +100,23 @@ const static ec_pdo_entry_reg_t domain1_regs[] =
 
 /***************************************************/	
 
-void ODwrite(ec_master_t* master, uint16_t slavePos, uint16_t index, uint8_t subIndex, uint8_t objectValue)
+void ODwrite(ec_slave_config_t* slaveConfig, uint16_t index, uint8_t subIndex, uint8_t objectValue)
 {
-	/* Blocks until a reponse is received */
-	uint8_t retVal = ecrt_master_sdo_download(master, slavePos, index, subIndex, &objectValue, sizeof(objectValue), NULL);
+	/* Writing the value actually happens after activating the master. */ 
+	uint8_t retVal = ecrt_slave_config_sdo(slaveConfig, index, subIndex, &objectValue, sizeof(objectValue), NULL);
 	/* retVal != 0: Failure */
 	if (retVal)
-		printk(KERN_ERR PFX "OD write unsuccessful\n");
+		printk(KERN_ERR PFX "OD write request unsuccessful\n");
 }
 
-void initDrive(ec_master_t* master, uint16_t slavePos)
+void initDrive(ec_slave_config_t* slaveConfig)
 {
 	/* Reset alarm */
-	ODwrite(master, slavePos, 0x6040, 0x00, 128);
+	ODwrite(slaveConfig, 0x6040, 0x00, 128);
 	/* Servo on and operational */
-	ODwrite(master, slavePos, 0x6040, 0x00, 0xF);
+	ODwrite(slaveConfig, 0x6040, 0x00, 0xF);
 	/* Mode of operation, CSP */
-	ODwrite(master, slavePos, 0x6060, 0x00, 0x8);
+	ODwrite(slaveConfig, 0x6060, 0x00, 0x8);
 }
 
 /***************************************************/	
@@ -132,7 +132,7 @@ void run(long data)
 	
 		/********************************************************************************/
 		
-		/* If all slave are in operational state, exchange PDO data */
+		/* If all slave are in operational state, exchange PDO data. */
 		/* Why 5000? Well, after activating the master, it start applyting the specified
 		   configurations (SDOs that should be sent, PDOs that have been defined).
 		   Therefore it takes a few cycles for ALL the drives to reach OP and be able to 
