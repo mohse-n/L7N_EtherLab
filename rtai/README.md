@@ -9,3 +9,19 @@ See RTAI documentation (available online and in the tarball) and [IgH EtherCAT M
 ---
 
 RTAI installation procedure is described in RTAI_Installation_Guide.md. 
+
+---
+
+To make the module, when your in /examples/rtai directory, run as superuser,
+```bash
+make modules
+```
+To load the module,
+```bash
+insmod ec_rtai_sample.ko
+```
+And to remove the module,
+```bash
+rmmod ec_rtai_sample.ko
+```
+**Note:** After is has been loaded, there is the possiblity of the module not exiting properly after it runs into a (minor) error (i.e. kernel oops). In such cases, the kenrel (computer) should be rebooted as there is no way of removing the module. 
