@@ -136,13 +136,13 @@ void run(long data)
 		/********************************************************************************/
 		
 		/* If all slave are in operational state, exchange PDO data. */
-		/* Why 5000? Well, after activating the master, it start applyting the specified
+		/* Why 5000? Well, after activating the master, it starts applying the specified
 		   configurations (SDOs that should be sent, PDOs that have been defined).
 		   Therefore it takes a few cycles for ALL the drives to reach OP and be able to 
-		   move the motors. During this time, we can send frames without RPDOs (e.g. target position).
-		   5000 is a purely an approximation and obtained with trial-and-error.
+		   move the motors. During this time, we send frames without RPDOs (e.g. target position).
+		   1000 is a purely based on trial-and-error.
 		*/
-		if (opFlag >= 5000)
+		if (opFlag == 1000)
 		{
 			/* Read PDOs from the datagram */
 			actPos0 = EC_READ_S32(domain1_pd + offset_actPos0);
