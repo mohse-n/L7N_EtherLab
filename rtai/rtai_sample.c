@@ -122,7 +122,7 @@ void initDrive(ec_slave_config_t* slaveConfig)
 
 /***************************************************/	
 
-/* The parent task can send 1 interger value (data) to the new task */
+/* The parent task can pass 1 long variable (data) to the new task */
 void run(long data)
 {
 	while(1)
