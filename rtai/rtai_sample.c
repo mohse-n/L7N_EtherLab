@@ -20,8 +20,6 @@ static ec_slave_config_t* drive0 = NULL;
 static ec_slave_config_t* drive1 = NULL;
 
 static uint32_t opFlag = 0;
-static ec_slave_config_state_t slaveState0;
-static ec_slave_config_state_t slaveState1;
 
 static int32_t actPos0, targetPos0;
 static int32_t actPos1, targetPos1;
@@ -136,11 +134,14 @@ void run(long data)
 		/********************************************************************************/
 		
 		/* If all slave are in operational state, exchange PDO data. */
-		/* Why 1000? Well, after activating the master, it starts applying the specified
+		/* To check slaves' state, I've used a more elegant method in the "user" example.
+		   However, compiling with "ecrt_slave_config_state" would freeze the OS at insmod.
+		*/
+		/* After activating the master, it starts applying the specified
 		   configurations (SDOs that should be sent, PDOs that have been defined).
 		   Therefore it takes a few cycles for ALL the drives to reach OP and be able to 
-		   move the motors. During this time, we don't try to move the motors (e.g. targetPos = actPos).
-		   Note that the value 1000 is a purely based on trial-and-error.
+		   move the motors. During this time, we don't try to move the motors (i.e. targetPos = actPos).
+		   Note that the value 1000 is based purely on trial-and-error.
 		*/
 		if (opFlag == 1000)
 		{
