@@ -24,6 +24,8 @@
 #define PERIOD_NS (NSEC_PER_SEC / FREQUENCY)
 #define TIMESPEC2NS(T) ((uint64_t) (T).tv_sec * NSEC_PER_SEC + (T).tv_nsec)
 
+/* Comment to disable distributed clocks */
+#define DC
 
 
 void ODwrite(ec_master_t* master, uint16_t slavePos, uint16_t index, uint8_t subIndex, uint8_t objectValue)
@@ -45,6 +47,7 @@ void initDrive(ec_master_t* master, uint16_t slavePos)
 	ODwrite(master, slavePos, 0x6060, 0x00, 0x8);
 }
 
+#ifdef DC
 /* Copy-pasted from dc_user/main.c */
 struct timespec timespec_add(struct timespec time1, struct timespec time2)
 {
@@ -63,6 +66,7 @@ struct timespec timespec_add(struct timespec time1, struct timespec time2)
 
 	return result;
 }
+#endif
 
 /* We have to pass "master" to ecrt_release_master in signal_handler, but it is not possible
    to define one with more than one argument. Therefore, master should be a global variable. 
@@ -215,9 +219,10 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	
-	
+	#ifdef DC
 	ecrt_slave_config_dc(drive0, 0x0300, PERIOD_NS, 125000, 0, 0);
 	ecrt_slave_config_dc(drive1, 0x0300, PERIOD_NS, 125000, 0, 0);
+	#endif
 	
 	/* Up to this point, we have only requested the master. See log messages */
 	printf("Activating master...\n");
@@ -249,7 +254,10 @@ int main(int argc, char **argv)
 	*/
 	ec_slave_config_state_t slaveState0;
 	ec_slave_config_state_t slaveState1;
-	struct timespec wakeupTime, time;
+	struct timespec wakeupTime;
+	#ifdef DC
+	struct timespec	time;
+	#endif
 	struct timespec cycleTime = {0, PERIOD_NS};
 	clock_gettime(CLOCK_REALTIME, &wakeupTime);
 	
@@ -273,11 +281,13 @@ int main(int argc, char **argv)
 	
 		ecrt_domain_queue(domain1);
 		
+		#ifdef DC
 		/* Distributed clocks */
 		clock_gettime(CLOCK_REALTIME, &time);
 		ecrt_master_application_time(master, TIMESPEC2NS(time));
 		ecrt_master_sync_reference_clock(master);
 		ecrt_master_sync_slave_clocks(master);
+		#endif
 		
 		ecrt_master_send(master);
 	
@@ -323,11 +333,13 @@ int main(int argc, char **argv)
 		*/
 		ecrt_domain_queue(domain1);
 		
+		#ifdef DC
 		/* Distributed clocks */
 		clock_gettime(CLOCK_REALTIME, &time);
 		ecrt_master_application_time(master, TIMESPEC2NS(time));
 		ecrt_master_sync_reference_clock(master);
 		ecrt_master_sync_slave_clocks(master);
+		#endif
 		
 		/* Sends all datagrams in the queue.
 		   This method takes all datagrams that have been queued for transmission,
