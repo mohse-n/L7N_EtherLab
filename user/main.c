@@ -247,11 +247,6 @@ int main(int argc, char **argv)
 	if (!(domain1_pd = ecrt_domain_data(domain1)))
 		return -1;
 	
-	
-	/* The slaves (drives) enter OP mode after exchanging a few frames */
-	/* We could add a mechanism for checking state of the slaves in the 
-	   loop, so that after they have all reached OP state we break out of the it. 
-	*/
 	ec_slave_config_state_t slaveState0;
 	ec_slave_config_state_t slaveState1;
 	struct timespec wakeupTime;
@@ -261,6 +256,10 @@ int main(int argc, char **argv)
 	struct timespec cycleTime = {0, PERIOD_NS};
 	clock_gettime(CLOCK_REALTIME, &wakeupTime);
 	
+	/* The slaves (drives) enter OP mode after exchanging a few frames. */
+	/* We exchange frames with no RPDOs (targetPos) untill all slaves have 
+	   reached OP state, and then we break out of the loop.
+	*/
 	while (1)
 	{
 		
