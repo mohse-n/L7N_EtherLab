@@ -22,10 +22,16 @@ ___
 ___
 #### RTAI
 Now we should look for a version of RTAI that has a patch for kernel 3.4.x . The existence of .patch file should be checked by downloading the package and looking in the directory  
-/base/arch/x86/patches  
+```bash
+/base/arch/x86/patches 
+``` 
 In my case, I downloaded RTAI 4.0 and there were two .patch files for 3.4.x kernels:  
-hal-linux-3.4.6-x86-4.patch     
-hal-linux-3.4.67-x86-4.patch  
+```bash
+hal-linux-3.4.6-x86-4.patch  
+```
+```bash
+hal-linux-3.4.67-x86-4.patch 
+```     
 Thus, we basically have to decide between kernel 3.4.6 and 3.4.67. The latter is only incrementally better than the former, but fewer bugs is almost always a good thing.   
 On the other hand, I wouldn't want to run into potential issues because the IgH Master driver is untested for, say, 3.4.67. I went with the base version (3.4.6).  
 ### 2. Download the required files
