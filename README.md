@@ -104,6 +104,8 @@ At this point, you should be able to start the master,
 ```bash
 sudo /etc/init.d/ethercat start
 ```
+___
+**Note:** In case you needed to reinstall the package, delete "ethercat" and "ethercat-1.5.2" in /usr/local/src and follow the installation guide up to (and including) the "depmod" step.  
 
 
 

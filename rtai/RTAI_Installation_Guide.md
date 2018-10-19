@@ -113,7 +113,7 @@ dpkg -i linux-image-3.4.6-rtai_3.4.6-rtai-1_amd64.deb
 dpkg -i linux-headers-3.4.6-rtai_3.4.6-rtai-1_amd64.deb
 ```
 The bootloader should be automatically configured. Therefore, at this point, if we reboot, we can choose the RTAI kernel from Advanced Options.
-### 4. Install RTAI in userspace
+### 4. Install RTAI 
 ```bash
 cd /usr/src/rtai-4.0
 ```
@@ -176,3 +176,5 @@ cd /usr/realtime/testsuite/user/latency
 ```
 ### 7. Install IgH EtherCAT Master
 See [README.md](https://github.com/mohse-n/L7N_EtherLab).
+### Reinstalling RTAI 
+In case you needed to reinstall RTAI, delete "realtime" in /usr and repeat this guide from step 4.
