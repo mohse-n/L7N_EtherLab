@@ -11,6 +11,17 @@
 /* One motor revolution increments the encoder by 2^19 -1 */
 #define ENCODER_RES 524287
 
+#define DC
+
+#ifdef DC
+
+#define NSEC_PER_SEC (1000000000L)
+/* Period of motion loop, in microseconds */
+#define PERIOD (1000000 / FREQUENCY)
+#define PERIOD_NS (NSEC_PER_SEC / FREQUENCY)
+
+#endif
+
 
 static ec_master_t* master;
 static ec_domain_t* domain1 = NULL;
@@ -19,7 +30,7 @@ static uint8_t* domain1_pd;
 static ec_slave_config_t* drive0 = NULL;
 static ec_slave_config_t* drive1 = NULL;
 
-static uint32_t opFlag = 0;
+static uint32_t opCounter = 0;
 
 static int32_t actPos0, targetPos0;
 static int32_t actPos1, targetPos1;
@@ -125,6 +136,13 @@ void initDrive(ec_slave_config_t* slaveConfig)
 /* The parent task can pass 1 long variable (data) to the new task */
 void run(long data)
 {
+	
+	#ifdef DC
+	struct timeval tv;
+        unsigned int sync_ref_counter = 0;
+	count2timeval(nano2count(rt_get_real_time_ns()), &tv);
+	#endif
+	
 	while(1)
 	{
 	
@@ -143,7 +161,7 @@ void run(long data)
 		   move the motors. During this time, we don't try to move the motors (i.e. targetPos = actPos).
 		   Note that the value 1000 is based purely on trial-and-error.
 		*/
-		if (opFlag == 1000)
+		if (opCounter == 1000)
 		{
 			/* Read PDOs from the datagram */
 			actPos0 = EC_READ_S32(domain1_pd + offset_actPos0);
@@ -163,7 +181,7 @@ void run(long data)
 		}
 		else
 		{
-			opFlag = opFlag + 1;
+			opCounter = opCounter + 1;
 			/* Read PDOs from the datagram */
 			actPos0 = EC_READ_S32(domain1_pd + offset_actPos0);
 			actPos1 = EC_READ_S32(domain1_pd + offset_actPos1);
@@ -184,6 +202,21 @@ void run(long data)
 		/********************************************************************************/
 		
 		ecrt_domain_queue(domain1);
+		
+		#ifdef DC
+		tv.tv_usec += PERIOD;
+		
+      		if (tv.tv_usec >= 1000000)  
+		{
+               		tv.tv_usec -= 1000000;
+                	tv.tv_sec++;
+                }
+
+                ecrt_master_application_time(master, EC_TIMEVAL2NANO(tv));
+		ecrt_master_sync_reference_clock(master);
+       		ecrt_master_sync_slave_clocks(master);
+		#endif
+		
 		ecrt_master_send(master);
 			
 		/* Wait till the next period.
@@ -263,6 +296,11 @@ int __init init_mod(void)
 		printk(KERN_ERR PFX "PDO entry registration failed!\n");
 		goto out_release_master;
 	}
+	
+	#ifdef DC
+	ecrt_slave_config_dc(drive0, 0x0300, PERIOD_NS, 125000, 0, 0);
+	ecrt_slave_config_dc(drive1, 0x0300, PERIOD_NS, 125000, 0, 0);
+	#endif
 	
 	if (ecrt_master_activate(master)) 
 	{
