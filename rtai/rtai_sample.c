@@ -22,6 +22,8 @@
 #define PERIOD_US (USEC_PER_SEC / FREQUENCY)
 /* Period of motion loop, in nanoseconds */
 #define PERIOD_NS (NSEC_PER_SEC / FREQUENCY)
+/* SYNC0 event happens halfway through the cycle */
+#define SHIFT0 (PERIOD_NS/2)
 
 #endif
 
@@ -301,8 +303,8 @@ int __init init_mod(void)
 	}
 	
 	#ifdef DC
-	ecrt_slave_config_dc(drive0, 0x0300, PERIOD_NS, 125000, 0, 0);
-	ecrt_slave_config_dc(drive1, 0x0300, PERIOD_NS, 125000, 0, 0);
+	ecrt_slave_config_dc(drive0, 0x0300, PERIOD_NS, SHIFT0, 0, 0);
+	ecrt_slave_config_dc(drive1, 0x0300, PERIOD_NS, SHIFT0, 0, 0);
 	#endif
 	
 	if (ecrt_master_activate(master)) 

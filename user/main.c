@@ -18,14 +18,21 @@
 
 /* One motor revolution increments the encoder by 2^19 -1 */
 #define ENCODER_RES 524287
-/* Definitions necessary for distributed clock */
-#define NSEC_PER_SEC (1000000000L)
-#define FREQUENCY 1000
-#define PERIOD_NS (NSEC_PER_SEC / FREQUENCY)
-#define TIMESPEC2NS(T) ((uint64_t) (T).tv_sec * NSEC_PER_SEC + (T).tv_nsec)
 
 /* Comment to disable distributed clocks */
 #define DC
+
+#ifdef DC
+
+#define NSEC_PER_SEC (1000000000L)
+#define FREQUENCY 1000
+/* Period of motion loop, in nanoseconds */
+#define PERIOD_NS (NSEC_PER_SEC / FREQUENCY)
+/* SYNC0 event happens halfway through the cycle */
+#define SHIFT0 (PERIOD_NS/2)
+#define TIMESPEC2NS(T) ((uint64_t) (T).tv_sec * NSEC_PER_SEC + (T).tv_nsec)
+
+#endif
 
 
 void ODwrite(ec_master_t* master, uint16_t slavePos, uint16_t index, uint8_t subIndex, uint8_t objectValue)
@@ -220,8 +227,9 @@ int main(int argc, char **argv)
 	}
 	
 	#ifdef DC
-	ecrt_slave_config_dc(drive0, 0x0300, PERIOD_NS, 125000, 0, 0);
-	ecrt_slave_config_dc(drive1, 0x0300, PERIOD_NS, 125000, 0, 0);
+	/* Do not enable Sync1 */
+	ecrt_slave_config_dc(drive0, 0x0300, PERIOD_NS, SHIFT0, 0, 0);
+	ecrt_slave_config_dc(drive1, 0x0300, PERIOD_NS, SHIFT0, 0, 0);
 	#endif
 	
 	/* Up to this point, we have only requested the master. See log messages */
