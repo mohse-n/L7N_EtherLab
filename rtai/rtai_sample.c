@@ -11,7 +11,13 @@
 /* One motor revolution increments the encoder by 2^19 -1 */
 #define ENCODER_RES 524287
 
+/* Uncomment to use distributed clocks */
 #define DC
+/* Uncomment to use semaphore on the master module */
+#define SEM
+/* Uncomment to use callback funtion for master */
+#define CB
+
 
 #ifdef DC
 
@@ -28,6 +34,14 @@
 #endif
 
 
+#ifdef SEM
+include <rtai_sem.h>
+#endif
+
+
+
+
+
 static ec_master_t* master;
 static ec_domain_t* domain1 = NULL;
 static uint8_t* domain1_pd;
@@ -41,6 +55,10 @@ static int32_t actPos0, targetPos0;
 static int32_t actPos1, targetPos1;
 
 static RT_TASK task;
+
+#ifdef SEM
+static SEM master_sem;
+#endif
 
 /* Structures obtained from $ethercat cstruct -p 0 */
 /***************************************************/
@@ -150,9 +168,14 @@ void run(long data)
 	
 	while(1)
 	{
-	
+		#ifdef SEM
+		rt_sem_wait(&master_sem);
+		#endif
 		ecrt_master_receive(master);
 		ecrt_domain_process(domain1);
+		#ifdef SEM
+		rt_sem_signal(&master_sem);
+		#endif
 	
 		/********************************************************************************/
 		
@@ -211,6 +234,10 @@ void run(long data)
 		#ifdef DC
 		tv.tv_usec += PERIOD_US;
 		
+		#ifdef SEM
+		rt_sem_wait(&master_sem);
+		#endif
+		
       		if (tv.tv_usec >= 1000000)  
 		{
 			tv.tv_usec -= 1000000;
@@ -223,6 +250,10 @@ void run(long data)
 		#endif
 		
 		ecrt_master_send(master);
+		
+		#ifdef SEM
+		rt_sem_signal(&master_sem);
+		#endif
 			
 		/* Wait till the next period.
 		   - rt_task_wait_period suspends the execution of the currently running real time task until the next period is reached.
@@ -238,6 +269,10 @@ void run(long data)
 	
 int __init init_mod(void)
 {
+	
+	#ifdef SEM
+	rt_sem_init(&master_sem, 1);
+	#endif
 	
 	/* Reserve the first master (0) (/etc/init.d/ethercat start) for this program */
 	master = ecrt_request_master(0);
@@ -370,6 +405,10 @@ int __init init_mod(void)
 		printk(KERN_ERR PFX "Releasing master...\n");
 		ecrt_release_master(master);
 	out_return:
+		#ifdef SEM
+		rt_sem_delete(&master_sem);
+		#endif
+		
 		printk(KERN_ERR PFX "Failed to load. Aborting.\n");
 		return ret;
 	
@@ -383,6 +422,10 @@ void __exit cleanup_mod(void)
 	rt_task_delete(&task);
 	stop_rt_timer();
 	ecrt_release_master(master);
+	
+	#ifdef SEM
+	rt_sem_delete(&master_sem);
+	#endif
 	
 	printk(KERN_INFO PFX "Unloading.\n");
 }
