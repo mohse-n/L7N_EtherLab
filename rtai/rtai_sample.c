@@ -16,8 +16,11 @@
 #ifdef DC
 
 #define NSEC_PER_SEC (1000000000L)
+#define USEC_PER_SEC (1000000L)
+
 /* Period of motion loop, in microseconds */
-#define PERIOD_US (1000000 / FREQUENCY)
+#define PERIOD_US (USEC_PER_SEC / FREQUENCY)
+/* Period of motion loop, in nanoseconds */
 #define PERIOD_NS (NSEC_PER_SEC / FREQUENCY)
 
 #endif
