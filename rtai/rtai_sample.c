@@ -35,7 +35,16 @@
 
 
 #ifdef SEM
+
 include <rtai_sem.h>
+
+#endif
+
+
+#ifdef CB
+
+#define INHIBIT_TIME 20
+
 #endif
 
 
@@ -60,8 +69,12 @@ static RT_TASK task;
 static SEM master_sem;
 #endif
 
+#ifdef CB
+static cycles_t t_last_cycle = 0, t_critical;
+#endif
+
 /* Structures obtained from $ethercat cstruct -p 0 */
-/***************************************************/
+/*****************************************************************************/
 
 /* Slave 0's structures */
 static ec_pdo_entry_info_t slave_0_pdo_entries[] = 
@@ -111,7 +124,7 @@ static ec_sync_info_t slave_1_syncs[] =
 	{0xFF}
 };
 	
-/***************************************************/
+/*****************************************************************************/
 
 static unsigned int offset_controlWord0, offset_targetPos0, offset_statusWord0, offset_actPos0;
 static unsigned int offset_controlWord1, offset_targetPos1, offset_statusWord1, offset_actPos1;
@@ -130,7 +143,7 @@ const static ec_pdo_entry_reg_t domain1_regs[] =
 	{}
 };
 
-/***************************************************/	
+/*****************************************************************************/	
 
 void ODwrite(ec_slave_config_t* slaveConfig, uint16_t index, uint8_t subIndex, uint8_t objectValue)
 {
@@ -154,7 +167,35 @@ void initDrive(ec_slave_config_t* slaveConfig)
 	ODwrite(slaveConfig, 0x6060, 0x00, 0x8);
 }
 
-/***************************************************/	
+/*****************************************************************************/	
+void send_callback(void *cb_data)
+{
+    ec_master_t *m = (ec_master_t *) cb_data;
+
+    // too close to the next real time cycle: deny access...
+    if (get_cycles() - t_last_cycle <= t_critical) {
+        rt_sem_wait(&master_sem);
+        ecrt_master_send_ext(m);
+        rt_sem_signal(&master_sem);
+    }
+}
+
+/*****************************************************************************/
+
+void receive_callback(void *cb_data)
+{
+    ec_master_t *m = (ec_master_t *) cb_data;
+
+    // too close to the next real time cycle: deny access...
+    if (get_cycles() - t_last_cycle <= t_critical) {
+        rt_sem_wait(&master_sem);
+        ecrt_master_receive(m);
+        rt_sem_signal(&master_sem);
+    }
+}
+
+/*****************************************************************************/
+
 
 /* The parent task can pass 1 long variable (data) to the new task */
 void run(long data)
@@ -265,13 +306,67 @@ void run(long data)
 	
 }
 
-/***************************************************/
+/*****************************************************************************/
+
+#ifdef CB
+
+void send_callback(void *cb_data)
+{
+	ec_master_t *m = (ec_master_t *) cb_data;
+
+	// too close to the next real time cycle: deny access...
+	if (get_cycles() - t_last_cycle <= t_critical) 
+	{
+		#ifdef SEM
+		rt_sem_wait(&master_sem);
+		#endif
+		
+		ecrt_master_send_ext(m);
+		
+		#ifdef SEM
+		rt_sem_signal(&master_sem);
+		#endif
+	}
+}
+
+#endif
+
+/*****************************************************************************/
+
+#ifdef CB
+
+void receive_callback(void *cb_data)
+{
+	ec_master_t *m = (ec_master_t *) cb_data;
+
+	// too close to the next real time cycle: deny access...
+	if (get_cycles() - t_last_cycle <= t_critical) 
+	{
+		#ifdef SEM
+		rt_sem_wait(&master_sem);
+		#endif
+		
+		ecrt_master_receive(m);
+		
+		#ifdef SEM
+		rt_sem_signal(&master_sem);
+		#endif
+	}
+}
+
+#endif
+
+/*****************************************************************************/
 	
 int __init init_mod(void)
 {
 	
 	#ifdef SEM
 	rt_sem_init(&master_sem, 1);
+	#endif
+	
+	#ifdef CB
+	t_critical = cpu_khz * 1000 / FREQUENCY - cpu_khz * INHIBIT_TIME / 1000;
 	#endif
 	
 	/* Reserve the first master (0) (/etc/init.d/ethercat start) for this program */
@@ -285,6 +380,10 @@ int __init init_mod(void)
 		printk(KERN_ERR PFX "Requesting master 0 failed!\n");
 		goto out_return;
 	}
+	
+	#ifdef CB
+	ecrt_master_callbacks(master, send_callback, receive_callback, master);
+	#endif
 	
 	uint16_t alias = 0;
 	uint16_t position0 = 0;
@@ -430,7 +529,7 @@ void __exit cleanup_mod(void)
 	printk(KERN_INFO PFX "Unloading.\n");
 }
 	
-/***************************************************/
+/*****************************************************************************/
 	
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Mohsen Alizadeh Noghani");
