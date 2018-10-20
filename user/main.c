@@ -250,9 +250,11 @@ int main(int argc, char **argv)
 	ec_slave_config_state_t slaveState0;
 	ec_slave_config_state_t slaveState1;
 	struct timespec wakeupTime;
+	
 	#ifdef DC
 	struct timespec	time;
 	#endif
+	
 	struct timespec cycleTime = {0, PERIOD_NS};
 	clock_gettime(CLOCK_REALTIME, &wakeupTime);
 	
