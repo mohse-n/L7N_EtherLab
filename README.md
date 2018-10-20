@@ -106,7 +106,23 @@ At this point, you should be able to start the master,
 sudo /etc/init.d/ethercat start
 ```
 ___
-**Note:** In case you needed to reinstall the package, delete "ethercat" and "ethercat-1.5.2" in /usr/local/src and follow the installation guide up to (and including) the "depmod" step.  
+**Note:** To view the kernel log, either open /var/log/syslog with a text editor or
+```bash
+tail -f -n 10 /var/log/syslog
+```
+To view the 10 latest kernel messages (printed with printk). Additionally,
+```bash
+dmesg
+```
+also outputs the last kernel messages.
+___
+**Note:** In case you needed to reinstall the package, delete "ethercat" and "ethercat-1.5.2" in /usr/local/src and follow the installation guide up to (and including) the "depmod" step. 
+___
+**Note:** To enable debug messages (in kernel log),
+```bash
+ethercat debug 1
+```
+
 
 
 
