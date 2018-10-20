@@ -17,7 +17,7 @@
 
 #define NSEC_PER_SEC (1000000000L)
 /* Period of motion loop, in microseconds */
-#define PERIOD (1000000 / FREQUENCY)
+#define PERIOD_US (1000000 / FREQUENCY)
 #define PERIOD_NS (NSEC_PER_SEC / FREQUENCY)
 
 #endif
@@ -204,11 +204,11 @@ void run(long data)
 		ecrt_domain_queue(domain1);
 		
 		#ifdef DC
-		tv.tv_usec += PERIOD;
+		tv.tv_usec += PERIOD_US;
 		
       		if (tv.tv_usec >= 1000000)  
 		{
-				tv.tv_usec -= 1000000;
+			tv.tv_usec -= 1000000;
                 	tv.tv_sec++;
                 }
 
