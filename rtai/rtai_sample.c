@@ -249,14 +249,7 @@ void run(long data)
 		#endif
 		
 		#ifdef DC
-		tv.tv_usec += PERIOD_US;
-			
-      		if (tv.tv_usec >= 1000000)  
-		{
-			tv.tv_usec -= 1000000;
-                	tv.tv_sec++;
-                }
-
+		count2timeval(nano2count(rt_get_real_time_ns()), &tv);
                 ecrt_master_application_time(master, EC_TIMEVAL2NANO(tv));
 		ecrt_master_sync_reference_clock(master);
        		ecrt_master_sync_slave_clocks(master);
