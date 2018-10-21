@@ -325,8 +325,8 @@ int main(int argc, char **argv)
 		actPos1 = EC_READ_S32(domain1_pd + offset_actPos1);
 		
 		/* Process the received data */
-		targetPos0 = actPos0 + ENCODER_RES;
-		targetPos1 = actPos1 - ENCODER_RES;
+		targetPos0 = actPos0 + 5000;
+		targetPos1 = actPos1 - 5000;
 		
 		/* Write PDOs to the datagram */
 		EC_WRITE_U8  (domain1_pd + offset_controlWord0, 0xF );
