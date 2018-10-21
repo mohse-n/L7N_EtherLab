@@ -4,6 +4,9 @@
 
 /* Need this for nano2count */
 #include <rtai_sched.h>
+/* For sem_signal etc. */
+/* Why do we get an error if we've included it inside ifdef endif ? */
+#include <rtai_sem.h>
 
 #define FREQUENCY 2000
 #define TIMERTICKS (1000000000 / FREQUENCY)
@@ -30,13 +33,6 @@
 #define PERIOD_NS (NSEC_PER_SEC / FREQUENCY)
 /* SYNC0 event happens halfway through the cycle */
 #define SHIFT0 (PERIOD_NS/2)
-
-#endif
-
-
-#ifdef SEM
-
-include <rtai_sem.h>
 
 #endif
 
