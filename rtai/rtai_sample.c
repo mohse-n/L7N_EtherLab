@@ -177,6 +177,10 @@ void run(long data)
 	
 	while(1)
 	{
+		#ifdef CB
+		t_last_cycle = get_cycles();
+		#endif
+		
 		#ifdef SEM
 		rt_sem_wait(&master_sem);
 		#endif
