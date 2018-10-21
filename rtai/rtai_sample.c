@@ -329,6 +329,12 @@ int __init init_mod(void)
 	#endif
 	
 	#ifdef CB
+	/* Number of ticks since the beginning of last cycle that have to have passed so that
+	   another process is allowed to access the master.
+	   Calculated from : number of ticks for a full cycle - number of ticks during INHIBIT_TIME.
+	   (Refer to 1.1 Documentation for more info).
+	*/
+	   
 	t_critical = cpu_khz * 1000 / FREQUENCY - cpu_khz * INHIBIT_TIME / 1000;
 	#endif
 	
