@@ -329,6 +329,13 @@ int __init init_mod(void)
 	#endif
 	
 	#ifdef CB
+	/* Concurrent accesss (e.g. termnial tools such as "watch -n0 "ethercat reg read -p4 -tsm32 0x92c"
+	   can cause jitter, as the realtime process might have to wait for a lower priority one to finish 
+	   it's operation with the master. 
+	   Therefore accessing the master can be prohibited by the real-time module. If the time at which
+	   the other process tries to access to master is too close to the beginning of the next 
+	   real-time cycle, this application denies access by taking the lock. (See callback functions defined above)
+	*/
 	/* Number of ticks since the beginning of last cycle that have to have passed so that
 	   another process is allowed to access the master.
 	   Calculated from : number of ticks for a full cycle - number of ticks during INHIBIT_TIME.
