@@ -171,8 +171,6 @@ void run(long data)
 	
 	#ifdef DC
 	struct timeval tv;
-        unsigned int sync_ref_counter = 0;
-	count2timeval(nano2count(rt_get_real_time_ns()), &tv);
 	#endif
 	
 	while(1)
