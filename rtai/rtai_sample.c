@@ -167,35 +167,7 @@ void initDrive(ec_slave_config_t* slaveConfig)
 	ODwrite(slaveConfig, 0x6060, 0x00, 0x8);
 }
 
-/*****************************************************************************/	
-void send_callback(void *cb_data)
-{
-    ec_master_t *m = (ec_master_t *) cb_data;
-
-    // too close to the next real time cycle: deny access...
-    if (get_cycles() - t_last_cycle <= t_critical) {
-        rt_sem_wait(&master_sem);
-        ecrt_master_send_ext(m);
-        rt_sem_signal(&master_sem);
-    }
-}
-
 /*****************************************************************************/
-
-void receive_callback(void *cb_data)
-{
-    ec_master_t *m = (ec_master_t *) cb_data;
-
-    // too close to the next real time cycle: deny access...
-    if (get_cycles() - t_last_cycle <= t_critical) {
-        rt_sem_wait(&master_sem);
-        ecrt_master_receive(m);
-        rt_sem_signal(&master_sem);
-    }
-}
-
-/*****************************************************************************/
-
 
 /* The parent task can pass 1 long variable (data) to the new task */
 void run(long data)
