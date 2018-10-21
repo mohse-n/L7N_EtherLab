@@ -329,7 +329,7 @@ int __init init_mod(void)
 	#endif
 	
 	#ifdef CB
-	/* Concurrent accesss (e.g. termnial tools such as "watch -n0 "ethercat reg read -p4 -tsm32 0x92c"
+	/* Concurrent accesss (e.g. termnial tools such as "watch -n0 "ethercat reg read -p0 -tsm32 0x92c"
 	   can cause jitter, as the realtime process might have to wait for a lower priority one to finish 
 	   it's operation with the master. 
 	   Therefore accessing the master can be prohibited by the real-time module. If the time at which
