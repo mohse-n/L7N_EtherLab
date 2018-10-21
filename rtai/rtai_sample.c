@@ -244,13 +244,13 @@ void run(long data)
 		
 		ecrt_domain_queue(domain1);
 		
-		#ifdef DC
-		tv.tv_usec += PERIOD_US;
-		
 		#ifdef SEM
 		rt_sem_wait(&master_sem);
 		#endif
 		
+		#ifdef DC
+		tv.tv_usec += PERIOD_US;
+			
       		if (tv.tv_usec >= 1000000)  
 		{
 			tv.tv_usec -= 1000000;
