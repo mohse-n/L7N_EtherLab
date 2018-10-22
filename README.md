@@ -3,6 +3,7 @@ written for motion control of two servomotors connected to LS Mecapion L7N servo
 commented to facilitate the conversion process to other setups.  
 Perhaps more importantly, in "Installation guide" folder, you will find a step-by-step and tested procedure for installing RTAI and subsequently
 IgH Master.    
+___
 To run the programs, after installing the IgH Master library, copy-and-replace each in the "examples" folder, and 
 1. For the user example, in "/usr/local/src/ethercat/examples/usr",
    - "make clean" 
