@@ -305,10 +305,17 @@ int main(int argc, char **argv)
 	int32_t actPos0, targetPos0;
 	int32_t actPos1, targetPos1;
 	
+	/* Update wakeupTime = current time */
+	clock_gettime(CLOCK_REALTIME, &wakeupTime);
+	
 	while (1)
 	{
-		/* Sleep for adjusting the update frequency */
+		/* Wake up at wakeupTime + cycleTime. */
+		/* Q: Why don't we call clock_gettime instead of assuming the previous cycle has exactly taken cycleTime? 
+		   A: Perhaps better performance (no systemcall in the loop). 
+		*/
 		wakeupTime = timespec_add(wakeupTime, cycleTime);
+		/* Sleep to adjust the update frequency */
 		clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &wakeupTime, NULL);
 		/* Fetches received frames from the newtork device and processes the datagrams. */
 		ecrt_master_receive(master);

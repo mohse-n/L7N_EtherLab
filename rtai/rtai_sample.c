@@ -175,6 +175,7 @@ void run(long data)
 	
 	while(1)
 	{
+		
 		#ifdef CB
 		t_last_cycle = get_cycles();
 		#endif
@@ -334,7 +335,7 @@ int __init init_mod(void)
 	   it's operation with the master. 
 	   Therefore accessing the master can be prohibited by the real-time module. If the time at which
 	   the other process tries to access to master is too close to the beginning of the next 
-	   real-time cycle, this application denies access by taking the lock. (See callback functions defined above)
+	   real-time cycle, this application denies access by taking the lock. (See callback functions defined above and documentation)
 	*/
 	/* Number of ticks since the beginning of last cycle that have to have passed so that
 	   another process is allowed to access the master.
