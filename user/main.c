@@ -290,7 +290,7 @@ int main(int argc, char **argv)
 	#endif
 	
 	struct timespec cycleTime = {0, PERIOD_NS};
-	clock_gettime(CLOCK_REALTIME, &wakeupTime);
+	clock_gettime(CLOCK_MONOTONIC, &wakeupTime);
 	
 	/* The slaves (drives) enter OP mode after exchanging a few frames. */
 	/* We exchange frames with no RPDOs (targetPos) untill all slaves have 
@@ -300,7 +300,7 @@ int main(int argc, char **argv)
 	{
 		
 		wakeupTime = timespec_add(wakeupTime, cycleTime);
-		clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &wakeupTime, NULL);
+		clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &wakeupTime, NULL);
 		
 		ecrt_master_receive(master);
 		ecrt_domain_process(domain1);
@@ -318,7 +318,7 @@ int main(int argc, char **argv)
 		
 		#ifdef DC
 		/* Distributed clocks */
-		clock_gettime(CLOCK_REALTIME, &time);
+		clock_gettime(CLOCK_MONOTONIC, &time);
 		ecrt_master_application_time(master, TIMESPEC2NS(time));
 		ecrt_master_sync_reference_clock(master);
 		ecrt_master_sync_slave_clocks(master);
@@ -332,7 +332,7 @@ int main(int argc, char **argv)
 	int32_t actPos1, targetPos1;
 	
 	/* Update wakeupTime = current time */
-	clock_gettime(CLOCK_REALTIME, &wakeupTime);
+	clock_gettime(CLOCK_MONOTONIC, &wakeupTime);
 	
 	while (1)
 	{
@@ -342,7 +342,7 @@ int main(int argc, char **argv)
 		*/
 		wakeupTime = timespec_add(wakeupTime, cycleTime);
 		/* Sleep to adjust the update frequency */
-		clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &wakeupTime, NULL);
+		clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &wakeupTime, NULL);
 		/* Fetches received frames from the newtork device and processes the datagrams. */
 		ecrt_master_receive(master);
 		/* Evaluates the working counters of the received datagrams and outputs statistics,
@@ -377,7 +377,7 @@ int main(int argc, char **argv)
 		
 		#ifdef DC
 		/* Distributed clocks */
-		clock_gettime(CLOCK_REALTIME, &time);
+		clock_gettime(CLOCK_MONOTONIC, &time);
 		ecrt_master_application_time(master, TIMESPEC2NS(time));
 		ecrt_master_sync_reference_clock(master);
 		ecrt_master_sync_slave_clocks(master);
