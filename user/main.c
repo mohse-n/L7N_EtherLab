@@ -14,6 +14,8 @@
 #include <time.h>
 /* Header for handling signals (definition of SIGINT) */
 #include <signal.h>
+/* For using real-time scheduling policy (FIFO) */
+#include <sched.h>
 
 
 /* One motor revolution increments the encoder by 2^19 -1 */
@@ -92,10 +94,14 @@ void signal_handler(int sig)
 
 int main(int argc, char **argv)
 {
-	/* Set priority to highest value for userspace programs */
-	pid_t pid = getpid();
-	if (setpriority(PRIO_PROCESS, pid, -19))
-		printf("Warning: Failed to set priority\n");
+	
+	struct sched_param param = {};
+	param.sched_priority = sched_get_priority_max(SCHED_FIFO);
+	printf("Using priority %i.", param.sched_priority);
+	if (sched_setscheduler(0, SCHED_FIFO, &param) == -1) 
+	{
+		perror("sched_setscheduler failed");
+	}
 	
 	/* Lock the program into RAM and prevent swapping */
 	if (mlockall(MCL_CURRENT | MCL_FUTURE) == -1)
