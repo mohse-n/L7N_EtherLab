@@ -15,7 +15,9 @@ ___
 ___
 Looking at the "devices" folder, we can see the modified (and original) drivers and their associated kernel versions.
 For instance,  
+```
 r8169-3.4-ethercat.c  
+``` 
 is the modified driver for Realtek8169 family of network cards for kernel 3.4.x . Keep 3.4 in mind and move on to the next section (RTAI).  
 ___
 **Note:** Drivers for the more recent kernels are available on the [SourceForge repository](https://sourceforge.net/projects/etherlabmaster) and Gavin Lambert's [unofficial patchset](https://sourceforge.net/u/uecasm/etherlab-patches/ci/default/tree/#readme).  
