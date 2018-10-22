@@ -33,7 +33,7 @@ hal-linux-3.4.6-x86-4.patch
 hal-linux-3.4.67-x86-4.patch 
 ```     
 Thus, we basically have to decide between kernel 3.4.6 and 3.4.67. The latter is only incrementally better than the former, but fewer bugs is almost always a good thing.   
-On the other hand, I **felt** 3.4.6 is a safer choice. I wouldn't want to run into potential issues because the IgH Master driver is untested on, say, 3.4.67. I chose with the base version (3.4.6).  
+On the other hand, I **felt** 3.4.6 is a safer choice. I wouldn't want to run into potential issues because the IgH Master driver is untested on, say, 3.4.67. I chose the base version (3.4.6).  
 ### 2. Download the required files
 ```bash
 sudo -s
