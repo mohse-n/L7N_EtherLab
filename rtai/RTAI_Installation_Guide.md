@@ -103,7 +103,9 @@ make menuconfig
 6. Under “Power management and ACPI options”, disable anything that you can, including "CPU Frequency Scaling" and "CPU idle PM support".
 7. Under "Power management and ACPI options > ACPI", disable everything you're able to, except “Power Management Timer Support” and "Button".  
 8. Select "Exit" and save.  
-
+___
+**Note:** Also worth checking are the various guides and recommendations for the optimal kernel configuration in linuxcnc website and forum.
+___
 Now we should be able to compile the kernel. Note that since many, many device drivers are enabled and will be compiled, the installation process takes a significant amount of time (with i3-4700, it take about an hour).
 ```bash
 make -j `getconf _NPROCESSORS_ONLN` deb-pkg LOCALVERSION=-rtai
