@@ -1,6 +1,5 @@
 
 ## RTAI Installtion Guide:
-___
 **Note:** This guide is derived mainly from Juan Serna's excellent [tutorial](https://sites.google.com/site/thefreakengineer/tutorials/rtai-5-0-1-lubuntu-14-04-x64) (the only one on the Internet that actually worked for me).
 ___
 ### 1. Decide on a kernel version
