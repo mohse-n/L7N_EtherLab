@@ -1,4 +1,4 @@
-## IgH EtherCAT Master Installation Guide:   
+## IgH EtherCAT Master Installation Guide 
 **Note:** This guide is basically [the one by Thomas Bitsky](http://lists.etherlab.org/pipermail/etherlab-users/2015/002820.html), with some comments added and some removed.  
 ___
 **Note:** The installation sequence is   
@@ -121,7 +121,6 @@ At this point, you should be able to start the master,
 sudo /etc/init.d/ethercat start
 ```
 ### Extra notes
-___
 **Note:** To view the kernel log, either open /var/log/syslog with a text editor or
 ```bash
 tail -f -n 10 /var/log/syslog
