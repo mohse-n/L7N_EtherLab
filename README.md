@@ -42,7 +42,6 @@ ___
 ___
 **Note:** Be sure to apply the last option if have installed RTAI in /usr/realtime. If it's installed in a different directory, adjust the specified path accordingly. If you don't intend to compile RTAI codes at all, ignore this option.   
 ___
-___
 **Note:** See IgH EtherCAT Master 1.5.2 documentation for other options.
 ___
 ```bash
