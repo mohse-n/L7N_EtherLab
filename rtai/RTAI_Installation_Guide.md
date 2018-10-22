@@ -44,7 +44,7 @@ apt-get install curl
 ```
 Kernels have to exist at '/usr/src', and we're going to download everything in that directory.
 ```bash
-apt-get install curl
+cd /usr/src
 ```
 Download the appropriate version of RTAI,
 ```bash
