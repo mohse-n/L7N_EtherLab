@@ -183,6 +183,6 @@ cd /usr/realtime/testsuite/user/latency
 ./run
 ```
 ### 7. Install IgH EtherCAT Master
-See [README.md](https://github.com/mohse-n/L7N_EtherLab).
+See [README.md](https://github.com/mohse-n/L7N_EtherLab/blob/master/Installation%20guides/IgH%20Master%20Installation%20Guide.md).
 ### Reinstalling RTAI 
 In case you needed to reinstall RTAI, delete "realtime" in /usr and repeat this guide from step 4.
