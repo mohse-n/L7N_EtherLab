@@ -5,11 +5,7 @@ Basic structure of an EtherLab RTAI program:
 ---
 
 See RTAI documentation (available online and in the tarball) and [IgH EtherCAT Master 1.1 Documentation](https://www.etherlab.org/download/ethercat/igh-ethercat-master-1.1.pdf) for comments on the RTAI API.
-
----
-
-RTAI installation procedure is described in RTAI_Installation_Guide.md. 
-
+ 
 ---
 
 To make the module, when in /examples/rtai directory, run as superuser,
