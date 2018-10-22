@@ -3,8 +3,9 @@
 ___
 **Note:** RTAI installation guide is availabe in "RTAI" folder.
 ___
-Download the 1.5.2 tarball from [here](http://www.etherlab.org/en/ethercat/). 
-Extract and move it to /usr/local/src. Here I'm assuming you have extracted it in the home directory.
+Download the snapshot of 1.5-stable branch from [here](https://sourceforge.net/p/etherlabmaster/code/ci/stable-1.5/tree/). I got the snapshot at commit 336936.
+Extract and rename the folder to ethercat-1.5.2.
+Move the folder to /usr/local/src. Here I'm assuming you have extracted it in the home directory.
 ```bash
 sudo -s
 ```
