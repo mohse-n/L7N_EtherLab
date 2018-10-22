@@ -23,10 +23,14 @@ Move into the source directory,
 ```bash
 cd ethercat
 ```
-___
-**Note:** Be sure to apply the last option if have installed RTAI in /usr/realtime. If it's installed in a different directory, adjust the specified path accordingly. If you don't intend to compile RTAI codes at all, ignore this option.   
-___
-Make configure executable.
+Make the bootstrap file executable and generate the configure file.
+```bash
+chmod +x bootstrap
+```
+```bash
+./bootstrap
+```
+Make the configure file executable.
 ```bash
 chmod +x configure
 ```
@@ -35,6 +39,9 @@ ___
 **Note:** We're going to use the modified Realtek8169 driver. Hence, the "--enable-r8169" option.   
 ___
 **Note:** We're also going to write LXRT programs (RTAI in user space).Therefore, "--enable-rtdm".  
+___
+**Note:** Be sure to apply the last option if have installed RTAI in /usr/realtime. If it's installed in a different directory, adjust the specified path accordingly. If you don't intend to compile RTAI codes at all, ignore this option.   
+___
 ___
 **Note:** See IgH EtherCAT Master 1.5.2 documentation for other options.
 ___
