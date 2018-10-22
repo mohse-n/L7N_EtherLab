@@ -17,9 +17,12 @@
 /* For using real-time scheduling policy (FIFO) */
 #include <sched.h>
 
+/*****************************************************************************/
 
-/* One motor revolution increments the encoder by 2^19 -1 */
+/* One motor revolution increments the encoder by 2^19 -1. */
 #define ENCODER_RES 524287
+/* The maximum stack size which is guranteed safe to access without faulting. */       
+#define MAX_SAFE_STACK (8 * 1024) 
 
 /* Comment to disable distributed clocks */
 #define DC
@@ -36,6 +39,7 @@
 
 #endif
 
+/*****************************************************************************/
 
 void ODwrite(ec_master_t* master, uint16_t slavePos, uint16_t index, uint8_t subIndex, uint8_t objectValue)
 {
@@ -55,6 +59,8 @@ void initDrive(ec_master_t* master, uint16_t slavePos)
 	/* Mode of operation, CSP */
 	ODwrite(master, slavePos, 0x6060, 0x00, 0x8);
 }
+
+/*****************************************************************************/
 
 #ifdef DC
 /* Copy-pasted from dc_user/main.c */
@@ -77,6 +83,8 @@ struct timespec timespec_add(struct timespec time1, struct timespec time2)
 }
 #endif
 
+/*****************************************************************************/
+
 /* We have to pass "master" to ecrt_release_master in signal_handler, but it is not possible
    to define one with more than one argument. Therefore, master should be a global variable. 
 */
@@ -90,7 +98,16 @@ void signal_handler(int sig)
 	kill(pid, SIGKILL);
 }
 
+/*****************************************************************************/
 
+void stack_prefault(void)
+{
+    unsigned char dummy[MAX_SAFE_STACK];
+
+    memset(dummy, 0, MAX_SAFE_STACK);
+}
+
+/*****************************************************************************/
 
 int main(int argc, char **argv)
 {
@@ -109,7 +126,10 @@ int main(int argc, char **argv)
 		printf("mlockall failed");
 		return -1;
 	}
-
+	
+	stack_prefault();
+	
+	/* Register the signal handler function. */
 	signal(SIGINT, signal_handler);
 	
 	/* Reserve the first master (0) (/etc/init.d/ethercat start) for this program */
