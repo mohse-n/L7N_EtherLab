@@ -1,8 +1,14 @@
 ## IgH EtherCAT Master Installation Guide:   
 **Note:** This guide is basically [the one by Thomas Bitsky](http://lists.etherlab.org/pipermail/etherlab-users/2015/002820.html), with some comments added and some removed.  
 ___
-**Note:** RTAI installation guide is availabe in "RTAI" folder.
+**Note:** The installation sequence is   
+1. kernel-RTAI    
+2. RTAI   
+3. IgH EtherCAT Master 
+
+This guide describes the last step in the process.
 ___
+### 1. Download the library
 Download the snapshot of 1.5-stable branch from [here](https://sourceforge.net/p/etherlabmaster/code/ci/stable-1.5/tree/). I got the snapshot at commit 336936.
 Extract and rename the folder to ethercat-1.5.2.
 Move the folder to /usr/local/src. Here I'm assuming you have extracted it in the home directory.
@@ -23,6 +29,7 @@ Move into the source directory,
 ```bash
 cd ethercat
 ```
+### 2. Install the library
 Make the bootstrap file executable and generate the configure file.
 ```bash
 chmod +x bootstrap
@@ -63,6 +70,7 @@ make modules_install
 ```bash
 depmod
 ```
+### 3. Configure the master
 There are some parameters associated with the master module (e.g. NIC MAC address, driver to use). We specify these in a file we put in /etc/sysconfig. 
 ```bash
 sudo mkdir /etc/sysconfig/
@@ -112,6 +120,7 @@ At this point, you should be able to start the master,
 ```bash
 sudo /etc/init.d/ethercat start
 ```
+### Extra notes
 ___
 **Note:** To view the kernel log, either open /var/log/syslog with a text editor or
 ```bash
