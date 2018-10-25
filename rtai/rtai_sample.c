@@ -8,6 +8,8 @@
 /* Why do we get an error if we've included it inside ifdef endif ? */
 #include <rtai_sem.h>
 
+/*****************************************************************************/
+
 #define FREQUENCY 2000
 #define TIMERTICKS (1000000000 / FREQUENCY)
 #define PFX "ec_rtai_sample: "
@@ -43,9 +45,7 @@
 
 #endif
 
-
-
-
+/*****************************************************************************/
 
 static ec_master_t* master;
 static ec_domain_t* domain1 = NULL;
@@ -248,8 +248,7 @@ void run(long data)
 		#endif
 		
 		#ifdef DC
-		count2timeval(nano2count(rt_get_real_time_ns()), &tv);
-                ecrt_master_application_time(master, EC_TIMEVAL2NANO(tv));
+                ecrt_master_application_time(master, rt_get_real_time_ns());
 		ecrt_master_sync_reference_clock(master);
        		ecrt_master_sync_slave_clocks(master);
 		#endif
@@ -490,6 +489,7 @@ int __init init_mod(void)
 	
 }
 
+/*****************************************************************************/
 
 void __exit cleanup_mod(void)
 {
