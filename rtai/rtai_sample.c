@@ -25,6 +25,8 @@
 
 
 #ifdef DC
+/* 2 KHz is seemingly too much for DC cycle (PLL error)*/
+#define FREQUENCY 1000
 
 #define NSEC_PER_SEC (1000000000L)
 #define USEC_PER_SEC (1000000L)
@@ -185,9 +187,6 @@ void run(long data)
 		#endif
 		ecrt_master_receive(master);
 		ecrt_domain_process(domain1);
-		#ifdef SEM
-		rt_sem_signal(&master_sem);
-		#endif
 	
 		/********************************************************************************/
 		
@@ -242,10 +241,6 @@ void run(long data)
 		/********************************************************************************/
 		
 		ecrt_domain_queue(domain1);
-		
-		#ifdef SEM
-		rt_sem_wait(&master_sem);
-		#endif
 		
 		#ifdef DC
                 ecrt_master_application_time(master, rt_get_real_time_ns());
