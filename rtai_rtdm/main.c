@@ -239,6 +239,9 @@ int main(int argc, char **argv)
 	uint8_t opFlag = 0;
 	ec_slave_config_state_t slaveState0;
 	ec_slave_config_state_t slaveState1;
+	int32_t actPos0, targetPos0;
+	int32_t actPos1, targetPos1;
+	int period;
 	
 	/* What does nam2num do? */
 	task = rt_task_init(nam2num("ec_rtai_rtdm_example"), 0 /* priority */, 0 /* stack size */, 0 /* msg size */);
