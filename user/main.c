@@ -339,7 +339,7 @@ int main(int argc, char **argv)
 	int32_t actPos1, targetPos1;
 	#ifde MEASURE_TIMING
 	/* The slave time received in the current and the previous cycle */
-	uint32_t t_cur, t_perv;
+	uint32_t t_cur, t_prev;
 	#endif
 	
 	/* Update wakeupTime = current time */
@@ -365,8 +365,8 @@ int main(int argc, char **argv)
 		
 		#ifdef MEASURE_TIMING
 		ecrt_master_reference_clock_time(master, &t_cur);
-		printf("%" PRIu32 "\n", t_cur - t_perv);
-		t_perv = t_curv;
+		printf("%" PRIu32 "\n", t_cur - t_prev);
+		t_prev = t_curv;
 		#endif
 		/********************************************************************************/
 		
