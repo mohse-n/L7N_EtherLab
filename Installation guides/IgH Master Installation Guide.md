@@ -131,7 +131,7 @@ dmesg
 ```
 also outputs the last kernel messages.
 ___
-**Note:** In case you needed to reinstall the package, delete "ethercat" and "ethercat-1.5.2" in /usr/local/src and follow the installation guide up to (and including) the "depmod" step. 
+**Note:** In case you needed to reinstall the package, delete "ethercat" and "ethercat-1.5.2" in /usr/local/src and "etherlab" in /opt. Then follow the installation guide up to (and including) the "depmod" step. (Obviously, to install another version, deleting "ethercat" and "ethercat-1.5.2" is **not** required)
 ___
 **Note:** To enable debug messages (in kernel log),
 ```bash
