@@ -16,6 +16,8 @@
 #include <signal.h>
 /* For using real-time scheduling policy (FIFO) */
 #include <sched.h>
+/* For using uint32_t format specifier, PRIu32 */
+#include <inttypes.h>
 
 /*****************************************************************************/
 
@@ -26,13 +28,17 @@
 
 /* Comment to disable distributed clocks */
 #define DC
-
-#ifdef DC
+/* Measure the difference in reference slave's clock timstamp each cycle, and print the result. */
+/* Note: Only works with DC enabled. */
+#define MEASURE_TIMING
 
 #define NSEC_PER_SEC (1000000000L)
 #define FREQUENCY 1000
 /* Period of motion loop, in nanoseconds */
 #define PERIOD_NS (NSEC_PER_SEC / FREQUENCY)
+
+#ifdef DC
+
 /* SYNC0 event happens halfway through the cycle */
 #define SHIFT0 (PERIOD_NS/2)
 #define TIMESPEC2NS(T) ((uint64_t) (T).tv_sec * NSEC_PER_SEC + (T).tv_nsec)
@@ -62,7 +68,6 @@ void initDrive(ec_master_t* master, uint16_t slavePos)
 
 /*****************************************************************************/
 
-#ifdef DC
 /* Copy-pasted from dc_user/main.c */
 struct timespec timespec_add(struct timespec time1, struct timespec time2)
 {
@@ -81,7 +86,6 @@ struct timespec timespec_add(struct timespec time1, struct timespec time2)
 
 	return result;
 }
-#endif
 
 /*****************************************************************************/
 
@@ -120,7 +124,10 @@ int main(int argc, char **argv)
 		perror("sched_setscheduler failed\n");
 	}
 	
-	/* Lock the program into RAM and prevent swapping */
+	/* Lock the program into RAM to prevent page faults and swapping */
+	/* MCL_CURRENT: Lock in all current pages.
+	   MCL_FUTURE:  Lock in pages for heap and stack and shared memory.
+	*/
 	if (mlockall(MCL_CURRENT | MCL_FUTURE) == -1)
 	{
 		printf("mlockall failed\n");
@@ -330,6 +337,10 @@ int main(int argc, char **argv)
 	
 	int32_t actPos0, targetPos0;
 	int32_t actPos1, targetPos1;
+	#ifde MEASURE_TIMING
+	/* The slave time received in the current and the previous cycle */
+	uint32_t t_cur, t_perv;
+	#endif
 	
 	/* Update wakeupTime = current time */
 	clock_gettime(CLOCK_MONOTONIC, &wakeupTime);
@@ -351,6 +362,12 @@ int main(int argc, char **argv)
 		   commented out 
 		*/
 		ecrt_domain_process(domain1);
+		
+		#ifdef MEASURE_TIMING
+		ecrt_master_reference_clock_time(master, &t_cur);
+		printf("%" PRIu32 "\n", t_cur - t_perv);
+		t_perv = t_curv;
+		#endif
 		/********************************************************************************/
 		
 		/* Read PDOs from the datagram */
