@@ -21,7 +21,7 @@
 
 /*****************************************************************************/
 
-/* Comment to disable distributed clocks */
+/* Comment to disable distributed clocks. */
 #define DC
 
 /* Choose the syncronization method: The reference clock can be either master's, or the reference slave's. */
@@ -55,6 +55,156 @@
 /* SYNC0 event happens halfway through the cycle */
 #define SHIFT0 (PERIOD_NS/2)
 #define TIMESPEC2NS(T) ((uint64_t) (T).tv_sec * NSEC_PER_SEC + (T).tv_nsec)
+
+#endif
+
+/*****************************************************************************/
+
+#ifdef SYNC_MASTER_TO_REF
+
+/* First used in system_time_ns() */
+static int64_t  system_time_base = 0LL;
+/* First used in sync_distributed_clocks() */
+static uint64_t dc_time_ns = 0;
+static int32_t  prev_dc_diff_ns = 0;
+/* First used in update_master_clock() */
+static int32_t  dc_diff_ns = 0;
+static unsigned int cycle_ns = PERIOD_NS;
+static uint8_t  dc_started = 0;
+static int64_t  dc_diff_total_ns = 0LL;
+static int64_t  dc_delta_total_ns = 0LL;
+static int      dc_filter_idx = 0;
+static int64_t  dc_adjust_ns;
+#define DC_FILTER_CNT          1024
+/** Return the sign of a number
+ *
+ * ie -1 for -ve value, 0 for 0, +1 for +ve value
+ *
+ * \retval the sign of the value
+ */
+#define sign(val) \
+    ({ typeof (val) _val = (val); \
+    ((_val > 0) - (_val < 0)); })
+
+static uint64_t dc_start_time_ns = 0LL;
+
+#endif
+
+/*****************************************************************************/
+
+#ifdef SYNC_MASTER_TO_REF
+/** Get the time in ns for the current cpu, adjusted by system_time_base.
+ *
+ * \attention Rather than calling rt_get_time_ns() directly, all application
+ * time calls should use this method instead.
+ *
+ * \ret The time in ns.
+ */
+uint64_t system_time_ns(void)
+{
+    struct timespec time;
+    clock_gettime(CLOCK_MONOTONIC, &time);
+
+    if (system_time_base > time.tv_nsec) {
+       printf("%s() error: system_time_base greater than"
+               " system time (system_time_base: %lld, time: %llu\n",
+               __func__, system_time_base, time);
+        return time.tv_nsec;
+    }
+    else {
+        return time.tv_nsec - system_time_base;
+    }
+}
+
+
+ec_master_t* master;
+
+
+/** Synchronise the distributed clocks
+ */
+void sync_distributed_clocks(void)
+{
+
+    uint32_t ref_time = 0;
+    uint64_t prev_app_time = dc_time_ns;
+
+    dc_time_ns = system_time_ns();
+
+    // set master time in nano-seconds
+    ecrt_master_application_time(master, dc_time_ns);
+
+    // get reference clock time to synchronize master cycle
+    ecrt_master_reference_clock_time(master, &ref_time);
+    dc_diff_ns = (uint32_t) prev_app_time - ref_time;
+
+    // call to sync slaves to ref slave
+    ecrt_master_sync_slave_clocks(master);
+}
+
+
+/** Update the master time based on ref slaves time diff
+ *
+ * called after the ethercat frame is sent to avoid time jitter in
+ * sync_distributed_clocks()
+ */
+void update_master_clock(void)
+{
+#ifdef SYNC_MASTER_TO_REF
+    // calc drift (via un-normalised time diff)
+    int32_t delta = dc_diff_ns - prev_dc_diff_ns;
+	printf("%d\n", (int) delta);
+    prev_dc_diff_ns = dc_diff_ns;
+
+    // normalise the time diff
+    dc_diff_ns =
+        ((dc_diff_ns + (cycle_ns / 2)) % cycle_ns) - (cycle_ns / 2);
+
+    // only update if primary master
+    if (dc_started) {
+
+        // add to totals
+        dc_diff_total_ns += dc_diff_ns;
+        dc_delta_total_ns += delta;
+        dc_filter_idx++;
+
+        if (dc_filter_idx >= DC_FILTER_CNT) {
+            // add rounded delta average
+            dc_adjust_ns +=
+                ((dc_delta_total_ns + (DC_FILTER_CNT / 2)) / DC_FILTER_CNT);
+
+            // and add adjustment for general diff (to pull in drift)
+            dc_adjust_ns += sign(dc_diff_total_ns / DC_FILTER_CNT);
+
+            // limit crazy numbers (0.1% of std cycle time)
+            if (dc_adjust_ns < -1000) {
+                dc_adjust_ns = -1000;
+            }
+            if (dc_adjust_ns > 1000) {
+                dc_adjust_ns =  1000;
+            }
+
+            // reset
+            dc_diff_total_ns = 0LL;
+            dc_delta_total_ns = 0LL;
+            dc_filter_idx = 0;
+        }
+
+        // add cycles adjustment to time base (including a spot adjustment)
+        system_time_base += dc_adjust_ns + sign(dc_diff_ns);
+    }
+    else {
+        dc_started = (dc_diff_ns != 0);
+
+        if (dc_started) {
+            // output first diff
+            printf("First master diff: %d.\n", dc_diff_ns);
+
+            // record the time of this initial cycle
+            dc_start_time_ns = dc_time_ns;
+        }
+    }
+#endif
+}
 
 #endif
 
@@ -105,8 +255,6 @@ struct timespec timespec_add(struct timespec time1, struct timespec time2)
 /* We have to pass "master" to ecrt_release_master in signal_handler, but it is not possible
    to define one with more than one argument. Therefore, master should be a global variable. 
 */
-ec_master_t* master;
-
 void signal_handler(int sig)
 {
 	printf("\nReleasing master...\n");
@@ -381,6 +529,7 @@ int main(int argc, char **argv)
 		printf("%" PRIu32 "\n", t_cur - t_prev);
 		t_prev = t_curv;
 		#endif
+		
 		/********************************************************************************/
 		
 		/* Read PDOs from the datagram */
@@ -399,13 +548,14 @@ int main(int argc, char **argv)
 		EC_WRITE_S32 (domain1_pd + offset_targetPos1  , targetPos1);
 		
 		/********************************************************************************/
+		
 		/* Queues all domain datagrams in the master's datagram queue. 
 		   Call this function to mark the domain's datagrams for exchanging at the
 		   next call of ecrt_master_send() 
 		*/
 		ecrt_domain_queue(domain1);
 		
-		#ifdef DC
+		#ifdef SYNC_REF_TO_MASTER
 		/* Distributed clocks */
 		clock_gettime(CLOCK_MONOTONIC, &time);
 		ecrt_master_application_time(master, TIMESPEC2NS(time));
@@ -413,11 +563,24 @@ int main(int argc, char **argv)
 		ecrt_master_sync_slave_clocks(master);
 		#endif
 		
+		// sync distributed clock just before master_send to set
+     	        // most accurate master clock time
+		#ifdef SYNC_MASTER_TO_REF
+                sync_distributed_clocks();
+		#endif
+		
 		/* Sends all datagrams in the queue.
 		   This method takes all datagrams that have been queued for transmission,
 		   puts them into frames, and passes them to the Ethernet device for sending. 
 		*/
 		ecrt_master_send(master);
+		
+		// update the master clock
+     		// Note: called after ecrt_master_send() to reduce time
+                // jitter in the sync_distributed_clocks() call
+		#ifdef SYNC_MASTER_TO_REF
+                update_master_clock();
+		#endif
 	
 	}
 	
