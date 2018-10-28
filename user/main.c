@@ -61,7 +61,7 @@
 #endif
 
 /*****************************************************************************/
-/* Note: Anything relying on definition of SYNC_MASTER_TO_REF is copy-pasted from /rtdm_rtai_dc/main.c */
+/* Note: Anything relying on definition of SYNC_MASTER_TO_REF is essentially copy-pasted from /rtdm_rtai_dc/main.c */
 
 #ifdef SYNC_MASTER_TO_REF
 
@@ -106,18 +106,20 @@ static uint64_t dc_start_time_ns = 0LL;
  */
 uint64_t system_time_ns(void)
 {
-    struct timespec time;
-    clock_gettime(CLOCK_MONOTONIC, &time);
+	struct timespec time;
+	clock_gettime(CLOCK_MONOTONIC, &time);
 
-    if (system_time_base > time.tv_nsec) {
-       printf("%s() error: system_time_base greater than"
-               " system time (system_time_base: %lld, time: %llu\n",
-               __func__, system_time_base, time);
-        return time.tv_nsec;
-    }
-    else {
-        return time.tv_nsec - system_time_base;
-    }
+	if (system_time_base > time.tv_nsec) 
+	{
+		printf("%s() error: system_time_base greater than"
+		       " system time (system_time_base: %lld, time: %llu\n",
+			__func__, system_time_base, time);
+		return time.tv_nsec;
+	}
+	else 
+	{
+		return time.tv_nsec - system_time_base;
+	}
 }
 
 
@@ -129,20 +131,20 @@ ec_master_t* master;
 void sync_distributed_clocks(void)
 {
 
-    uint32_t ref_time = 0;
-    uint64_t prev_app_time = dc_time_ns;
+	uint32_t ref_time = 0;
+	uint64_t prev_app_time = dc_time_ns;
 
-    dc_time_ns = system_time_ns();
+	dc_time_ns = system_time_ns();
 
-    // set master time in nano-seconds
-    ecrt_master_application_time(master, dc_time_ns);
+	// set master time in nano-seconds
+	ecrt_master_application_time(master, dc_time_ns);
 
-    // get reference clock time to synchronize master cycle
-    ecrt_master_reference_clock_time(master, &ref_time);
-    dc_diff_ns = (uint32_t) prev_app_time - ref_time;
+	// get reference clock time to synchronize master cycle
+	ecrt_master_reference_clock_time(master, &ref_time);
+	dc_diff_ns = (uint32_t) prev_app_time - ref_time;
 
-    // call to sync slaves to ref slave
-    ecrt_master_sync_slave_clocks(master);
+	// call to sync slaves to ref slave
+	ecrt_master_sync_slave_clocks(master);
 }
 
 
@@ -154,59 +156,63 @@ void sync_distributed_clocks(void)
 void update_master_clock(void)
 {
 
-    // calc drift (via un-normalised time diff)
-    int32_t delta = dc_diff_ns - prev_dc_diff_ns;
+	// calc drift (via un-normalised time diff)
+	int32_t delta = dc_diff_ns - prev_dc_diff_ns;
 	printf("%d\n", (int) delta);
-    prev_dc_diff_ns = dc_diff_ns;
+	prev_dc_diff_ns = dc_diff_ns;
 
-    // normalise the time diff
-    dc_diff_ns =
-        ((dc_diff_ns + (cycle_ns / 2)) % cycle_ns) - (cycle_ns / 2);
+	// normalise the time diff
+	dc_diff_ns = ((dc_diff_ns + (cycle_ns / 2)) % cycle_ns) - (cycle_ns / 2);
+        
+	// only update if primary master
+	if (dc_started) 
+	{
 
-    // only update if primary master
-    if (dc_started) {
+		// add to totals
+		dc_diff_total_ns += dc_diff_ns;
+		dc_delta_total_ns += delta;
+		dc_filter_idx++;
 
-        // add to totals
-        dc_diff_total_ns += dc_diff_ns;
-        dc_delta_total_ns += delta;
-        dc_filter_idx++;
+		if (dc_filter_idx >= DC_FILTER_CNT) 
+		{
+			// add rounded delta average
+			dc_adjust_ns += ((dc_delta_total_ns + (DC_FILTER_CNT / 2)) / DC_FILTER_CNT);
+                
+			// and add adjustment for general diff (to pull in drift)
+			dc_adjust_ns += sign(dc_diff_total_ns / DC_FILTER_CNT);
 
-        if (dc_filter_idx >= DC_FILTER_CNT) {
-            // add rounded delta average
-            dc_adjust_ns +=
-                ((dc_delta_total_ns + (DC_FILTER_CNT / 2)) / DC_FILTER_CNT);
+			// limit crazy numbers (0.1% of std cycle time)
+			if (dc_adjust_ns < -1000) 
+			{
+				dc_adjust_ns = -1000;
+			}
+			if (dc_adjust_ns > 1000) 
+			{
+				dc_adjust_ns =  1000;
+			}
+		
+			// reset
+			dc_diff_total_ns = 0LL;
+			dc_delta_total_ns = 0LL;
+			dc_filter_idx = 0;
+		}
 
-            // and add adjustment for general diff (to pull in drift)
-            dc_adjust_ns += sign(dc_diff_total_ns / DC_FILTER_CNT);
+		// add cycles adjustment to time base (including a spot adjustment)
+		system_time_base += dc_adjust_ns + sign(dc_diff_ns);
+	}
+	else 
+	{
+		dc_started = (dc_diff_ns != 0);
 
-            // limit crazy numbers (0.1% of std cycle time)
-            if (dc_adjust_ns < -1000) {
-                dc_adjust_ns = -1000;
-            }
-            if (dc_adjust_ns > 1000) {
-                dc_adjust_ns =  1000;
-            }
+		if (dc_started) 
+		{
+			// output first diff
+			printf("First master diff: %d.\n", dc_diff_ns);
 
-            // reset
-            dc_diff_total_ns = 0LL;
-            dc_delta_total_ns = 0LL;
-            dc_filter_idx = 0;
-        }
-
-        // add cycles adjustment to time base (including a spot adjustment)
-        system_time_base += dc_adjust_ns + sign(dc_diff_ns);
-    }
-    else {
-        dc_started = (dc_diff_ns != 0);
-
-        if (dc_started) {
-            // output first diff
-            printf("First master diff: %d.\n", dc_diff_ns);
-
-            // record the time of this initial cycle
-            dc_start_time_ns = dc_time_ns;
-        }
-    }
+			// record the time of this initial cycle
+			dc_start_time_ns = dc_time_ns;
+		}
+	}
 }
 
 #endif
@@ -530,7 +536,7 @@ int main(int argc, char **argv)
 		#ifdef MEASURE_TIMING
 		ecrt_master_reference_clock_time(master, &t_cur);
 		printf("%" PRIu32 "\n", t_cur - t_prev);
-		t_prev = t_curv;
+		t_prev = t_cur;
 		#endif
 		
 		/********************************************************************************/
