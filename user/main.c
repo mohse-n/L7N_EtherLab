@@ -61,6 +61,7 @@
 #endif
 
 /*****************************************************************************/
+/* Note: Anything relying on definition of SYNC_MASTER_TO_REF is copy-pasted from /rtdm_rtai_dc/main.c */
 
 #ifdef SYNC_MASTER_TO_REF
 
@@ -267,7 +268,7 @@ void signal_handler(int sig)
 
 /*****************************************************************************/
 
-/* We make sure 8Kb (maximum stack size) is allocated and locked by mlockall(MCL_CURRENT | MCL_FUTURE). */
+/* We make sure 8kB (maximum stack size) is allocated and locked by mlockall(MCL_CURRENT | MCL_FUTURE). */
 void stack_prefault(void)
 {
     unsigned char dummy[MAX_SAFE_STACK];
@@ -566,9 +567,9 @@ int main(int argc, char **argv)
 		ecrt_master_sync_slave_clocks(master);
 		#endif
 		
+		#ifdef SYNC_MASTER_TO_REF
 		// sync distributed clock just before master_send to set
      	        // most accurate master clock time
-		#ifdef SYNC_MASTER_TO_REF
                 sync_distributed_clocks();
 		#endif
 		
@@ -578,10 +579,10 @@ int main(int argc, char **argv)
 		*/
 		ecrt_master_send(master);
 		
+		#ifdef SYNC_MASTER_TO_REF
 		// update the master clock
      		// Note: called after ecrt_master_send() to reduce time
                 // jitter in the sync_distributed_clocks() call
-		#ifdef SYNC_MASTER_TO_REF
                 update_master_clock();
 		#endif
 	
