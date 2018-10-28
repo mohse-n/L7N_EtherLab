@@ -96,6 +96,7 @@ static uint64_t dc_start_time_ns = 0LL;
 /*****************************************************************************/
 
 #ifdef SYNC_MASTER_TO_REF
+
 /** Get the time in ns for the current cpu, adjusted by system_time_base.
  *
  * \attention Rather than calling rt_get_time_ns() directly, all application
@@ -152,7 +153,7 @@ void sync_distributed_clocks(void)
  */
 void update_master_clock(void)
 {
-#ifdef SYNC_MASTER_TO_REF
+
     // calc drift (via un-normalised time diff)
     int32_t delta = dc_diff_ns - prev_dc_diff_ns;
 	printf("%d\n", (int) delta);
@@ -206,7 +207,6 @@ void update_master_clock(void)
             dc_start_time_ns = dc_time_ns;
         }
     }
-#endif
 }
 
 #endif
