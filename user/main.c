@@ -1,6 +1,8 @@
 
 #include "ecrt.h"
 
+/*****************************************************************************/
+
 #include <string.h>
 #include <stdio.h>
 /* For setting the process's priority (setpriority) */
@@ -265,10 +267,10 @@ void signal_handler(int sig)
 
 /*****************************************************************************/
 
+/* We make sure 8Kb (maximum stack size) is allocated and locked by mlockall(MCL_CURRENT | MCL_FUTURE). */
 void stack_prefault(void)
 {
     unsigned char dummy[MAX_SAFE_STACK];
-
     memset(dummy, 0, MAX_SAFE_STACK);
 }
 
@@ -295,6 +297,7 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	
+	/* Allocate the entire stack, locked by mlockall(MCL_FUTURE). */
 	stack_prefault();
 	
 	/* Register the signal handler function. */
@@ -498,7 +501,7 @@ int main(int argc, char **argv)
 	
 	int32_t actPos0, targetPos0;
 	int32_t actPos1, targetPos1;
-	#ifde MEASURE_TIMING
+	#ifdef MEASURE_TIMING
 	/* The slave time received in the current and the previous cycle */
 	uint32_t t_cur, t_prev;
 	#endif
