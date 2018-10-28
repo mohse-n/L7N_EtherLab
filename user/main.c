@@ -21,13 +21,26 @@
 
 /*****************************************************************************/
 
+/* Comment to disable distributed clocks */
+#define DC
+
+/* Choose the syncronization method: The reference clock can be either master's, or the reference slave's. */
+#ifdef DC
+
+/* Slave0's clock is the reference: no drift. */
+#define SYNC_MASTER_TO_REF
+/* Master's clock (CPU) is the reference: lower overhead. */
+#define SYNC_REF_TO_MASTER
+
+#endif
+
+/*****************************************************************************/
+
 /* One motor revolution increments the encoder by 2^19 -1. */
 #define ENCODER_RES 524287
 /* The maximum stack size which is guranteed safe to access without faulting. */       
 #define MAX_SAFE_STACK (8 * 1024) 
 
-/* Comment to disable distributed clocks */
-#define DC
 /* Measure the difference in reference slave's clock timstamp each cycle, and print the result. */
 /* Note: Only works with DC enabled. */
 #define MEASURE_TIMING
