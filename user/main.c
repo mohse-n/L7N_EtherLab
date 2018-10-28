@@ -26,13 +26,13 @@
 /* Comment to disable distributed clocks. */
 #define DC
 
-/* Choose the syncronization method: The reference clock can be either master's, or the reference slave's. */
+/* Choose the syncronization method: The reference clock can be either master's, or the reference slave's (slave 0 by default) */
 #ifdef DC
 
 /* Slave0's clock is the reference: no drift. */
 #define SYNC_MASTER_TO_REF
 /* Master's clock (CPU) is the reference: lower overhead. */
-#define SYNC_REF_TO_MASTER
+//#define SYNC_REF_TO_MASTER
 
 #endif
 
@@ -331,9 +331,8 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	
-	/* Structures obtained from $ethercat cstruct -p 0 */
 	/***************************************************/
-	/* Slave 0's structures */
+	/* Slave 0's structures, obtained from $ethercat cstruct -p 0 */ 
 	ec_pdo_entry_info_t slave_0_pdo_entries[] = 
 	{
 	{0x6040, 0x00, 16}, /* Controlword */
@@ -357,7 +356,7 @@ int main(int argc, char **argv)
 	{0xFF}
 	};
 	
-	/* Slave 1's structures */
+	/* Slave 1's structures, obtained from $ethercat cstruct -p 1 */ 
 	ec_pdo_entry_info_t slave_1_pdo_entries[] = 
 	{
 	{0x6040, 0x00, 16}, /* Controlword */
