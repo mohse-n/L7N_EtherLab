@@ -158,7 +158,7 @@ void update_master_clock(void)
 
 	// calc drift (via un-normalised time diff)
 	int32_t delta = dc_diff_ns - prev_dc_diff_ns;
-	printf("%d\n", (int) delta);
+	//printf("%d\n", (int) delta);
 	prev_dc_diff_ns = dc_diff_ns;
 
 	// normalise the time diff
@@ -560,8 +560,7 @@ int main(int argc, char **argv)
 		
 		#ifdef MEASURE_TIMING
 		ecrt_master_reference_clock_time(master, &t_cur);
-		printf("%" PRIu32 "\n", t_cur - t_prev);
-		t_prev = t_cur;
+		/* To be continued... (refer to the end of this loop */
 		#endif
 		
 		/********************************************************************************/
@@ -614,6 +613,12 @@ int main(int argc, char **argv)
      		// Note: called after ecrt_master_send() to reduce time
                 // jitter in the sync_distributed_clocks() call
                 update_master_clock();
+		#endif
+		
+		#ifdef MEASURE_TIMING
+		/* Print here, to (hopefully) reduce jitter */
+		printf("%" PRIu32 "\n", t_cur - t_prev);
+		t_prev = t_cur;
 		#endif
 	
 	}
