@@ -93,6 +93,8 @@ static uint64_t dc_start_time_ns = 0LL;
 
 #endif
 
+ec_master_t* master;
+
 /*****************************************************************************/
 
 #ifdef SYNC_MASTER_TO_REF
@@ -121,9 +123,6 @@ uint64_t system_time_ns(void)
 		return time.tv_nsec - system_time_base;
 	}
 }
-
-
-ec_master_t* master;
 
 
 /** Synchronise the distributed clocks
