@@ -21,19 +21,15 @@ ___
 **Note:** Drivers for the more recent kernels are available on the [SourceForge repository](https://sourceforge.net/projects/etherlabmaster) and Gavin Lambert's [unofficial patchset](https://sourceforge.net/u/uecasm/etherlab-patches/ci/default/tree/#readme).  
 ___
 #### PREEMPT_RT
-Now we should look for a version of 3.4.x kernel for which a PREEMPT_RT patch is availabe. The existence of .patch file should be checked by downloading the package and looking in the directory  
-```bash
-/base/arch/x86/patches 
-``` 
-In my case, I downloaded RTAI 4.0 and there were two .patch files for 3.4.x kernels:  
-```bash
-hal-linux-3.4.6-x86-4.patch  
+Now we should look for a version of 3.4.x kernel for which a PREEMPT_RT patch is available. The existence of .patch file should be checked by visiting   
 ```
-```bash
-hal-linux-3.4.67-x86-4.patch 
-```     
-Thus, we basically have to decide between kernel 3.4.6 and 3.4.67. The latter is only incrementally better than the former, but fewer bugs is almost always a good thing.   
-On the other hand, I **felt** 3.4.6 is a safer choice. I wouldn't want to run into potential issues because the IgH Master driver is untested on, say, 3.4.67. I chose the base version (3.4.6).  
+https://mirrors.edge.kernel.org/pub/linux/kernel/projects/rt/
+``` 
+In '/3.4' directory, the only available patch is that of kernel 3.4.113.
+```
+patch-3.4.113-rt145.patch.xz   
+```
+Therefore, we choose 3.4.113 as our kernel.
 ### 2. Download the required files
 ```bash
 sudo -s
@@ -46,24 +42,24 @@ Kernels have to exist at '/usr/src', and we're going to download everything in t
 ```bash
 cd /usr/src
 ```
-Download the appropriate version of RTAI,
+Download the patch,
 ```bash
-curl -L https://www.rtai.org/userfiles/downloads/RTAI/rtai-4.0.tar.bz2 | tar xj
+curl -L https://mirrors.edge.kernel.org/pub/linux/kernel/projects/rt/3.4/patch-3.4.113-rt145.patch.xz | tar xj
 ```
 Download the associated kernel,
 ```bash
-curl -L https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.4.6.tar.xz | tar xJ
+curl -L https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.4.113.tar.xz | tar xJ
 ```
-We are going start from the default kernel configuration when building the RTAI-patched kernel. This way we'll be sure that the only cause of possbile failure in kernel boot process is the modification that **we** have made.
+We are going start from the default kernel configuration when building the PREEMPT-patched kernel. This way we'll be sure that the only cause of possbile failure or improvements are **our** modifications.
 ___
 **Note:** Entering the right URL below requires a visit to http://kernel.ubuntu.com/~kernel-ppa/mainline.
 ___
 ```bash
-curl -L http://kernel.ubuntu.com/~kernel-ppa/mainline/v3.4.6-quantal/linux-image-3.4.6-030406-generic_3.4.6-030406.201207191609_amd64.deb -o linux-image-3.4.6-generic-amd64.deb
+curl -L http://kernel.ubuntu.com/~kernel-ppa/mainline/v3.4.113/linux-image-3.4.113-0304113-generic_3.4.113-0304113.201610261546_amd64.deb -o linux-image-3.4.113-generic-amd64.deb
 ```
-Extract the .deb package. Unfortunately, dpkg doesn't support multithreading, so this and similar steps often take longer that you expect.
+Extract the .deb package. Unfortunately, dpkg doesn't support multithreading, so this and similar steps might take longer than you expect.
 ```bash
-dpkg-deb -x linux-image-3.4.6-generic-amd64.deb linux-image-3.4.6-generic-amd64
+dpkg-deb -x linux-image-3.4.113-generic-amd64.deb linux-image-3.4.113-generic-amd64
 ```
 Install the dependencies. I'm not certain if this is the minimal set of dependencies and perhaps some could be removed, but these worked for me.
 ```bash
@@ -76,39 +72,39 @@ apt-get install cvs subversion build-essential git-core g++-multilib gcc-multili
 apt-get install libtool automake libncurses5-dev kernel-package
 ```
 ```bash
-apt-get install docbook-xsl fop libncurses5 libpcre3 libpvm3 libquadmath0 libsaxon-java libskinlf-java libstdc++6 libtinfo5 libxml2 tcl8.5 tk8.5 zlib1g libgcc1 libc6 libblas-dev gfortran liblapack-dev libssl-dev portaudio19-dev portaudio19-doc
+apt-get install docbook-xsl fop libncurses5 libpcre3 libpvm3 libquadmath0 libstdc++6 libtinfo5 libxml2 tcl8.5 tk8.5 zlib1g libgcc1 libc6 libblas-dev gfortran liblapack-dev libssl-dev portaudio19-dev portaudio19-doc
 ```
 
 ### 3. Patch, configure, and build the kernel
 Replace the default .config file with the configuration file of the associated Ubuntu kernel,
 ```bash
-cp /usr/src/linux-image-3.4.6-generic-amd64/boot/config-3.4.6-030406-generic /usr/src/linux-3.4.6/.config
+cp /usr/src/linux-image-3.4.113-generic-amd64/boot/config-3.4.6-030406-generic /usr/src/linux-3.4.113/.config
 ```
-Apply the RTAI patch to the kernel source files,
+Apply the PREEMPT_RT patch to the kernel source files,
 ```bash
-cd /usr/src/linux-3.4.6
+cd /usr/src/linux-3.4.113
 ```
 ```bash
-patch -p1 < /usr/src/rtai-4.0/base/arch/x86/patches/hal-linux-3.4.6-x86-4.patch
+patch -p1 < /usr/src/patch-3.4.113-rt145.patch
 ```
 Now we're ready to configure the kernel.
 ```bash
 make menuconfig
 ```
-1. Disable "Enable loadable module support > Module versioning support " (IgH Master RTAI modules wouldn't compile otherwise)
-2. If you're using a 64-bit CPU: "Processor type and features > Processor family > Generic x86_64"
-3. Number of physical cores (i.e. don't account for hyperthreading): "Processor type and features > Maximum number of CPU’s > 2" (My PC had i3-4700, which has 2 physical cores)
-4. Disable “Processor type and features” > SMT (Hyperthreading) scheduler support”
-5. Enable “Processor type and features > Symmetric multi-processing support"
-6. Under “Power management and ACPI options”, disable anything that you can, including "CPU Frequency Scaling" and "CPU idle PM support".
-7. Under "Power management and ACPI options > ACPI", disable everything you're able to, except “Power Management Timer Support” and "Button".  
+1. If you're using a 64-bit CPU: "Processor type and features > Processor family > Generic x86_64"
+2. Number of physical cores (i.e. don't account for hyperthreading): "Processor type and features > Maximum number of CPU’s > 2" (My PC had i3-4700, which has 2 physical cores)
+3. Disable “Processor type and features” > SMT (Hyperthreading) scheduler support”
+4. Enable “Processor type and features > Symmetric multi-processing support"
+5. Under “Power management and ACPI options”, disable anything that you can, including "CPU Frequency Scaling" and "CPU idle PM support".
+6. Under "Power management and ACPI options > ACPI", disable everything you're able to, except “Power Management Timer Support” and "Button".  
+7. High res timer  
 8. Select "Exit" and save.  
 ___
 **Note:** Also worth checking are the various guides and recommendations for the optimal kernel configuration in linuxcnc website and forum.
 ___
-Now we should be able to compile the kernel. Note that since many, many device drivers are enabled and will be compiled, the installation process takes a significant amount of time (with i3-4700, it take about an hour).
+Now we should be able to compile the kernel. Note that since many, many device drivers are enabled and will be compiled, the installation process takes a significant amount of time (with i3-4700, it takes about an hour).
 ```bash
-make -j `getconf _NPROCESSORS_ONLN` deb-pkg LOCALVERSION=-rtai
+make -j `getconf _NPROCESSORS_ONLN` deb-pkg 
 ```
 Extract RTAI-patched kernel's image and headers.
 ```bash
@@ -120,58 +116,8 @@ dpkg -i linux-image-3.4.6-rtai_3.4.6-rtai-1_amd64.deb
 ```bash
 dpkg -i linux-headers-3.4.6-rtai_3.4.6-rtai-1_amd64.deb
 ```
-The bootloader should be automatically configured. Therefore, at this point, if we reboot, we can choose the RTAI kernel from Advanced Options.
-### 4. Install RTAI 
-```bash
-cd /usr/src/rtai-4.0
-```
-```bash
-make menuconfig
-```
-1. Specify where RTAI is to be installed and where it should look for the patched kernel.  
-Under "General > Installation directory" = /usr/realtime  
-Under "General > Linux source tree" = /usr/src/linux-3.4.6
-2. Choose "General > Inlining mode of user-space services > Eager inlining"
-3. Under "Machine > Number of CPUs (SMP-only)" = 2 (for my CPU)
-4. Disable "Add-ons > Real-Time COMEDI support in user space"  
-5. (Optional, and only required for RTAI LXRT) Enable "Add-one > Real-Time Driver Model over RTAI" 
-
-Compile and install RTAI,
-```bash
-make -j `getconf _NPROCESSORS_ONLN`
-```
-```bash
-make install
-```
-### 5. Start the modules at startup  
-RTAI programs (themselves kernel modules) communicate with core RTAI modules. Thus, these have to loaded prior to loading an RTAI program. 
-To automatically load the modules before startup, add just before "do_start",
-```bash
-nano /etc/init.d/rc.local
-```
-```bash
-/sbin/insmod /usr/realtime/modules/rtai_hal.ko
-/sbin/insmod /usr/realtime/modules/rtai_sched.ko
-/sbin/insmod /usr/realtime/modules/rtai_fifos.ko
-/sbin/insmod /usr/realtime/modules/rtai_sem.ko
-/sbin/insmod /usr/realtime/modules/rtai_mbx.ko
-/sbin/insmod /usr/realtime/modules/rtai_msg.ko
-/sbin/insmod /usr/realtime/modules/rtai_netrpc.ko
-/sbin/insmod /usr/realtime/modules/rtai_shm.ko
-```
-Additionally, in order to run RTAI userspace (LXRT) programs that use the Real Time Driver Model (RTDM), you should add,
-```bash
-/sbin/insmod /usr/realtime/modules/rtai_rtdm.ko
-```
-___
-**Note:** [Only one RTAI scheduler exsits](https://mail.rtai.org/pipermail/rtai/2015-February/026696.html), namely rtai_sched. rtai_lxrt.ko is "linked to" (i.e. is a shortcut for) rtai_sched.ko.  
-___
-Now save the changes and exit.  
-Reboot and then check if all the modules above are loaded,
-```bash
-lsmod | grep rtai
-```
-### 6. Run the latency test
+The bootloader should be automatically configured. Therefore, at this point, if we reboot, we can choose the rt kernel from Advanced Options.
+### 4. Run the latency test
 To start the kernel space test:
 ```bash
 cd /usr/realtime/testsuite/kern/latency
@@ -182,7 +128,7 @@ To start the user space latency test:
 cd /usr/realtime/testsuite/user/latency
 ./run
 ```
-### 7. Install IgH EtherCAT Master
+### 5. Install IgH EtherCAT Master
 See [IgH EtherCAT Master installation guide](https://github.com/mohse-n/L7N_EtherLab/blob/master/Installation%20guides/IgH%20Master%20Installation%20Guide.md).
-### Reinstalling RTAI 
-In case you needed to reinstall RTAI, delete "realtime" in /usr and repeat this guide from step 4.
+### Reinstalling the kernel 
+???
