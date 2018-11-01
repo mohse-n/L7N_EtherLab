@@ -16,7 +16,7 @@ For instance,
 ```
 r8169-3.4-ethercat.c  
 ``` 
-is the modified driver for Realtek8169 family of network cards for kernel 3.4.x . Keep 3.4 in mind and move on to the next section (RTAI).  
+is the modified driver for Realtek8169 family of network cards for kernel 3.4.x . Keep 3.4 in mind and move on to the next section (PREEMPT_RT).  
 ___
 **Note:** Drivers for the more recent kernels are available on the [SourceForge repository](https://sourceforge.net/projects/etherlabmaster) and Gavin Lambert's [unofficial patchset](https://sourceforge.net/u/uecasm/etherlab-patches/ci/default/tree/#readme).  
 ___
@@ -31,10 +31,14 @@ patch-3.4.113-rt145.patch.xz
 ```
 Therefore, we choose 3.4.113 as our kernel.
 ### 2. Download the required files
+Download and extract the patch in your home folder,
+```bash
+https://mirrors.edge.kernel.org/pub/linux/kernel/projects/rt/3.4/patch-3.4.113-rt145.patch.xz
+```
 ```bash
 sudo -s
 ```
-We use cURL for downloading RTAI and Linux kernel.
+We use cURL for downloading the Linux kernel.
 ```bash
 apt-get install curl
 ```
@@ -42,15 +46,11 @@ Kernels have to exist at '/usr/src', and we're going to download everything in t
 ```bash
 cd /usr/src
 ```
-Download the patch,
-```bash
-curl -L https://mirrors.edge.kernel.org/pub/linux/kernel/projects/rt/3.4/patch-3.4.113-rt145.patch.xz | tar xj
-```
-Download the associated kernel,
+Download the kernel,
 ```bash
 curl -L https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.4.113.tar.xz | tar xJ
 ```
-We are going start from the default kernel configuration when building the PREEMPT-patched kernel. This way we'll be sure that the only cause of possbile failure or improvements are **our** modifications.
+We are going start from the default kernel configuration when building the PREEMPT-patched kernel. This way we'll be sure that the only cause of possbile failure or improvements is **our** modifications.
 ___
 **Note:** Entering the right URL below requires a visit to http://kernel.ubuntu.com/~kernel-ppa/mainline.
 ___
