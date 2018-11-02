@@ -8,7 +8,6 @@ There are two versions to take into account when determining the kernel version:
 #### Igh EtherCAT Master
 Since we're going to write IgH EtherCAT Master (from here on called IgH Master) programs, we consider its version first and proceed accordingly. 
 The lastest stable version of the library can be downloaded from the [SourceForge repository.](https://sourceforge.net/p/etherlabmaster/code/ci/stable-1.5/tree/). 
-___
 Looking at the "devices" folder, we can see the modified (and original) drivers and their associated kernel versions.
 For instance,  
 ```
@@ -40,7 +39,7 @@ We use cURL for downloading the Linux kernel.
 ```bash
 apt-get install curl
 ```
-Kernels have to exist at '/usr/src', and we're going to download everything in that directory.
+Kernels have to exist at '/usr/src', and we're going to download everything to that directory.
 ```bash
 cd /usr/src
 ```
@@ -48,9 +47,9 @@ Download the kernel,
 ```bash
 curl -L https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.4.113.tar.xz | tar xJ
 ```
-We are going start from the default kernel configuration when building the PREEMPT-patched kernel. This way we'll be sure that the only cause of possbile failure or improvements is **our** modifications.
+When building the PREEMPT-patched kernel, we're going start from the default kernel configuration. That way we'll be sure that the only cause of possbile failure or improvements is **our** modifications.
 ___
-**Note:** Entering the right URL below requires a visit to http://kernel.ubuntu.com/~kernel-ppa/mainline.
+**Note:** Entering the correct URL below requires a visit to http://kernel.ubuntu.com/~kernel-ppa/mainline.
 ___
 ```bash
 curl -L http://kernel.ubuntu.com/~kernel-ppa/mainline/v3.4.113/linux-image-3.4.113-0304113-generic_3.4.113-0304113.201610261546_amd64.deb -o linux-image-3.4.113-generic-amd64.deb
@@ -59,7 +58,7 @@ Extract the .deb package. Unfortunately, dpkg doesn't support multithreading, so
 ```bash
 dpkg-deb -x linux-image-3.4.113-generic-amd64.deb linux-image-3.4.113-generic-amd64
 ```
-Install the dependencies. I'm not certain if this is the minimal set of dependencies and perhaps some could be removed, but these worked for me.
+Install the dependencies. I'm not certain if this is the minimal set of dependencies -perhaps some could be removed- but these worked for me.
 ```bash
 apt-get update
 ```
@@ -74,7 +73,7 @@ apt-get install docbook-xsl fop libncurses5 libpcre3 libpvm3 libquadmath0 libstd
 ```
 
 ### 3. Patch, configure, and build the kernel
-Replace the default .config file with the configuration file of the associated Ubuntu kernel,
+Replace the default Ubuntu .config file with the configuration file of the associated Ubuntu kernel,
 ```bash
 cp /usr/src/linux-image-3.4.113-generic-amd64/boot/config-3.4.6-030406-generic /usr/src/linux-3.4.113/.config
 ```
@@ -116,16 +115,16 @@ dpkg -i linux-headers-3.4.6-rtai_3.4.6-rtai-1_amd64.deb
 ```
 The bootloader should be automatically configured. Therefore, at this point, if we reboot, we can choose the rt kernel from Advanced Options.
 ### 4. Run the latency test
-To start the kernel space test:
+Install gnuplot
 ```bash
-cd /usr/realtime/testsuite/kern/latency
-./run
+sudo apt-get install gnuplot
 ```
-To start the user space latency test:
+Download the bash script 'mklatencyplot.bash' from [here](http://www.osadl.org/Create-a-latency-plot-from-cyclictest-hi.bash-script-for-latency-plot.0.html).  
+As root, 
 ```bash
-cd /usr/realtime/testsuite/user/latency
-./run
+bash ./mklatencyplot.bash
 ```
+You can let the test finish its run, or stop it at any time. Either way, a 'plot.png' file will be generated in the same directory as the script's, showing a histogram of the latencies and the maximum latency. 
 ### 5. Install IgH EtherCAT Master
 See [IgH EtherCAT Master installation guide](https://github.com/mohse-n/L7N_EtherLab/blob/master/Installation%20guides/IgH%20Master%20Installation%20Guide.md).
 ### Reinstalling the kernel 
