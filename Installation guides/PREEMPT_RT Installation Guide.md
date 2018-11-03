@@ -59,7 +59,6 @@ Extract the .deb package. Unfortunately, dpkg doesn't support multithreading, so
 dpkg-deb -x linux-image-3.4.113-generic-amd64.deb linux-image-3.4.113-generic-amd64
 ```
 Install ncurses library, used for GUI in menuconfig.
-```
 ```bash
 apt-get install libncurses5-dev
 ```
