@@ -58,24 +58,15 @@ Extract the .deb package. Unfortunately, dpkg doesn't support multithreading, so
 ```bash
 dpkg-deb -x linux-image-3.4.113-generic-amd64.deb linux-image-3.4.113-generic-amd64
 ```
-Install the dependencies. I'm not certain if this is the minimal set of dependencies -perhaps some could be removed- but these worked for me.
-```bash
-apt-get update
+Install ncurses library, used for GUI in menuconfig.
 ```
 ```bash
-apt-get install cvs subversion build-essential git-core g++-multilib gcc-multilib
+apt-get install libncurses5-dev
 ```
-```bash
-apt-get install libtool automake libncurses5-dev kernel-package
-```
-```bash
-apt-get install docbook-xsl fop libncurses5 libpcre3 libpvm3 libquadmath0 libstdc++6 libtinfo5 libxml2 tcl8.5 tk8.5 zlib1g libgcc1 libc6 libblas-dev gfortran liblapack-dev libssl-dev portaudio19-dev portaudio19-doc
-```
-
 ### 3. Patch, configure, and build the kernel
 Replace the default Ubuntu .config file with the configuration file of the associated Ubuntu kernel,
 ```bash
-cp /usr/src/linux-image-3.4.113-generic-amd64/boot/config-3.4.6-030406-generic /usr/src/linux-3.4.113/.config
+cp /usr/src/linux-image-3.4.113-generic-amd64/boot/config-3.4.113-0304113-generic /usr/src/linux-3.4.113/.config
 ```
 Apply the PREEMPT_RT patch to the kernel source files,
 ```bash
@@ -90,12 +81,13 @@ make menuconfig
 ```
 1. If you're using a 64-bit CPU: "Processor type and features > Processor family > Generic x86_64"
 2. Number of physical cores (i.e. don't account for hyperthreading): "Processor type and features > Maximum number of CPU’s > 2" (My PC had i3-4700, which has 2 physical cores)
-3. Disable “Processor type and features” > SMT (Hyperthreading) scheduler support”
-4. Enable “Processor type and features > Symmetric multi-processing support"
-5. Under “Power management and ACPI options”, disable anything that you can, including "CPU Frequency Scaling" and "CPU idle PM support".
-6. Under "Power management and ACPI options > ACPI", disable everything you're able to, except “Power Management Timer Support” and "Button".  
-7. High res timer  
-8. Select "Exit" and save.  
+3. Disable “Processor type and features > Tickless System (Dynamic Ticks)”
+4. Disable “Processor type and features > SMT (Hyperthreading) scheduler support”
+5. Enable “Processor type and features > Symmetric multi-processing support"
+6. Choose “Processor type and features > Timer frequency (1000 HZ)"
+7. Under “Power management and ACPI options”, disable anything that you can, including "CPU Frequency Scaling", "CPU idle PM support", and anything listed under "Memory power savings".
+8. Under "Power management and ACPI options > ACPI", disable everything you're able to, except “Power Management Timer Support” and "Button".  
+9. Select "Exit" and save.  
 ___
 **Note:** Also worth checking are the various guides and recommendations for the optimal kernel configuration in linuxcnc website and forum.
 ___
@@ -129,3 +121,4 @@ You can let the test finish its run, or stop it at any time. Either way, a 'plot
 See [IgH EtherCAT Master installation guide](https://github.com/mohse-n/L7N_EtherLab/blob/master/Installation%20guides/IgH%20EtherCAT%20Master%20Installation%20Guide.md).
 ### Reinstalling the kernel 
 ???
+
