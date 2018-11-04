@@ -131,7 +131,7 @@ apt-get install grub-customizer
 Run grub-customizer,
 In "General settings > default entry", under predefined, choose  
 ```
-Advanced options for Ubuntu>Ubuntu, with Linux 3.4.113-rt145"
+Advanced options for Ubuntu>Ubuntu, with Linux 3.4.113-rt145
 ```
 ### 4. Install RTAI 
 ```bash
