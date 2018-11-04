@@ -100,7 +100,7 @@ make menuconfig
 2. If you're using a 64-bit CPU: "Processor type and features > Processor family > Generic x86_64"
 3. Number of physical cores (i.e. don't account for hyperthreading): "Processor type and features > Maximum number of CPU’s > 2" (My PC had i3-4700, which has 2 physical cores)
 4. Disable “Processor type and features” > SMT (Hyperthreading) scheduler support”
-5. Enable “Processor type and features > Symmetric multi-processing support"
+5. Choose “Processor type and features > Timer frequency (1000 HZ)"
 6. Under “Power management and ACPI options”, disable anything that you can, including "CPU Frequency Scaling" and "CPU idle PM support".
 7. Under "Power management and ACPI options > ACPI", disable everything you're able to, except “Power Management Timer Support” and "Button".  
 8. Select "Exit" and save.  
