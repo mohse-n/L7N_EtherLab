@@ -1,5 +1,8 @@
 
 ## RTAI Installtion Guide
+
+**Note:** The following guide has been tested on Ubuntu 14.04 LTS (gcc version 4.8.4).
+___
 **Note:** This guide is derived mainly from Juan Serna's excellent [tutorial](https://sites.google.com/site/thefreakengineer/tutorials/rtai-5-0-1-lubuntu-14-04-x64) (the only one on the Internet that actually worked for me).
 ___
 ### 1. Decide on a kernel version
