@@ -1,6 +1,8 @@
 
 ## PREEMPT_RT Installtion Guide
-
+___
+**Note:** The following guide has been tested on Ubuntu 14.04 LTS (gcc version 4.8.4).
+___
 ### 1. Decide on a kernel version
 There are two versions to take into account when determining the kernel version:  
 * **Igh EtherCAT Master:** The package has modified network card drivers only for specific versions of the kernel. 
