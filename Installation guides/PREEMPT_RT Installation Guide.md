@@ -106,7 +106,18 @@ dpkg -i linux-image-3.4.113-rt145_3.4.113-rt145-2_amd64.deb
 ```bash
 dpkg -i linux-headers-3.4.113-rt145_3.4.113-rt145-2_amd64.deb
 ```
-The bootloader should be automatically configured. Therefore, at this point, if we reboot, we can choose the rt kernel from Advanced Options.
+The bootloader should be automatically configured. Therefore, at this point, if we reboot, we can choose the RTAI kernel from Advanced Options.  
+If the new kernel is not added to the bootloader list, use the grub-customizer program,  
+```bash
+add-apt-repository ppa:danielrichter2007/grub-customizer
+apt-get update
+apt-get install grub-customizer
+```
+Run grub-customizer,
+In "General settings > default entry", under predefined, choose  
+```
+Advanced options for Ubuntu>Ubuntu, with Linux 3.4.113-rt145"
+```
 ### 4. Run the latency test
 Install gnuplot
 ```bash
