@@ -96,7 +96,7 @@ Now we should be able to compile the kernel. Note that since many, many device d
 ```bash
 make -j `getconf _NPROCESSORS_ONLN` deb-pkg 
 ```
-Extract RTAI-patched kernel's image and headers. (Note that the name of the debian packages might be different).  
+Extract RTAI-patched kernel's image and headers. (Note that the name of the debian packages might be different from below).  
 ```bash
 cd /usr/src
 ```
