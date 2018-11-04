@@ -112,6 +112,10 @@ Install gnuplot
 ```bash
 sudo apt-get install gnuplot
 ```
+Install rt-tests (for using cyclictest)  
+```bash
+sudo apt-get install rt-tests
+```
 Download the bash script 'mklatencyplot.bash' from [here](http://www.osadl.org/Create-a-latency-plot-from-cyclictest-hi.bash-script-for-latency-plot.0.html).  
 As root, 
 ```bash
