@@ -60,9 +60,9 @@ Extract the .deb package. Unfortunately, dpkg doesn't support multithreading, so
 ```bash
 dpkg-deb -x linux-image-3.4.113-generic-amd64.deb linux-image-3.4.113-generic-amd64
 ```
-Install ncurses library, used for GUI in menuconfig.
+Install the packges needed for building the kernel.  
 ```bash
-apt-get install libncurses5-dev
+apt-get install libncurses5-dev dpkg-dev
 ```
 ### 3. Patch, configure, and build the kernel
 Replace the default Ubuntu .config file with the configuration file of the associated Ubuntu kernel,
