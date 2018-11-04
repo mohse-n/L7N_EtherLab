@@ -1,6 +1,6 @@
 
 ## PREEMPT_RT Installtion Guide
-___
+
 **Note:** The following guide has been tested on Ubuntu 14.04 LTS (gcc version 4.8.4).
 ___
 ### 1. Decide on a kernel version
