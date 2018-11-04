@@ -121,7 +121,18 @@ dpkg -i linux-image-3.4.6-rtai_3.4.6-rtai-1_amd64.deb
 ```bash
 dpkg -i linux-headers-3.4.6-rtai_3.4.6-rtai-1_amd64.deb
 ```
-The bootloader should be automatically configured. Therefore, at this point, if we reboot, we can choose the RTAI kernel from Advanced Options.
+The bootloader should be automatically configured. Therefore, at this point, if we reboot, we can choose the RTAI kernel from Advanced Options.  
+If the new kernel is not added to the bootloader list, use the grub-customizer program,  
+```bash
+add-apt-repository ppa:danielrichter2007/grub-customizer
+apt-get update
+apt-get install grub-customizer
+```
+Run grub-customizer,
+In "General settings > default entry", under predefined, choose  
+```
+Advanced options for Ubuntu>Ubuntu, with Linux 3.4.113-rt145"
+```
 ### 4. Install RTAI 
 ```bash
 cd /usr/src/rtai-4.0
