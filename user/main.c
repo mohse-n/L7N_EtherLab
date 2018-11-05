@@ -560,7 +560,8 @@ int main(int argc, char **argv)
 		
 		#ifdef MEASURE_TIMING
 		ecrt_master_reference_clock_time(master, &t_cur);
-		/* To be continued... (refer to the end of this loop */
+		printf("%" PRIu32 "\n", t_cur - t_prev);
+		t_prev = t_cur;
 		#endif
 		
 		/********************************************************************************/
@@ -613,12 +614,6 @@ int main(int argc, char **argv)
      		// Note: called after ecrt_master_send() to reduce time
                 // jitter in the sync_distributed_clocks() call
                 update_master_clock();
-		#endif
-		
-		#ifdef MEASURE_TIMING
-		/* Print here, to (hopefully) reduce jitter */
-		printf("%" PRIu32 "\n", t_cur - t_prev);
-		t_prev = t_cur;
 		#endif
 	
 	}

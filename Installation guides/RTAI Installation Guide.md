@@ -1,5 +1,8 @@
 
 ## RTAI Installtion Guide
+
+**Note:** The following guide has been tested on Ubuntu 14.04 LTS (gcc version 4.8.4).
+___
 **Note:** This guide is derived mainly from Juan Serna's excellent [tutorial](https://sites.google.com/site/thefreakengineer/tutorials/rtai-5-0-1-lubuntu-14-04-x64) (the only one on the Internet that actually worked for me).
 ___
 ### 1. Decide on a kernel version
@@ -8,10 +11,7 @@ There are two versions to take into account when detemining the kernel version:
 * **RTAI**: Kernel patches are available for some kernels and not others. Also to consider is the fact that newer releases (e.g. RTAI 5.1) are not widely adopted and therefore not thoroughly tested and debugged.   
 #### Igh EtherCAT Master
 Since we're going to write IgH EtherCAT Master (from here on called IgH Master) programs, we consider its version first and proceed accordingly. 
-The current IgH EtherCAT version is 1.5.2 and can be downloaded from the [website](https://www.etherlab.org/en/ethercat/index.php). 
-___
-**Note:** The [SourceForge repository](https://sourceforge.net/projects/etherlabmaster) is regularly updated and is much more recent, but during this walkthrough, we stick to the tried-and-tested versions due to better stability and support from the community.  
-___
+The lastest stable version of the library can be downloaded from the [SourceForge repository.](https://sourceforge.net/p/etherlabmaster/code/ci/stable-1.5/tree/). 
 Looking at the "devices" folder, we can see the modified (and original) drivers and their associated kernel versions.
 For instance,  
 ```
@@ -19,7 +19,7 @@ r8169-3.4-ethercat.c
 ``` 
 is the modified driver for Realtek8169 family of network cards for kernel 3.4.x . Keep 3.4 in mind and move on to the next section (RTAI).  
 ___
-**Note:** Drivers for the more recent kernels are available on the [SourceForge repository](https://sourceforge.net/projects/etherlabmaster) and Gavin Lambert's [unofficial patchset](https://sourceforge.net/u/uecasm/etherlab-patches/ci/default/tree/#readme).  
+**Note:** Drivers for the more recent kernels are available in Gavin Lambert's [unofficial patchset](https://sourceforge.net/u/uecasm/etherlab-patches/ci/default/tree/#readme).  
 ___
 #### RTAI
 Now we should look for a version of RTAI that has a patch for kernel 3.4.x . The existence of .patch file should be checked by downloading the package and looking in the directory  
@@ -43,7 +43,7 @@ We use cURL for downloading RTAI and Linux kernel.
 ```bash
 apt-get install curl
 ```
-Kernels have to exist at '/usr/src', and we're going to download everything in that directory.
+Kernels have to exist at '/usr/src', and we're going to download everything to that directory.
 ```bash
 cd /usr/src
 ```
@@ -55,9 +55,9 @@ Download the associated kernel,
 ```bash
 curl -L https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.4.6.tar.xz | tar xJ
 ```
-We are going start from the default kernel configuration when building the RTAI-patched kernel. This way we'll be sure that the only cause of possbile failure in kernel boot process is the modification that **we** have made.
+When building the RTAI-patched kernel, we're going start from the default kernel configuration. That way we'll be sure that the only cause of possbile failure in kernel boot process is the modification that **we** have made.
 ___
-**Note:** Entering the right URL below requires a visit to http://kernel.ubuntu.com/~kernel-ppa/mainline.
+**Note:** Entering the correct URL below requires a visit to http://kernel.ubuntu.com/~kernel-ppa/mainline.
 ___
 ```bash
 curl -L http://kernel.ubuntu.com/~kernel-ppa/mainline/v3.4.6-quantal/linux-image-3.4.6-030406-generic_3.4.6-030406.201207191609_amd64.deb -o linux-image-3.4.6-generic-amd64.deb
@@ -66,7 +66,7 @@ Extract the .deb package. Unfortunately, dpkg doesn't support multithreading, so
 ```bash
 dpkg-deb -x linux-image-3.4.6-generic-amd64.deb linux-image-3.4.6-generic-amd64
 ```
-Install the dependencies. I'm not certain if this is the minimal set of dependencies and perhaps some could be removed, but these worked for me.
+Install the dependencies. I'm not certain if this is the minimal set of dependencies -perhaps some could be removed- but these worked for me.
 ```bash
 apt-get update
 ```
@@ -81,7 +81,7 @@ apt-get install docbook-xsl fop libncurses5 libpcre3 libpvm3 libquadmath0 libsax
 ```
 
 ### 3. Patch, configure, and build the kernel
-Replace the default .config file with the configuration file of the associated Ubuntu kernel,
+Replace the default Ubuntu .config file with the configuration file of the associated Ubuntu kernel,
 ```bash
 cp /usr/src/linux-image-3.4.6-generic-amd64/boot/config-3.4.6-030406-generic /usr/src/linux-3.4.6/.config
 ```
@@ -100,7 +100,7 @@ make menuconfig
 2. If you're using a 64-bit CPU: "Processor type and features > Processor family > Generic x86_64"
 3. Number of physical cores (i.e. don't account for hyperthreading): "Processor type and features > Maximum number of CPU’s > 2" (My PC had i3-4700, which has 2 physical cores)
 4. Disable “Processor type and features” > SMT (Hyperthreading) scheduler support”
-5. Enable “Processor type and features > Symmetric multi-processing support"
+5. Choose “Processor type and features > Timer frequency (1000 HZ)"
 6. Under “Power management and ACPI options”, disable anything that you can, including "CPU Frequency Scaling" and "CPU idle PM support".
 7. Under "Power management and ACPI options > ACPI", disable everything you're able to, except “Power Management Timer Support” and "Button".  
 8. Select "Exit" and save.  
@@ -121,7 +121,18 @@ dpkg -i linux-image-3.4.6-rtai_3.4.6-rtai-1_amd64.deb
 ```bash
 dpkg -i linux-headers-3.4.6-rtai_3.4.6-rtai-1_amd64.deb
 ```
-The bootloader should be automatically configured. Therefore, at this point, if we reboot, we can choose the RTAI kernel from Advanced Options.
+The bootloader should be automatically configured. Therefore, at this point, if we reboot, we can choose the RTAI kernel from Advanced Options.  
+If the new kernel is not added to the bootloader list, use the grub-customizer program,  
+```bash
+add-apt-repository ppa:danielrichter2007/grub-customizer
+apt-get update
+apt-get install grub-customizer
+```
+Run grub-customizer,
+In "General settings > default entry", under predefined, choose  
+```
+Advanced options for Ubuntu>Ubuntu, with Linux 3.4.113-rt145
+```
 ### 4. Install RTAI 
 ```bash
 cd /usr/src/rtai-4.0
@@ -184,6 +195,6 @@ cd /usr/realtime/testsuite/user/latency
 ./run
 ```
 ### 7. Install IgH EtherCAT Master
-See [IgH EtherCAT Master installation guide](https://github.com/mohse-n/L7N_EtherLab/blob/master/Installation%20guides/IgH%20Master%20Installation%20Guide.md).
+See [IgH EtherCAT Master installation guide](https://github.com/mohse-n/L7N_EtherLab/blob/master/Installation%20guides/IgH%20EtherCAT%20Master%20Installation%20Guide.md).
 ### Reinstalling RTAI 
 In case you needed to reinstall RTAI, delete "realtime" in /usr and repeat this guide from step 4.
