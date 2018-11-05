@@ -285,6 +285,7 @@ void stack_prefault(void)
 int main(int argc, char **argv)
 {
 	
+	/* SCHED_FIFO tasks are allowed to run until they have completed their work or voluntarily yields. */
 	struct sched_param param = {};
 	param.sched_priority = sched_get_priority_max(SCHED_FIFO);
 	printf("Using priority %i.\n", param.sched_priority);
