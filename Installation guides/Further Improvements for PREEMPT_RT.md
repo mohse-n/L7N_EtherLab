@@ -10,7 +10,7 @@ idle=poll processor.max_cstate=1
 ```
 isolcpus=1 nohz_full=1 rcu_nocbs=1
 ``` 
-and assign the process to core 1 by setting its affinity in the code (sched_setaffinity).
+and then assign a process to core 1 by setting its affinity in the code (sched_setaffinity).
 * isolcpus removes the specified CPUs, as defined by the cpu_number values, from the general kernel SMP balancing and scheduler algroithms. 
 The only way to move a process onto or off an "isolated" CPU is via the CPU affinity syscalls.  
 [How to isolcpus](https://unix.stackexchange.com/questions/326579/how-to-ensure-exclusive-cpu-availability-for-a-running-process)  
