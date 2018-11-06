@@ -331,7 +331,10 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	
-	/* SCHED_FIFO tasks are allowed to run until they have completed their work or voluntarily yields. */
+	/* SCHED_FIFO tasks are allowed to run until they have completed their work or voluntarily yield. */
+	/* Note that even the lowest priority realtime thread will be scheduled ahead of any thread with a non-realtime policy; 
+	   if only one realtime thread exists, the SCHED_FIFO priority value does not matter.
+	*/  
 	struct sched_param param = {};
 	param.sched_priority = sched_get_priority_max(SCHED_FIFO);
 	printf("Using priority %i.\n", param.sched_priority);
