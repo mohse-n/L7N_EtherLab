@@ -1,5 +1,5 @@
 /* For CPU_ZERO and CPU_SET macros */
-#include _GNU_SOURCE
+#define _GNU_SOURCE
 
 #include "ecrt.h"
 
@@ -317,7 +317,7 @@ int main(int argc, char **argv)
 	/* 0 for the first argument means set the affinity of the current process. */
 	/* Returns 0 on success. */
 	if (!sched_setaffinity(0, sizeof(set), &set))
-		printf("Setting CPU affinity failed!\n);
+		printf("Setting CPU affinity failed!\n");
 	
 	/* SCHED_FIFO tasks are allowed to run until they have completed their work or voluntarily yields. */
 	struct sched_param param = {};
@@ -527,9 +527,8 @@ int main(int argc, char **argv)
 	
 		ecrt_domain_queue(domain1);
 		
-		/* Note: Syncing master
 		/* Syncing reference slave to master:
-                   1- The master's clock is the reference.
+                   1- The master's (PC) clock is the reference.
 		   2- Sync the reference slave's clock to the master's.
 		   3- Sync the other slave clocks to the reference slave's.
 		*/
