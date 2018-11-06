@@ -30,6 +30,10 @@ Move into the source directory,
 cd ethercat
 ```
 ### 2. Install the library
+Install autoreconf
+```bash
+apt-get install autoreconf
+```
 Make the bootstrap file executable and generate the configure file.
 ```bash
 chmod +x bootstrap
