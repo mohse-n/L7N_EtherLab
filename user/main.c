@@ -1,3 +1,5 @@
+/* For CPU_ZERO and CPU_SET macros */
+#include _GNU_SOURCE
 
 #include "ecrt.h"
 
@@ -16,7 +18,7 @@
 #include <time.h>
 /* Header for handling signals (definition of SIGINT) */
 #include <signal.h>
-/* For using real-time scheduling policy (FIFO) */
+/* For using real-time scheduling policy (FIFO) and sched_setaffinity */
 #include <sched.h>
 /* For using uint32_t format specifier, PRIu32 */
 #include <inttypes.h>
@@ -46,7 +48,7 @@
 /* Measure the difference in reference slave's clock timstamp each cycle, and print the result. */
 /* Note: Only works with DC enabled. */
 #define MEASURE_TIMING
-#define LOOP_COMPENSATION 1
+#define LOOP_COMPENSATION 
 
 #define NSEC_PER_SEC (1000000000L)
 #define FREQUENCY 1000
@@ -259,7 +261,7 @@ inline struct timespec timespec_add(struct timespec* time1, struct timespec* tim
 	return result;
 }
 
-#if LOOP_COMPENSATION
+#ifdef LOOP_COMPENSATION
 /* result = time1 - time2 */
 inline struct timespec timespec_sub(struct timespec* time1, struct timespec* time2)
 {
@@ -306,6 +308,16 @@ void stack_prefault(void)
 
 int main(int argc, char **argv)
 {
+	
+	cpu_set_t set;
+	/* Clear set, so that it contains no CPUs. */
+	CPU_ZERO(&set);
+	/* Add CPU (core) 1 to the CPU set. */
+	CPU_SET(1, &set);
+	/* 0 for the first argument means set the affinity of the current process. */
+	/* Returns 0 on success. */
+	if (!sched_setaffinity(0, sizeof(set), &set))
+		printf("Setting CPU affinity failed!\n);
 	
 	/* SCHED_FIFO tasks are allowed to run until they have completed their work or voluntarily yields. */
 	struct sched_param param = {};
@@ -547,7 +559,7 @@ int main(int argc, char **argv)
 	
 	/* Sleep is how long we should sleep each loop to keep the cycle's frequency as close to cycleTime as possible. */ 
 	struct timespec sleepTime;
-	#if LOOP_COMPENSATION 
+	#ifdef LOOP_COMPENSATION 
 	struct timespec execTime, endTime;
 	#endif 	
 	
@@ -558,8 +570,9 @@ int main(int argc, char **argv)
 	
 	while (1)
 	{
-		#if LOOP_COMPENSATION
+		#ifdef LOOP_COMPENSATION
 		clock_gettime(CLOCK_MONOTONIC, &endTime);
+		/* wakeupTime is also start time of the loop. */
 		execTime = timespec_sub(&endTime, &wakeupTime);
 		/* Compensate for the execution time of the loop.
 	           For example, we should sleep for 0.98 msecs if we've already spent 0.02 msecs
