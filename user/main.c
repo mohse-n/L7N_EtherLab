@@ -45,14 +45,16 @@
 /* The maximum stack size which is guranteed safe to access without faulting. */       
 #define MAX_SAFE_STACK (8 * 1024) 
 
-/* Measure the difference in reference slave's clock timstamp each cycle, and print the result. */
+/* Uncomment to enable performance measurement. */
+/* Measure the difference in reference slave's clock timstamp each cycle, and print the result,
+   which should be as close to cycleTime as possible. */
 /* Note: Only works with DC enabled. */
-#define MEASURE_TIMING
+#define MEASURE_PERF
 
 /* Calculate the time it has taken to complete the loop, and sleep accordingly
    by substracting it from the desired cycle time (cycleTime)
 */
-//#define LOOP_COMPENSATION 
+#define MEASURE_TIMING 
 
 #define NSEC_PER_SEC (1000000000L)
 #define FREQUENCY 1000
@@ -263,7 +265,7 @@ inline void timespec_add(struct timespec* result, struct timespec* time1, struct
 
 }
 
-#ifdef LOOP_COMPENSATION
+#ifdef MEASURE_TIMING
 /* result = time1 - time2 */
 inline void timespec_sub(struct timespec* result, struct timespec* time1, struct timespec* time2)
 {
@@ -554,40 +556,38 @@ int main(int argc, char **argv)
 	
 	int32_t actPos0, targetPos0;
 	int32_t actPos1, targetPos1;
-	#ifdef MEASURE_TIMING
+	#ifdef MEASURE_PERF
 	/* The slave time received in the current and the previous cycle */
 	uint32_t t_cur, t_prev;
 	#endif
 	
 	/* Sleep is how long we should sleep each loop to keep the cycle's frequency as close to cycleTime as possible. */ 
 	struct timespec sleepTime;
-	#ifdef LOOP_COMPENSATION 
+	#ifdef MEASURE_TIMING 
 	struct timespec execTime, endTime;
 	#endif 	
 	
-	/* When the execution time of the loop is considered negligible. */
+	/* Wake up 1 msec after the start of the previous loop. */
 	sleepTime = cycleTime;
 	/* Update wakeupTime = current time */
 	clock_gettime(CLOCK_MONOTONIC, &wakeupTime);
 	
 	while (1)
 	{
-		#ifdef LOOP_COMPENSATION
+		#ifdef MEASURE_TIMING
 		clock_gettime(CLOCK_MONOTONIC, &endTime);
 		/* wakeupTime is also start time of the loop. */
 		/* execTime = endTime - wakeupTime */
 		timespec_sub(&execTime, &endTime, &wakeupTime);
-		/* Compensate for the execution time of the loop.
-	           For example, we should sleep for 0.98 msecs if we've already spent 0.02 msecs
-		   doing stuff in the loop, i.e.,
-		   sleepTime = cycleTime - execTime;
-		*/
-		timespec_sub(&sleepTime, &cycleTime, &execTime);
 		#endif
 		
 		/* wakeupTime = wakeupTime + sleepTime */
 		timespec_add(&wakeupTime, &wakeupTime, &sleepTime);
 		/* Sleep to adjust the update frequency */
+		/* Note: TIMER_ABSTIME flag is key in ensuring the execution with the desire frequency.
+		   Even if we don't apply LOOP_COMPENSATION, the sleep ends cycleTime (=1 msecs)
+		   after the start of the previous loop.
+		*/
 		clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &wakeupTime, NULL);
 		/* Fetches received frames from the newtork device and processes the datagrams. */
 		ecrt_master_receive(master);
@@ -598,7 +598,7 @@ int main(int argc, char **argv)
 		*/
 		ecrt_domain_process(domain1);
 		
-		#ifdef MEASURE_TIMING
+		#ifdef MEASURE_PERF
 		ecrt_master_reference_clock_time(master, &t_cur);
 		printf("%" PRIu32 "\n", t_cur - t_prev);
 		t_prev = t_cur;
