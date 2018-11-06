@@ -93,7 +93,7 @@ static int64_t  dc_adjust_ns;
     ((_val > 0) - (_val < 0)); })
 
 static uint64_t dc_start_time_ns = 0LL;
-z
+
 #endif
 
 ec_master_t* master;
