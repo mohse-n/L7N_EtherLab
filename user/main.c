@@ -493,7 +493,7 @@ int main(int argc, char **argv)
 	
 		ecrt_domain_queue(domain1);
 		
-		#ifdef SYNC_REF_TO_MASTER
+		
 		/* Syncing reference slave to master:
                    1- The master's clock is the reference.
 		   2- Sync the reference slave's clock to the master's.
@@ -511,22 +511,8 @@ int main(int argc, char **argv)
 		   All slave clocks will be synchronized to the reference slave clock.
 		*/
 		ecrt_master_sync_slave_clocks(master);
-		#endif
-		
-		#ifdef SYNC_MASTER_TO_REF
-		// sync distributed clock just before master_send to set
-     	        // most accurate master clock time
-                sync_distributed_clocks();
-		#endif
 		
 		ecrt_master_send(master);
-		
-		#ifdef SYNC_MASTER_TO_REF
-		// update the master clock
-     		// Note: called after ecrt_master_send() to reduce time
-                // jitter in the sync_distributed_clocks() call
-                update_master_clock();
-		#endif
 	
 	}
 	
