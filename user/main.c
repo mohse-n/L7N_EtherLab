@@ -90,7 +90,7 @@ static int64_t  dc_adjust_ns;
     ((_val > 0) - (_val < 0)); })
 
 static uint64_t dc_start_time_ns = 0LL;
-
+z
 #endif
 
 ec_master_t* master;
@@ -240,19 +240,19 @@ void initDrive(ec_master_t* master, uint16_t slavePos)
 /*****************************************************************************/
 
 /* Copy-pasted from dc_user/main.c */
-struct timespec timespec_add(struct timespec time1, struct timespec time2)
+inline struct timespec timespec_add(struct timespec* time1, struct timespec* time2)
 {
 	struct timespec result;
 
-	if ((time1.tv_nsec + time2.tv_nsec) >= NSEC_PER_SEC) 
+	if ((time1->tv_nsec + time2->tv_nsec) >= NSEC_PER_SEC) 
 	{
-		result.tv_sec = time1.tv_sec + time2.tv_sec + 1;
-		result.tv_nsec = time1.tv_nsec + time2.tv_nsec - NSEC_PER_SEC;
+		result.tv_sec = time1->tv_sec + time2->tv_sec + 1;
+		result.tv_nsec = time1->tv_nsec + time2->tv_nsec - NSEC_PER_SEC;
 	} 
 	else 
 	{
-		result.tv_sec = time1.tv_sec + time2.tv_sec;
-		result.tv_nsec = time1.tv_nsec + time2.tv_nsec;
+		result.tv_sec = time1->tv_sec + time2->tv_sec;
+		result.tv_nsec = time1->tv_nsec + time2->tv_nsec;
 	}
 
 	return result;
@@ -476,7 +476,7 @@ int main(int argc, char **argv)
 	while (1)
 	{
 		
-		wakeupTime = timespec_add(wakeupTime, cycleTime);
+		wakeupTime = timespec_add(&wakeupTime, &cycleTime);
 		clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &wakeupTime, NULL);
 		
 		ecrt_master_receive(master);
@@ -493,7 +493,7 @@ int main(int argc, char **argv)
 	
 		ecrt_domain_queue(domain1);
 		
-		
+		/* Note: Syncing master
 		/* Syncing reference slave to master:
                    1- The master's clock is the reference.
 		   2- Sync the reference slave's clock to the master's.
@@ -532,7 +532,7 @@ int main(int argc, char **argv)
 		/* Q: Why don't we call clock_gettime instead of assuming the previous cycle has exactly taken cycleTime? 
 		   A: Perhaps better performance (no systemcall in the loop). 
 		*/
-		wakeupTime = timespec_add(wakeupTime, cycleTime);
+		wakeupTime = timespec_add(&wakeupTime, &cycleTime);
 		/* Sleep to adjust the update frequency */
 		clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &wakeupTime, NULL);
 		/* Fetches received frames from the newtork device and processes the datagrams. */
