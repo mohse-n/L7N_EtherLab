@@ -316,7 +316,7 @@ int main(int argc, char **argv)
 	CPU_SET(1, &set);
 	/* 0 for the first argument means set the affinity of the current process. */
 	/* Returns 0 on success. */
-	if (!sched_setaffinity(0, sizeof(set), &set))
+	if (sched_setaffinity(0, sizeof(set), &set))
 		printf("Setting CPU affinity failed!\n");
 	
 	/* SCHED_FIFO tasks are allowed to run until they have completed their work or voluntarily yields. */
