@@ -46,6 +46,7 @@
 /* Measure the difference in reference slave's clock timstamp each cycle, and print the result. */
 /* Note: Only works with DC enabled. */
 #define MEASURE_TIMING
+#define LOOP_COMPENSATION 1
 
 #define NSEC_PER_SEC (1000000000L)
 #define FREQUENCY 1000
@@ -239,7 +240,7 @@ void initDrive(ec_master_t* master, uint16_t slavePos)
 
 /*****************************************************************************/
 
-/* Copy-pasted from dc_user/main.c */
+/* result = time1 + time2 */
 inline struct timespec timespec_add(struct timespec* time1, struct timespec* time2)
 {
 	struct timespec result;
@@ -257,6 +258,27 @@ inline struct timespec timespec_add(struct timespec* time1, struct timespec* tim
 
 	return result;
 }
+
+#if LOOP_COMPENSATION
+/* result = time1 - time2 */
+inline struct timespec timespec_sub(struct timespec* time1, struct timespec* time2)
+{
+	struct timespec result;
+
+	if ((time1->tv_nsec - time2->tv_nsec) < 0) 
+	{
+		result.tv_sec = time1->tv_sec - time2->tv_sec - 1;
+		result.tv_nsec = NSEC_PER_SEC - (time1->tv_nsec - time2->tv_nsec);
+	} 
+	else 
+	{
+		result.tv_sec = time1->tv_sec - time2->tv_sec;
+		result.tv_nsec = time1->tv_nsec - time2->tv_nsec;
+	}
+
+	return result;
+}
+#endif
 
 /*****************************************************************************/
 
@@ -523,16 +545,31 @@ int main(int argc, char **argv)
 	uint32_t t_cur, t_prev;
 	#endif
 	
+	/* Sleep is how long we should sleep each loop to keep the cycle's frequency as close to cycleTime as possible. */ 
+	struct timespec sleepTime;
+	#if LOOP_COMPENSATION 
+	struct timespec execTime, endTime;
+	#endif 	
+	
+	/* When the execution time of the loop is considered negligible. */
+	sleepTime = cycleTime;
 	/* Update wakeupTime = current time */
 	clock_gettime(CLOCK_MONOTONIC, &wakeupTime);
 	
 	while (1)
 	{
-		/* Wake up at wakeupTime + cycleTime. */
-		/* Q: Why don't we call clock_gettime instead of assuming the previous cycle has exactly taken cycleTime? 
-		   A: Perhaps better performance (no systemcall in the loop). 
+		#if LOOP_COMPENSATION
+		clock_gettime(CLOCK_MONOTONIC, &endTime);
+		execTime = timespec_sub(&endTime, &wakeupTime);
+		/* Compensate for the execution time of the loop.
+	           For example, we should sleep for 0.98 msecs if we've already spent 0.02 msecs
+		   doing stuff in the loop, i.e.,
+		   sleepTime = cycleTime - execTime;
 		*/
-		wakeupTime = timespec_add(&wakeupTime, &cycleTime);
+		sleepTime = timespec_sub(&cycleTime, &execTime);
+		#endif
+		
+		wakeupTime = timespec_add(&wakeupTime, &sleepTime);
 		/* Sleep to adjust the update frequency */
 		clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &wakeupTime, NULL);
 		/* Fetches received frames from the newtork device and processes the datagrams. */
