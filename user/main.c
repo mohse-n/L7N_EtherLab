@@ -48,7 +48,11 @@
 /* Measure the difference in reference slave's clock timstamp each cycle, and print the result. */
 /* Note: Only works with DC enabled. */
 #define MEASURE_TIMING
-#define LOOP_COMPENSATION 
+
+/* Calculate the time it has taken to complete the loop, and sleep accordingly
+   by substracting it from the desired cycle time (cycleTime)
+*/
+//#define LOOP_COMPENSATION 
 
 #define NSEC_PER_SEC (1000000000L)
 #define FREQUENCY 1000
@@ -243,42 +247,38 @@ void initDrive(ec_master_t* master, uint16_t slavePos)
 /*****************************************************************************/
 
 /* result = time1 + time2 */
-inline struct timespec timespec_add(struct timespec* time1, struct timespec* time2)
+inline void timespec_add(struct timespec* result, struct timespec* time1, struct timespec* time2)
 {
-	struct timespec result;
 
 	if ((time1->tv_nsec + time2->tv_nsec) >= NSEC_PER_SEC) 
 	{
-		result.tv_sec = time1->tv_sec + time2->tv_sec + 1;
-		result.tv_nsec = time1->tv_nsec + time2->tv_nsec - NSEC_PER_SEC;
+		result->tv_sec  = time1->tv_sec + time2->tv_sec + 1;
+		result->tv_nsec = time1->tv_nsec + time2->tv_nsec - NSEC_PER_SEC;
 	} 
 	else 
 	{
-		result.tv_sec = time1->tv_sec + time2->tv_sec;
-		result.tv_nsec = time1->tv_nsec + time2->tv_nsec;
+		result->tv_sec  = time1->tv_sec + time2->tv_sec;
+		result->tv_nsec = time1->tv_nsec + time2->tv_nsec;
 	}
 
-	return result;
 }
 
 #ifdef LOOP_COMPENSATION
 /* result = time1 - time2 */
-inline struct timespec timespec_sub(struct timespec* time1, struct timespec* time2)
+inline void timespec_sub(struct timespec* result, struct timespec* time1, struct timespec* time2)
 {
-	struct timespec result;
 
 	if ((time1->tv_nsec - time2->tv_nsec) < 0) 
 	{
-		result.tv_sec = time1->tv_sec - time2->tv_sec - 1;
-		result.tv_nsec = NSEC_PER_SEC - (time1->tv_nsec - time2->tv_nsec);
+		result->tv_sec  = time1->tv_sec - time2->tv_sec - 1;
+		result->tv_nsec = NSEC_PER_SEC - (time1->tv_nsec - time2->tv_nsec);
 	} 
 	else 
 	{
-		result.tv_sec = time1->tv_sec - time2->tv_sec;
-		result.tv_nsec = time1->tv_nsec - time2->tv_nsec;
+		result->tv_sec  = time1->tv_sec - time2->tv_sec;
+		result->tv_nsec = time1->tv_nsec - time2->tv_nsec;
 	}
 
-	return result;
 }
 #endif
 
@@ -317,7 +317,10 @@ int main(int argc, char **argv)
 	/* 0 for the first argument means set the affinity of the current process. */
 	/* Returns 0 on success. */
 	if (sched_setaffinity(0, sizeof(set), &set))
+	{
 		printf("Setting CPU affinity failed!\n");
+		return -1;
+	}
 	
 	/* SCHED_FIFO tasks are allowed to run until they have completed their work or voluntarily yields. */
 	struct sched_param param = {};
@@ -510,7 +513,7 @@ int main(int argc, char **argv)
 	while (1)
 	{
 		
-		wakeupTime = timespec_add(&wakeupTime, &cycleTime);
+		timespec_add(&wakeupTime, &wakeupTime, &cycleTime);
 		clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &wakeupTime, NULL);
 		
 		ecrt_master_receive(master);
@@ -572,16 +575,18 @@ int main(int argc, char **argv)
 		#ifdef LOOP_COMPENSATION
 		clock_gettime(CLOCK_MONOTONIC, &endTime);
 		/* wakeupTime is also start time of the loop. */
-		execTime = timespec_sub(&endTime, &wakeupTime);
+		/* execTime = endTime - wakeupTime */
+		timespec_sub(&execTime, &endTime, &wakeupTime);
 		/* Compensate for the execution time of the loop.
 	           For example, we should sleep for 0.98 msecs if we've already spent 0.02 msecs
 		   doing stuff in the loop, i.e.,
 		   sleepTime = cycleTime - execTime;
 		*/
-		sleepTime = timespec_sub(&cycleTime, &execTime);
+		timespec_sub(&sleepTime, &cycleTime, &execTime);
 		#endif
 		
-		wakeupTime = timespec_add(&wakeupTime, &sleepTime);
+		/* wakeupTime = wakeupTime + sleepTime */
+		timespec_add(&wakeupTime, &wakeupTime, &sleepTime);
 		/* Sleep to adjust the update frequency */
 		clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &wakeupTime, NULL);
 		/* Fetches received frames from the newtork device and processes the datagrams. */
