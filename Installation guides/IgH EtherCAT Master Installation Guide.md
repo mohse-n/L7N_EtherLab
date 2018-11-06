@@ -6,28 +6,23 @@ ___
 2. RTAI   
 3. IgH EtherCAT Master 
 
+or, alternatively
+
+1. kernel-PREEMPT_RT
+2. IgH EtherCAT Master 
+
 This guide describes the last step in the process.
 ___
 ### 1. Download the library
 Download the snapshot of 1.5-stable branch from [here](https://sourceforge.net/p/etherlabmaster/code/ci/stable-1.5/tree/). I got the snapshot at commit 336936.
 Extract and rename the folder to ethercat-1.5.2.
-Move the folder to /usr/local/src. Here I'm assuming you have extracted it in the home directory.
+Move the folder to /usr/local/src. Here I'm assuming you have extracted it in the home directory, and named it stable-1.5.
 ```bash
 sudo -s
 ```
-```bash
-mv ethercat-1.5.2 /usr/local/src/
-```
-Just for convenience (typing "ethercat" instead of "ethercat-1.5.2"), create a symbolic link,
-```bash
-cd /usr/local/src
-```
-```bash
-ln -s ethercat-1.5.2 ethercat
-```
 Move into the source directory,
 ```bash
-cd ethercat
+cd ~/stable-1.5
 ```
 ### 2. Install the library
 Install a few build tools
@@ -93,7 +88,8 @@ The field in front of DEVICE_MODULES is the name of the driver which the master 
 ```bash
 DEVICE_MODULES=“r8619"
 ```
-___
+press ctrl+x to save and exit.
+__
 **Note:** If your network card isn't supported by EtherLab, or EtherLab doesn't support your kernel version, DEVICE_MODULES=“generic".  
 ___
 Copy the initilization script,
@@ -103,11 +99,11 @@ cd /opt/etherlab
 ```bash
 cp ./etc/init.d/ethercat /etc/init.d/
 ```
-Give execution permission to all groups,
+Give execution permission (for starting and stopping the ethercat master module) to all groups,
 ```bash
 sudo chmod a+x /etc/init.d/ethercat
 ```
-Make the ethercat command line tool available,
+Make the ethercat command line tools (for example, $ethercat slaves) available,
 ```bash
 sudo ln -s /opt/etherlab/bin/ethercat /usr/local/bin/ethercat
 ```
@@ -120,6 +116,7 @@ And add the following line to it,
 ```bash
 KERNEL=="EtherCAT[0-9]*", MODE="0664"
 ```
+Press ctrl+x to save and exit.
 At this point, you should be able to start the master,
 ```bash
 sudo /etc/init.d/ethercat start
