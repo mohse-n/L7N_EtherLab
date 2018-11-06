@@ -1,6 +1,8 @@
 /* For CPU_ZERO and CPU_SET macros */
 #define _GNU_SOURCE
 
+/*****************************************************************************/
+
 #include "ecrt.h"
 
 /*****************************************************************************/
@@ -51,10 +53,10 @@
 /* Note: Only works with DC enabled. */
 #define MEASURE_PERF
 
-/* Calculate the time it has taken to complete the loop, and sleep accordingly
-   by substracting it from the desired cycle time (cycleTime)
-*/
+/* Calculate the time it took to complete the loop. */
 #define MEASURE_TIMING 
+
+#define SET_CPU_AFFINITY
 
 #define NSEC_PER_SEC (1000000000L)
 #define FREQUENCY 1000
@@ -248,6 +250,7 @@ void initDrive(ec_master_t* master, uint16_t slavePos)
 
 /*****************************************************************************/
 
+/* Add two timespec structures (time1 and time2), store the the result in result. */
 /* result = time1 + time2 */
 inline void timespec_add(struct timespec* result, struct timespec* time1, struct timespec* time2)
 {
@@ -266,6 +269,7 @@ inline void timespec_add(struct timespec* result, struct timespec* time1, struct
 }
 
 #ifdef MEASURE_TIMING
+/* Substract two timespec structures (time1 and time2), store the the result in result.
 /* result = time1 - time2 */
 inline void timespec_sub(struct timespec* result, struct timespec* time1, struct timespec* time2)
 {
@@ -311,11 +315,14 @@ void stack_prefault(void)
 int main(int argc, char **argv)
 {
 	
+	#ifdef SET_CPU_AFFINITY
 	cpu_set_t set;
 	/* Clear set, so that it contains no CPUs. */
 	CPU_ZERO(&set);
 	/* Add CPU (core) 1 to the CPU set. */
 	CPU_SET(1, &set);
+	#endif
+	
 	/* 0 for the first argument means set the affinity of the current process. */
 	/* Returns 0 on success. */
 	if (sched_setaffinity(0, sizeof(set), &set))
