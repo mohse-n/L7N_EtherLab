@@ -1,3 +1,5 @@
+**Note:** A great resource for different aspects of tuning a real-time linux is [Red Hat Tuning Guide](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/). In particualr, the entirety of chapter 2 is definitely worth a look.
+
 ## Kernel Boot Parameters
 1. Prevent the CPU from going to sleep by
 ```
