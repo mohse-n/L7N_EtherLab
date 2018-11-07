@@ -15,12 +15,13 @@ idle=poll processor.max_cstate=1
 * [UT Blog: Briefly mentions processor.max_cstate](https://utcc.utoronto.ca/~cks/space/blog/linux/KernelRcuNocbsMeaning)  
 2. Isolate a core (here core 1) for running only one task (tickless)
 ```
-isolcpus=1 nohz_full=1 rcu_nocbs=1
+isolcpus=1 nohz=on nohz_full=1 rcu_nocbs=1 intel_pstate=disable nosoftlockup
 ``` 
 and then assign a process to core 1 by setting its affinity in the code (sched_setaffinity).
 * isolcpus removes the specified CPUs, as defined by the cpu_number values, from the general kernel SMP balancing and scheduler algroithms. 
 The only way to move a process onto or off an "isolated" CPU is via the CPU affinity syscalls.
 ### References
+* [Red Hat: Addional info on the parameters](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/system_partitioning)
 * [Answer on Unix Stack Exchange: How to isolcpus](https://unix.stackexchange.com/questions/326579/how-to-ensure-exclusive-cpu-availability-for-a-running-process)  
 * [Steven Rostedt Talk, nohz_full and rcu_nocbs, see 39:45](https://www.youtube.com/watch?v=wAX3jOHHhn0&t=2306s)  
 * [UT blog: Explains rcu_nocbs](https://utcc.utoronto.ca/~cks/space/blog/linux/KernelRcuNocbsMeaning)  
