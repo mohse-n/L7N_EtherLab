@@ -157,4 +157,4 @@ make clean
 ````bash
 make mrproper
 `````
-With this method, your progress revert to the start of step 3 (default kernel config, no patch applied).
+With this method, your progress revert back to the start of step 3. (default kernel config, no patch applied)
