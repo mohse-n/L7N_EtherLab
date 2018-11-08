@@ -65,7 +65,7 @@ skew_tick=1
 ```
 * [Red Hat: Suggests skew_tick=1](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/reduce_cpu_performance_spikes)
 * [Also on Red Hat's Bugzilla](https://bugzilla.redhat.com/show_bug.cgi?id=1451073)
-#### 3. Prevent IRQ Handling
+### Prevent IRQ Handling
 Continuing along the CPU isolation patch, we can delegate interrupt handling to our CPU of choice.
 Disable irqbalance daemon, which distributes IRQ handling among CPUs.
 ```bash
@@ -91,7 +91,7 @@ ___
 ##### References
 * [Red Hat: Interrupt and Process Binding](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/interrupt_and_process_binding)
 * [IRQBALANCE_BANNED_CPUS explained](https://fordodone.com/2015/04/30/irqbalance_banned_cpus-explained-and-working-on-ubuntu-14-04/)
-#### 3. Set Various Kernel Parameters in /etc/sysctl.conf  
+### Set Various Kernel Parameters in /etc/sysctl.conf  
 The sysctl command is used to modify kernel parameters at runtime. /etc/sysctl.conf is a text file containing sysctl values to be read in and set by sysct at boot time. ([Source](https://www.cyberciti.biz/faq/linux-kernel-etcsysctl-conf-security-hardening/))
 We set the value of the following parameters, as recommended by Red Hat.
 * kernel.hung_task_timeout_secs = 600: Sets timeout after a task is considered hanging to 600 seconds.
