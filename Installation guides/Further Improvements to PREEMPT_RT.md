@@ -30,9 +30,31 @@ isolcpus=1 nohz=on nohz_full=1 rcu_nocbs=1 rcu_nocb_poll intel_pstate=disable no
 We will later assign a process to core 1 by setting its affinity in the code (via sched_setaffinity).
 * isolcpus removes the specified CPUs, as defined by the cpu_number values, from the general kernel SMP balancing and scheduler algroithms. 
 The only way to move a process onto or off an "isolated" CPU is via the CPU affinity syscalls.
+___
+**Note:** To list the paramerts passed by the bootloader to the kernel,
+```bash
+cat /proc/cmdline
+``` 
+___
+**Note:** The "C" column in the output of these commands shows on which CPU the process is running. The first command displays that for userspace processes only, whereas the second command also lists kernel space threads.
+```bash
+ps -aF
+``` 
+```bash
+ps -eF
+``` 
+Therefore, with the parameters of this section in effect, there shouldn't be any process listed by the command above with "C" = 1.
+___
+**Note:** We can check whether the isolated CPU is running in tickless mode by looking at the number of "Local timer interrupts" that it handles. Either that figure should not increase at all (ideal) or it should increase by 1 per second ([turns out achieving the ideal rate of zero is not trivial](https://lwn.net/Articles/659490/)) . To list the total number of interrupts handled by each CPU,
+```bash
+cat /proc/interrupts
+``` 
+In my experience, CPU 1 -which doesn't start with any processes with our configuration- started with 1 tick per second, but unfortunately, once assigned a process (with sched_setaffinity in the user example), the scheduler ticks increased to some number in 250-300 range (the tick rate is adaptive, after all). 
+This behaviour is something worth investigating.
 ### References
 * [Red Hat: Addional info on the parameters used for system partitioning](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/system_partitioning)
 * [Red Hat: Offloading RCU Callbacks](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/offloading_rcu_callbacks)
+* [Kernel NO_HZ documentation](https://www.kernel.org/doc/Documentation/timers/NO_HZ.txt). The interesting part (for us) starts from "OMIT SCHEDULING-CLOCK TICKS FOR IDLE CPUs".
 * [Answer on Unix Stack Exchange: How to isolcpus](https://unix.stackexchange.com/questions/326579/how-to-ensure-exclusive-cpu-availability-for-a-running-process)  
 * [Steven Rostedt's talk, nohz_full and rcu_nocbs, see 39:45](https://www.youtube.com/watch?v=wAX3jOHHhn0&t=2306s)  
 * [UT blog: Explains rcu_nocbs](https://utcc.utoronto.ca/~cks/space/blog/linux/KernelRcuNocbsMeaning)  
