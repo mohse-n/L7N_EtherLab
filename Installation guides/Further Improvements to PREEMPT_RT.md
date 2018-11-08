@@ -116,6 +116,13 @@ vm.stat_interval = 10
 * [What does an NMI watchdog do?](https://unix.stackexchange.com/questions/353895/should-i-disable-nmi-watchdog-permanently-or-not)
 * [Real-time Linux from a Basic Perspective: Real-time Throttling](http://linuxrealtime.org/index.php/Basic_Linux_from_a_Real-Time_Perspective)
 * [Kernel documentation: vm](https://www.kernel.org/doc/Documentation/sysctl/vm.txt)
+### Load Dynamic Libraries at Application Startup
+Although it can slow down program initialization, it is one way to avoid non-deterministic latencies during program execution.
+```bash
+LD_BIND_NOW=1
+export LD_BIND_NOW
+``` 
+
 
 
 
