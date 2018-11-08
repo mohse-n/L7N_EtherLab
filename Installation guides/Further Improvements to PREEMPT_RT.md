@@ -6,7 +6,7 @@ The documentation consists of:
 ## Ubuntu Installation
 Install Ubuntu with ext2 file system.
 #### References
-
+* [Red Hat: File System Determinism Tips](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/file_system_determinism_tips)  
 ## Kernel Boot Parameters
 Certain operating system configuration options are only tunable via the kernel command line.  
 ### 1. Disable CPU power saving mode
