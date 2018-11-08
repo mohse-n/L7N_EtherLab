@@ -65,7 +65,7 @@ skew_tick=1
 ```
 * [Red Hat: Suggests skew_tick=1](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/reduce_cpu_performance_spikes)
 * [Also on Red Hat's Bugzilla](https://bugzilla.redhat.com/show_bug.cgi?id=1451073)
-### Prevent IRQ Handling
+### 3. Prevent IRQ Handling
 Continuing along the CPU isolation patch, we can delegate interrupt handling to our CPU of choice.
 Disable irqbalance daemon, which distributes IRQ handling among CPUs.
 ```bash
@@ -80,9 +80,45 @@ And to exclude CPU 1 from handling IRQs,
 IRQ_BALANCE_BANNED_CPUS="2"
 ```
 The second reference explains for why we set the value to "2".
-### References
+___
+**Note:** With the setting above,
+```bash
+cat /proc/interrupts
+``` 
+should be 0 -or at least constant- for all entries corresponding the CPU 1. However, in my setup there has been two exceptions, namely "Local timer interrupt" (discussed above) and "Function call interrupt". The latter case is strange, as the number of instances increased for CPU 1 and stayed constant at 0 for CPU 0.    
+"Function call interrupt" is seemingly an (Intel) architecture-specific interrupt, and there might not be much we can do about it.
+___
+## References
 * [Red Hat: Interrupt and Process Binding](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/interrupt_and_process_binding)
 * [IRQBALANCE_BANNED_CPUS explained](https://fordodone.com/2015/04/30/irqbalance_banned_cpus-explained-and-working-on-ubuntu-14-04/)
+### 3. Set Various Kernel Parameters in /etc/sysctl.conf  
+The sysctl command is used to modify kernel parameters at runtime. /etc/sysctl.conf is a text file containing sysctl values to be read in and set by sysct at boot time. ([Source](https://www.cyberciti.biz/faq/linux-kernel-etcsysctl-conf-security-hardening/))
+We set the value of the following parameters, as recommended by Red Hat.
+* kernel.hung_task_timeout_secs = 600: Sets timeout after a task is considered hanging to 600 seconds.
+* kernel.nmi_watchdog = 0: Disables NMI's (non-maskabled interrupts) watchdog
+* kernel.sched_rt_runtime_us = 1000000: Disable real-time throttling. In other words, dedicate 100% of CPU time to the real-time tasks, until the finish or yield.
+* vm.stat_interval = 10: Increase the time interval between which vm (virtual memory) statistics are updated to 10 seconds. The default
+is 1 second.
+```bash
+nano /etc/sysctl.conf
+``` 
+Add somewhere,
+```
+kernel.hung_task_timeout_secs = 600
+kernel.nmi_watchdog = 0
+kernel.sched_rt_runtime_us = 1000000
+vm.stat_interval = 10
+``` 
+## References
+* [Red Hat: System Partitioning](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/system_partitioning) is where these settings are recommended.
+* [Explains kernel timeout](https://www.nico.schottelius.org/blog/reboot-linux-if-task-blocked-for-more-than-n-seconds/)
+* [What does an NMI watchdog do?](https://unix.stackexchange.com/questions/353895/should-i-disable-nmi-watchdog-permanently-or-not)
+* [Real-time Linux from a Basic Perspective: Real-time Throttling](http://linuxrealtime.org/index.php/Basic_Linux_from_a_Real-Time_Perspective)
+* [Kernel documentation: vm](https://www.kernel.org/doc/Documentation/sysctl/vm.txt)
+
+
+
+
 
 
 
