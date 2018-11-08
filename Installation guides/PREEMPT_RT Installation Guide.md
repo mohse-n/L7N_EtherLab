@@ -135,6 +135,26 @@ bash ./mklatencyplot.bash
 You can let the test finish its run, or stop it at any time. Either way, a 'plot.png' file will be generated in the same directory as the script's, showing a histogram of the latencies of each CPU (core) and the maximum latency. 
 ### 5. Install IgH EtherCAT Master
 See [IgH EtherCAT Master installation guide](https://github.com/mohse-n/L7N_EtherLab/blob/master/Installation%20guides/IgH%20EtherCAT%20Master%20Installation%20Guide.md).
-### Reinstalling the kernel 
-???
-
+### Reinstalling the kernel
+```bash
+cd /usr/src/linux-3.4.113
+````bash
+make clean
+`````
+In "usr/src", delete any folder and .deb file associated with 3.4.113-rt145.
+In "/boot", delete any file associated with 3.4.113-rt145.
+If you would like to change the configuration, 
+```bash
+make menuconfig
+```
+and follow the next steps in this guide. 
+___
+**Note**: If you want to undo the patch and configuration steps, instead of 
+````bash
+make clean
+`````
+, use 
+````bash
+make mrproper
+`````
+With this method, your progress revert to the start of step 3 (default kernel config, no patch applied).
