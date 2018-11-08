@@ -54,10 +54,12 @@ ___
 cat /proc/interrupts
 ``` 
 In my experience, CPU 1 -which doesn't start with any processes with our configuration- started with 1 tick per second, but unfortunately, once assigned a process (with sched_setaffinity in the user example), the scheduler ticks increased to some number in 250-300 range (the tick rate is adaptive, after all). 
-This behaviour is something worth investigating. 
+This behaviour is something worth investigating.    
 One possiblity: maybe it's due to 3.4.113 not having a CONFIG_NO_HZ_FULL option, in contrast to newer kernels? Note that in the [kernel documentation](https://www.kernel.org/doc/Documentation/timers/NO_HZ.txt),   
+
 * for CONFIG_NO_HZ=y, which is the only option on 3.4: "Omit scheduling-clock ticks on idle CPUs"
-* for CONFIG_NO_HZ_FULL=y, which is not available on 3.4: "Omit scheduling-clock ticks on CPUs that are either idle **or that have only one runnable task.**"
+* for CONFIG_NO_HZ_FULL=y, which is not available on 3.4: "Omit scheduling-clock ticks on CPUs that are either idle **or that have only one runnable task.**"  
+
 **References**   
 * [Red Hat: Addional info on the parameters used for system partitioning](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/system_partitioning)
 * [Red Hat: Offloading RCU Callbacks](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/offloading_rcu_callbacks)
