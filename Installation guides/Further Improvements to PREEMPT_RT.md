@@ -3,7 +3,7 @@ I've found [the documentation for "Red Hat Enterprise Linux for Real Time"](http
 The documentation consists of:  
 * [Red Hat's guide to real-time programming](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/reference_guide/pref-preface).
 * A guide to tuning aspects of a real-time linux system is [Red Hat Tuning Guide](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/). In particular, the entirety of [chapter 2](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/chap-general_system_tuning#Using_the_Tuna_interface) is definitely worth a look.
-* [Improving the Real-Time Properties](http://linuxrealtime.org/index.php/Improving_the_Real-Time_Properties) is a collection of best practices that covers much of the same ground as the tuning guide by Red Hat, but it does recommend different values for a few parameters.
+* [Improving the Real-Time Properties](http://linuxrealtime.org/index.php/Improving_the_Real-Time_Properties) is a collection of best practices that covers much of the same ground as the tuning guide by Red Hat (and perhaps a bit more), but it does recommend different values for a few parameters.
 ### Ubuntu Installation
 Install Ubuntu with ext2 file system.
 ##### References
@@ -120,8 +120,12 @@ vm.stat_interval = 10
 Although it can slow down program initialization, it is one way to avoid non-deterministic latencies during program execution.
 ```bash
 LD_BIND_NOW=1
+``` 
+```bash
 export LD_BIND_NOW
 ``` 
+##### References
+* [Red Hat: Loading Dynamic Libraries](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/loading_dynamic_libraries)
 
 
 
