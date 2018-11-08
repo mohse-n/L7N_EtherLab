@@ -7,7 +7,7 @@ The documentation consists of:
 Install Ubuntu with ext2 file system.
 ##### References
 * [Red Hat: File System Determinism Tips](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/file_system_determinism_tips)  
-## BIOS Settings
+### BIOS Settings
 Disable any power saving feature.
 ##### References
 * [Red Hat: Setting BIOS parameters](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_MRG/1.3/html/Realtime_Tuning_Guide/sect-Realtime_Tuning_Guide-General_System_Tuning-Setting_BIOS_parameters.html)
