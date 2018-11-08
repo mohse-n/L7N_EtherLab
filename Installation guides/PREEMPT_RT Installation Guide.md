@@ -56,7 +56,7 @@ ___
 ```bash
 curl -L http://kernel.ubuntu.com/~kernel-ppa/mainline/v3.4.113/linux-image-3.4.113-0304113-generic_3.4.113-0304113.201610261546_amd64.deb -o linux-image-3.4.113-generic-amd64.deb
 ```
-Extract the .deb package. Unfortunately, dpkg doesn't support multithreading, so this and similar steps might take longer than you expect.
+Extract the .deb package. 
 ```bash
 dpkg-deb -x linux-image-3.4.113-generic-amd64.deb linux-image-3.4.113-generic-amd64
 ```
@@ -92,7 +92,7 @@ make menuconfig
 ___
 **Note:** Also worth checking are the various guides and recommendations for the optimal kernel configuration in linuxcnc website and forum.
 ___
-Now we should be able to compile the kernel. Note that since many, many device drivers are enabled and will be compiled, the installation process takes a significant amount of time (with i3-4700, it takes about an hour).
+Now we should be able to compile the kernel. Note that since many, many device drivers are enabled and will be compiled, and, additionally, since dpkg doesn't support multithreading, the installation process takes a significant amount of time (with i3-4700, it takes about an hour).
 ```bash
 make -j `getconf _NPROCESSORS_ONLN` deb-pkg 
 ```
