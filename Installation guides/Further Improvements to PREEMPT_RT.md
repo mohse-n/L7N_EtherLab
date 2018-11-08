@@ -22,7 +22,7 @@ idle=poll processor.max_cstate=1
 * [Red Hat: Describes what RCU does in one sentence](https://access.redhat.com/solutions/2260151)   
 * [Red Hat: Recommends above parameters](https://access.redhat.com/articles/65410)  
 * [UT Blog: Briefly mentions processor.max_cstate](https://utcc.utoronto.ca/~cks/space/blog/linux/KernelRcuNocbsMeaning) 
-### 2. Partition the CPUs
+### 2. Parameters for CPU Isolation
 Isolate a core (here core 1) for running only one task and offload housekeeping tasks from that CPU. 
 ```
 isolcpus=1 nohz=on nohz_full=1 rcu_nocbs=1 rcu_nocb_poll intel_pstate=disable nosoftlockup 
@@ -37,26 +37,27 @@ The only way to move a process onto or off an "isolated" CPU is via the CPU affi
 * [Steven Rostedt's talk, nohz_full and rcu_nocbs, see 39:45](https://www.youtube.com/watch?v=wAX3jOHHhn0&t=2306s)  
 * [UT blog: Explains rcu_nocbs](https://utcc.utoronto.ca/~cks/space/blog/linux/KernelRcuNocbsMeaning)  
 * Search nosoftlockup in [this](https://access.redhat.com/sites/default/files/attachments/201501-perf-brief-low-latency-tuning-rhel7-v1.1.pdf) Red Hat document.   
-
 The skew_tick=1 parameter causes the kernel to program each CPU's tick timer to fire at different times, avoiding any possible lock contention.
 ```
 skew_tick=1 
 ```
 * [Red Hat: Suggests skew_tick=1](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/reduce_cpu_performance_spikes)
 * [Also on Red Hat's Bugzilla](https://bugzilla.redhat.com/show_bug.cgi?id=1451073)
+### Prevent IRQ Handling
+Continuing along the CPU isolation patch, we can delegate interrupt handling to our CPU of choice.
 Disable irqbalance daemon, which distributes IRQ handling among CPUs.
 ```bash
 nano /etc/default/irqbalance
 ```
-in this file, add (or set)
+in this file, to disable the daemon, add (or set)
 ```
 ENABLED="0"
 ```
-to disable the daemon, and
+And to exclude CPU 1 from handling IRQs,
 ```
 IRQ_BALANCE_BANNED_CPUS="2"
 ```
-to exclude CPU 1 from handling IRQs. The second reference explains for why we set the value to "2".
+The second reference explains for why we set the value to "2".
 ### References
 * [Red Hat: Interrupt and Process Binding](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/interrupt_and_process_binding)
 * [IRQBALANCE_BANNED_CPUS explained](https://fordodone.com/2015/04/30/irqbalance_banned_cpus-explained-and-working-on-ubuntu-14-04/)
