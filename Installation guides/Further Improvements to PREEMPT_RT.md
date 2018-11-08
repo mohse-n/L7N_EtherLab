@@ -96,7 +96,7 @@ The sysctl command is used to modify kernel parameters at runtime. /etc/sysctl.c
 We set the value of the following parameters, as recommended by Red Hat.
 * kernel.hung_task_timeout_secs = 600: Sets timeout after a task is considered hanging to 600 seconds.
 * kernel.nmi_watchdog = 0: Disables NMI's (non-maskabled interrupts) watchdog
-* kernel.sched_rt_runtime_us = 1000000: Disable real-time throttling. In other words, dedicate 100% of CPU time to the real-time tasks, until the finish or yield.
+* kernel.sched_rt_runtime_us = 1000000: Disable real-time throttling. In other words, dedicate 100% of CPU time to the real-time tasks, until the finish or yield. This is OK as long as the RT task are running on isolated cores.
 * vm.stat_interval = 10: Increase the time interval between which vm (virtual memory) statistics are updated to 10 seconds. The default
 is 1 second.
 ```bash
