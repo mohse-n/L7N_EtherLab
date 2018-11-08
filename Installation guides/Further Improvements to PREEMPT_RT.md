@@ -13,13 +13,13 @@ Certain operating system configuration options are only tunable via the kernel c
 ```
 idle=poll processor.max_cstate=1
 ``` 
-* Limiting the CPU to C1 at most doesn't allow for much idling and power saving.  
+* Limiting the CPU to C1 power mode doesn't allow for much idling and power saving.  
 #### References
 * [Red Hat: Describes what RCU does in one sentence](https://access.redhat.com/solutions/2260151)   
 * [Red Hat: Recommends above parameters](https://access.redhat.com/articles/65410)  
 * [UT Blog: Briefly mentions processor.max_cstate](https://utcc.utoronto.ca/~cks/space/blog/linux/KernelRcuNocbsMeaning) 
 ### 2. Partition the CPUs
-Isolate a core (here core 1) for running only one task and offload housekeeping tasks from that CPU (system partitioning)  
+Isolate a core (here core 1) for running only one task and offload housekeeping tasks from that CPU. 
 ```
 isolcpus=1 nohz=on nohz_full=1 rcu_nocbs=1 rcu_nocb_poll intel_pstate=disable nosoftlockup 
 ``` 
