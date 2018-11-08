@@ -44,5 +44,22 @@ skew_tick=1
 ```
 * [Red Hat: Suggests skew_tick=1](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/reduce_cpu_performance_spikes)
 * [Also on Red Hat's Bugzilla](https://bugzilla.redhat.com/show_bug.cgi?id=1451073)
+Disable irqbalance daemon, which distributes IRQ handling among CPUs.
+```bash
+nano /etc/default/irqbalance
+```
+in this file, add (or set)
+```
+ENABLED="0"
+```
+to disable the daemon, and
+```
+IRQ_BALANCE_BANNED_CPUS="2"
+```
+to exclude CPU 1 from handling IRQs. The second reference explains for why we set the value to "2".
+### References
+* [Red Hat: Interrupt and Process Binding](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/interrupt_and_process_binding)
+* [IRQBALANCE_BANNED_CPUS explained](https://fordodone.com/2015/04/30/irqbalance_banned_cpus-explained-and-working-on-ubuntu-14-04/)
+
 
 
