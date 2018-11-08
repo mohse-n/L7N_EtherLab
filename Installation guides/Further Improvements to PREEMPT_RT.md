@@ -5,12 +5,12 @@ The documentation consists of:
 * A guide to tuning aspects of a real-time linux system is [Red Hat Tuning Guide](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/). In particular, the entirety of [chapter 2](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/chap-general_system_tuning#Using_the_Tuna_interface) is definitely worth a look.
 * [Improving the Real-Time Properties](http://linuxrealtime.org/index.php/Improving_the_Real-Time_Properties) is a collection of best practices that covers much of the same ground as the tuning guide by Red Hat (and perhaps a bit more), but it does recommend different values for a few parameters.
 ### Ubuntu Installation
-Install Ubuntu with ext2 file system.
-##### References
+Install Ubuntu with ext2 file system.   
+**References**    
 * [Red Hat: File System Determinism Tips](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/file_system_determinism_tips)  
 ### BIOS Settings
-Disable any power saving feature.
-##### References
+Disable any power saving feature.   
+**References**     
 * [Red Hat: Setting BIOS parameters](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_MRG/1.3/html/Realtime_Tuning_Guide/sect-Realtime_Tuning_Guide-General_System_Tuning-Setting_BIOS_parameters.html)
 ### Kernel Boot Parameters
 Certain operating system configuration options are only tunable via the kernel command line.  
@@ -18,8 +18,8 @@ Certain operating system configuration options are only tunable via the kernel c
 ```
 idle=poll processor.max_cstate=1
 ``` 
-* Limiting the CPU to C1 power mode doesn't allow for much idling and power saving.  
-##### References
+* Limiting the CPU to C1 power mode doesn't allow for much idling and power saving.     
+**References**   
 * [Red Hat: Describes what RCU does in one sentence](https://access.redhat.com/solutions/2260151)   
 * [Red Hat: Recommends above parameters](https://access.redhat.com/articles/65410)  
 * [UT Blog: Briefly mentions processor.max_cstate](https://utcc.utoronto.ca/~cks/space/blog/linux/KernelRcuNocbsMeaning) 
@@ -51,8 +51,8 @@ ___
 cat /proc/interrupts
 ``` 
 In my experience, CPU 1 -which doesn't start with any processes with our configuration- started with 1 tick per second, but unfortunately, once assigned a process (with sched_setaffinity in the user example), the scheduler ticks increased to some number in 250-300 range (the tick rate is adaptive, after all). 
-This behaviour is something worth investigating.
-##### References
+This behaviour is something worth investigating.   
+**References**   
 * [Red Hat: Addional info on the parameters used for system partitioning](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/system_partitioning)
 * [Red Hat: Offloading RCU Callbacks](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/offloading_rcu_callbacks)
 * [Kernel NO_HZ documentation](https://www.kernel.org/doc/Documentation/timers/NO_HZ.txt). The interesting part (for us) starts from "OMIT SCHEDULING-CLOCK TICKS FOR IDLE CPUs".
@@ -64,6 +64,7 @@ The skew_tick=1 parameter causes the kernel to program each CPU's tick timer to 
 ```
 skew_tick=1 
 ```
+**References**   
 * [Red Hat: Suggests skew_tick=1](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/reduce_cpu_performance_spikes)
 * [Also on Red Hat's Bugzilla](https://bugzilla.redhat.com/show_bug.cgi?id=1451073)
 ### Prevent IRQ Handling
@@ -89,7 +90,7 @@ cat /proc/interrupts
 should be 0 -or at least constant- for all entries corresponding the CPU 1. However, in my setup there has been two exceptions, namely "Local timer interrupt" (discussed above) and "Function call interrupt". The latter case is strange, as the number of instances increased for CPU 1 and stayed constant at 0 for CPU 0.    
 "Function call interrupt" is seemingly an (Intel) architecture-specific interrupt, and there might not be much we can do about it.
 ___
-##### References
+**References**    
 * [Red Hat: Interrupt and Process Binding](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/interrupt_and_process_binding)
 * [IRQBALANCE_BANNED_CPUS explained](https://fordodone.com/2015/04/30/irqbalance_banned_cpus-explained-and-working-on-ubuntu-14-04/)
 ### Set Various Kernel Parameters in /etc/sysctl.conf  
@@ -110,7 +111,7 @@ kernel.nmi_watchdog = 0
 kernel.sched_rt_runtime_us = 1000000
 vm.stat_interval = 10
 ``` 
-##### References
+**References**   
 * [Red Hat: System Partitioning](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/system_partitioning) is where these settings are recommended.
 * [Explains kernel timeout](https://www.nico.schottelius.org/blog/reboot-linux-if-task-blocked-for-more-than-n-seconds/)
 * [What does an NMI watchdog do?](https://unix.stackexchange.com/questions/353895/should-i-disable-nmi-watchdog-permanently-or-not)
@@ -124,7 +125,7 @@ LD_BIND_NOW=1
 ```bash
 export LD_BIND_NOW
 ``` 
-##### References
+**References**    
 * [Red Hat: Loading Dynamic Libraries](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/loading_dynamic_libraries)
 
 
