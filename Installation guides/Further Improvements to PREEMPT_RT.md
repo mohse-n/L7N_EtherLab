@@ -23,7 +23,7 @@ Isolate a core (here core 1) for running only one task and offload housekeeping 
 ```
 isolcpus=1 nohz=on nohz_full=1 rcu_nocbs=1 rcu_nocb_poll intel_pstate=disable nosoftlockup 
 ``` 
-We will later assign a process to core 1 by setting its affinity in the code (sched_setaffinity).
+We will later assign a process to core 1 by setting its affinity in the code (via sched_setaffinity).
 * isolcpus removes the specified CPUs, as defined by the cpu_number values, from the general kernel SMP balancing and scheduler algroithms. 
 The only way to move a process onto or off an "isolated" CPU is via the CPU affinity syscalls.
 ### References
