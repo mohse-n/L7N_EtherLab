@@ -1,28 +1,28 @@
-## General Resources
+### General Resources
 I've found [the documentation for "Red Hat Enterprise Linux for Real Time"](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/) to be extremely well-organized and useful.   
 The documentation consists of:  
 * [Red Hat's guide to real-time programming](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/reference_guide/pref-preface).
 * A guide to tuning aspects of a real-time linux system is [Red Hat Tuning Guide](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/). In particular, the entirety of [chapter 2](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/chap-general_system_tuning#Using_the_Tuna_interface) is definitely worth a look.
-## Ubuntu Installation
+### Ubuntu Installation
 Install Ubuntu with ext2 file system.
-#### References
+##### References
 * [Red Hat: File System Determinism Tips](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/file_system_determinism_tips)  
 ## BIOS Settings
 Disable any power saving feature.
-#### References
+##### References
 * [Red Hat: Setting BIOS parameters](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_MRG/1.3/html/Realtime_Tuning_Guide/sect-Realtime_Tuning_Guide-General_System_Tuning-Setting_BIOS_parameters.html)
-## Kernel Boot Parameters
+### Kernel Boot Parameters
 Certain operating system configuration options are only tunable via the kernel command line.  
-### 1. Disable CPU power saving mode
+#### 1. Disable CPU power saving mode
 ```
 idle=poll processor.max_cstate=1
 ``` 
 * Limiting the CPU to C1 power mode doesn't allow for much idling and power saving.  
-#### References
+##### References
 * [Red Hat: Describes what RCU does in one sentence](https://access.redhat.com/solutions/2260151)   
 * [Red Hat: Recommends above parameters](https://access.redhat.com/articles/65410)  
 * [UT Blog: Briefly mentions processor.max_cstate](https://utcc.utoronto.ca/~cks/space/blog/linux/KernelRcuNocbsMeaning) 
-### 2. Parameters for CPU Isolation
+#### 2. Parameters for CPU Isolation
 Isolate a core (here core 1) for running only one task and offload housekeeping tasks from that CPU. 
 ```
 isolcpus=1 nohz=on nohz_full=1 rcu_nocbs=1 rcu_nocb_poll intel_pstate=disable nosoftlockup 
@@ -51,7 +51,7 @@ cat /proc/interrupts
 ``` 
 In my experience, CPU 1 -which doesn't start with any processes with our configuration- started with 1 tick per second, but unfortunately, once assigned a process (with sched_setaffinity in the user example), the scheduler ticks increased to some number in 250-300 range (the tick rate is adaptive, after all). 
 This behaviour is something worth investigating.
-### References
+##### References
 * [Red Hat: Addional info on the parameters used for system partitioning](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/system_partitioning)
 * [Red Hat: Offloading RCU Callbacks](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/offloading_rcu_callbacks)
 * [Kernel NO_HZ documentation](https://www.kernel.org/doc/Documentation/timers/NO_HZ.txt). The interesting part (for us) starts from "OMIT SCHEDULING-CLOCK TICKS FOR IDLE CPUs".
@@ -65,7 +65,7 @@ skew_tick=1
 ```
 * [Red Hat: Suggests skew_tick=1](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/reduce_cpu_performance_spikes)
 * [Also on Red Hat's Bugzilla](https://bugzilla.redhat.com/show_bug.cgi?id=1451073)
-### 3. Prevent IRQ Handling
+#### 3. Prevent IRQ Handling
 Continuing along the CPU isolation patch, we can delegate interrupt handling to our CPU of choice.
 Disable irqbalance daemon, which distributes IRQ handling among CPUs.
 ```bash
@@ -88,10 +88,10 @@ cat /proc/interrupts
 should be 0 -or at least constant- for all entries corresponding the CPU 1. However, in my setup there has been two exceptions, namely "Local timer interrupt" (discussed above) and "Function call interrupt". The latter case is strange, as the number of instances increased for CPU 1 and stayed constant at 0 for CPU 0.    
 "Function call interrupt" is seemingly an (Intel) architecture-specific interrupt, and there might not be much we can do about it.
 ___
-## References
+##### References
 * [Red Hat: Interrupt and Process Binding](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/interrupt_and_process_binding)
 * [IRQBALANCE_BANNED_CPUS explained](https://fordodone.com/2015/04/30/irqbalance_banned_cpus-explained-and-working-on-ubuntu-14-04/)
-### 3. Set Various Kernel Parameters in /etc/sysctl.conf  
+#### 3. Set Various Kernel Parameters in /etc/sysctl.conf  
 The sysctl command is used to modify kernel parameters at runtime. /etc/sysctl.conf is a text file containing sysctl values to be read in and set by sysct at boot time. ([Source](https://www.cyberciti.biz/faq/linux-kernel-etcsysctl-conf-security-hardening/))
 We set the value of the following parameters, as recommended by Red Hat.
 * kernel.hung_task_timeout_secs = 600: Sets timeout after a task is considered hanging to 600 seconds.
@@ -109,7 +109,7 @@ kernel.nmi_watchdog = 0
 kernel.sched_rt_runtime_us = 1000000
 vm.stat_interval = 10
 ``` 
-## References
+##### References
 * [Red Hat: System Partitioning](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/system_partitioning) is where these settings are recommended.
 * [Explains kernel timeout](https://www.nico.schottelius.org/blog/reboot-linux-if-task-blocked-for-more-than-n-seconds/)
 * [What does an NMI watchdog do?](https://unix.stackexchange.com/questions/353895/should-i-disable-nmi-watchdog-permanently-or-not)
