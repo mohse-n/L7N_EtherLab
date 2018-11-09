@@ -5,12 +5,12 @@ The documentation consists of:
 * A guide to tuning aspects of a real-time linux system is [Red Hat Tuning Guide](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/). In particular, the entirety of [chapter 2](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/chap-general_system_tuning#Using_the_Tuna_interface) is definitely worth a look.
 * [Improving the Real-Time Properties](http://linuxrealtime.org/index.php/Improving_the_Real-Time_Properties) is a collection of best practices that covers much of the same ground as the tuning guide by Red Hat (and perhaps a bit more), but it does recommend different values for a few parameters.
 ### Ubuntu Installation
-Install Ubuntu with ext2 file system.   
+Install Ubuntu with `ext2` file system.   
 
 **References**    
 * [Red Hat: File System Determinism Tips](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/file_system_determinism_tips)  
 ### BIOS Settings
-Disable any power saving feature.   
+Disable any power saving features.   
 
 **References**     
 * [Red Hat: Setting BIOS parameters](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_MRG/1.3/html/Realtime_Tuning_Guide/sect-Realtime_Tuning_Guide-General_System_Tuning-Setting_BIOS_parameters.html)
@@ -20,7 +20,7 @@ Certain operating system configuration options are only tunable via the kernel c
 ```
 idle=poll processor.max_cstate=1
 ``` 
-* Limiting the CPU to C1 power mode doesn't allow for much idling and power saving.    
+* Limiting the CPU to `C1` power mode doesn't allow for much idling and power saving.    
 
 **References**   
 * [Red Hat: Describes what RCU does in one sentence](https://access.redhat.com/solutions/2260151)   
@@ -31,8 +31,8 @@ Isolate a core (here core 1) for running only one task and offload housekeeping 
 ```
 isolcpus=1 nohz=on nohz_full=1 rcu_nocbs=1 rcu_nocb_poll intel_pstate=disable nosoftlockup 
 ``` 
-We will later assign a process to core 1 by setting its affinity in the code (via sched_setaffinity).
-* isolcpus removes the specified CPUs, as defined by the cpu_number values, from the general kernel SMP balancing and scheduler algroithms. 
+We will later assign a process to core 1 by setting its affinity in the code (via `sched_setaffinity`).
+* `isolcpus` removes the specified CPUs, from the general kernel SMP balancing and scheduler algroithms. 
 The only way to move a process onto or off an "isolated" CPU is via the CPU affinity syscalls.
 ___
 **Note:** To list the paramerts passed by the bootloader to the kernel,
@@ -40,25 +40,25 @@ ___
 cat /proc/cmdline
 ``` 
 ___
-**Note:** The "C" column in the output of these commands shows on which CPU the process is running. The first command displays that for userspace processes only, whereas the second command also lists kernel space threads.
+**Note:** The `C` column in the output of these commands shows on which CPU the process is running. The first command displays that for userspace processes only, whereas the second command also lists kernel space threads.
 ```bash
 ps -aF
 ``` 
 ```bash
 ps -eF
 ``` 
-Therefore, with the parameters of this section in effect, there shouldn't be any process listed by the command above with "C" = 1.
+Therefore, with the parameters of this section in effect, there shouldn't be any process listed by the command above with `C` = 1.
 ___
-**Note:** We can check whether the isolated CPU is running in tickless mode by looking at the number of "Local timer interrupts" that it handles. Either that figure should not increase at all (ideal) or it should increase by 1 per second ([turns out achieving the ideal rate of zero is not trivial](https://lwn.net/Articles/659490/)) . To list the total number of interrupts handled by each CPU,
+**Note:** We can check whether the isolated CPU is running in tickless mode by looking at the number of `Local timer interrupts` that it handles. Either that figure should not increase at all (ideal) or it should increase by 1 per second ([turns out achieving the ideal rate of zero is not trivial](https://lwn.net/Articles/659490/)) . To list the total number of interrupts handled by each CPU,
 ```bash
 cat /proc/interrupts
 ``` 
-In my experience, CPU 1 -which doesn't start with any processes with our configuration- started with 1 tick per second, but unfortunately, once assigned a process (with sched_setaffinity in the user example), the scheduler ticks increased to some number in 250-300 range (the tick rate is adaptive, after all). 
+In my experience, CPU 1 -which doesn't start with any processes with our configuration- started with 1 tick per second, but unfortunately, once assigned a process (with `sched_setaffinity` in the user example), the scheduler ticks increased to some number in 250-300 range (the tick rate is adaptive, after all). 
 This behaviour is something worth investigating.    
-One possiblity: maybe it's due to 3.4.113 not having a CONFIG_NO_HZ_FULL option, in contrast to newer kernels? Note that in the [kernel documentation](https://www.kernel.org/doc/Documentation/timers/NO_HZ.txt),   
+One possiblity: maybe it's due to 3.4.113 not having a `CONFIG_NO_HZ_FULL` option, in contrast to newer kernels? Note that in the [kernel documentation](https://www.kernel.org/doc/Documentation/timers/NO_HZ.txt),   
 
-* for CONFIG_NO_HZ=y, which is the only option on 3.4: "Omit scheduling-clock ticks on idle CPUs"
-* for CONFIG_NO_HZ_FULL=y, which is not available on 3.4: "Omit scheduling-clock ticks on CPUs that are either idle **or that have only one runnable task.**"  
+* for `CONFIG_NO_HZ=y`, which is the only option on 3.4: "Omit scheduling-clock ticks on idle CPUs"
+* for `CONFIG_NO_HZ_FULL=y`, which is not available on 3.4: "Omit scheduling-clock ticks on CPUs that are either idle **or that have only one runnable task.**"  
 
 **References**   
 * [Red Hat: Addional info on the parameters used for system partitioning](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/system_partitioning)
@@ -68,7 +68,7 @@ One possiblity: maybe it's due to 3.4.113 not having a CONFIG_NO_HZ_FULL option,
 * [Steven Rostedt's talk, nohz_full and rcu_nocbs, see 39:45](https://www.youtube.com/watch?v=wAX3jOHHhn0&t=2306s)  
 * [UT blog: Explains rcu_nocbs](https://utcc.utoronto.ca/~cks/space/blog/linux/KernelRcuNocbsMeaning)  
 * Search nosoftlockup in [this](https://access.redhat.com/sites/default/files/attachments/201501-perf-brief-low-latency-tuning-rhel7-v1.1.pdf) Red Hat document.   
-The skew_tick=1 parameter causes the kernel to program each CPU's tick timer to fire at different times, avoiding any possible lock contention.
+The `skew_tick=1` parameter causes the kernel to program each CPU's tick timer to fire at different times, avoiding any possible lock contention.
 ```
 skew_tick=1 
 ```
@@ -77,7 +77,7 @@ skew_tick=1
 * [Also on Red Hat's Bugzilla](https://bugzilla.redhat.com/show_bug.cgi?id=1451073)
 ### Prevent IRQ Handling
 Continuing along the CPU isolation patch, we can delegate interrupt handling to our CPU of choice.
-Disable irqbalance daemon, which distributes IRQ handling among CPUs.
+Disable `irqbalance` daemon, which distributes IRQ handling among CPUs.
 ```bash
 nano /etc/default/irqbalance
 ```
@@ -95,19 +95,19 @@ ___
 ```bash
 cat /proc/interrupts
 ``` 
-should be 0 -or at least constant- for all entries corresponding the CPU 1. However, in my setup there has been two exceptions, namely "Local timer interrupt" (discussed above) and "Function call interrupt". The latter case is strange, as the number of instances increased for CPU 1 and stayed constant at 0 for CPU 0.    
-"Function call interrupt" is seemingly an (Intel) architecture-specific interrupt, and there might not be much we can do about it.
+should be 0 -or at least constant- for all entries corresponding the CPU 1. However, in my setup there has been two exceptions, namely `Local timer interrupt` (discussed above) and `Function call interrupt`. The latter case is strange, as the number of instances increased for CPU 1 and stayed constant at 0 for CPU 0.    
+`Function call interrupt` is seemingly an (Intel) architecture-specific interrupt, and there might not be much we can do about it.
 ___
 **References**    
 * [Red Hat: Interrupt and Process Binding](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/interrupt_and_process_binding)
 * [IRQBALANCE_BANNED_CPUS explained](https://fordodone.com/2015/04/30/irqbalance_banned_cpus-explained-and-working-on-ubuntu-14-04/)
 ### Set Various Kernel Parameters in /etc/sysctl.conf  
-The sysctl command is used to modify kernel parameters at runtime. /etc/sysctl.conf is a text file containing sysctl values to be read in and set by sysct at boot time. ([Source](https://www.cyberciti.biz/faq/linux-kernel-etcsysctl-conf-security-hardening/))
+The sysctl command is used to modify kernel parameters at runtime. `/etc/sysctl.conf` is a text file containing sysctl values to be read in and set by sysct at boot time. ([Source](https://www.cyberciti.biz/faq/linux-kernel-etcsysctl-conf-security-hardening/))
 We set the value of the following parameters, as recommended by Red Hat.
-* kernel.hung_task_timeout_secs = 600: Sets timeout after a task is considered hanging to 600 seconds.
-* kernel.nmi_watchdog = 0: Disables NMI's (non-maskabled interrupts) watchdog
-* kernel.sched_rt_runtime_us = 1000000: Disable real-time throttling. In other words, dedicate 100% of CPU time to the real-time tasks, until the finish or yield. This is OK as long as the RT task are running on isolated cores.
-* vm.stat_interval = 10: Increase the time interval between which vm (virtual memory) statistics are updated to 10 seconds. The default
+* `kernel.hung_task_timeout_secs = 600`: Sets timeout after a task is considered hanging to 600 seconds.
+* `kernel.nmi_watchdog = 0`: Disables NMI's (non-maskabled interrupts) watchdog
+* `kernel.sched_rt_runtime_us = 1000000`: Disable real-time throttling. In other words, dedicate 100% of CPU time to the real-time tasks, until the finish or yield. This is OK as long as the RT task are running on isolated cores.
+* `vm.stat_interval = 10`: Increase the time interval between which vm (virtual memory) statistics are updated to 10 seconds. The default
 is 1 second.
 ```bash
 nano /etc/sysctl.conf
