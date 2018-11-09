@@ -10,7 +10,7 @@ Additionally, in [Installation guides](https://github.com/mohse-n/L7N_EtherLab/t
 and a few [suggestions for optimizing the performance of PREEMPT_RT](https://github.com/mohse-n/L7N_EtherLab/blob/master/Installation%20guides/Further%20Improvements%20to%20PREEMPT_RT.md).    
 ___
 To run the programs, after installing the IgH Master library, copy-and-replace each in the `examples` folder, and 
-1. For the user example, in `~/stable-1.5/examples/usr",
+1. For the user example, in `~/stable-1.5/examples/usr`,
    - `make clean`
    - `make` 
    - `./ec_user_example` to run the userspace process. 
