@@ -14,9 +14,8 @@ or, alternatively
 This guide describes the last step in the process.
 ___
 ### 1. Download the library
-Download the snapshot of 1.5-stable branch from [here](https://sourceforge.net/p/etherlabmaster/code/ci/stable-1.5/tree/). I got the snapshot at commit 336936.
-Extract and rename the folder to ethercat-1.5.2.
-Move the folder to /usr/local/src. Here I'm assuming you have extracted it in the home directory, and named it stable-1.5.
+Download the snapshot of `stable-1.5` branch from [here](https://sourceforge.net/p/etherlabmaster/code/ci/stable-1.5/tree/). I got the snapshot at commit 336936.
+Here I'm assuming you have extracted it in the home directory, and named it `stable-1.5`.
 ```bash
 sudo -s
 ```
@@ -29,14 +28,14 @@ Install a few build tools
 ```bash
 apt-get install autoconf libtool
 ```
-Make the bootstrap file executable and generate the configure file.
+Make `bootstrap` file executable and generate the configure file.
 ```bash
 chmod +x bootstrap
 ```
 ```bash
 ./bootstrap
 ```
-Make the configure file executable.
+Make `configure` file executable.
 ```bash
 chmod +x configure
 ```
@@ -44,9 +43,9 @@ Configure the Makefile.
 ___
 **Note:** We're going to use the modified Realtek8169 driver. Hence, the "--enable-r8169" option.   
 ___
-**Note:** We're also going to write LXRT programs (RTAI in user space).Therefore, "--enable-rtdm".  
+**Note:** If you're not going to write LXRT programs (RTAI in user space) ignore "--enable-rtdm".  
 ___
-**Note:** Be sure to apply the last option if have installed RTAI in /usr/realtime. If it's installed in a different directory, adjust the specified path accordingly. If you don't intend to compile RTAI codes at all, ignore this option.   
+**Note:** Be sure to apply the last option if have installed RTAI in `/usr/realtime`. If it's installed in a different directory, adjust the specified path accordingly. If you don't intend to compile RTAI codes at all, ignore this option.   
 ___
 **Note:** See IgH EtherCAT Master 1.5.2 documentation for other options.
 ___
@@ -70,7 +69,7 @@ make modules_install
 depmod
 ```
 ### 3. Configure the master
-There are some parameters associated with the master module (e.g. NIC MAC address, driver to use). We specify these in a file we put in /etc/sysconfig. 
+There are some parameters associated with the master module (e.g. NIC MAC address, driver to use). We specify these in a file `/etc/sysconfig`. 
 ```bash
 sudo mkdir /etc/sysconfig/
 ```
@@ -80,17 +79,17 @@ sudo cp /opt/etherlab/etc/sysconfig/ethercat /etc/sysconfig/
 ```bash
 sudo nano /etc/sysconfig/ethercat
 ```
-Run "ifconfig" (in another terminal) and copy the MAC address of eth0. Paste it between the quotes in front of MASTER0_DEVICE.  
+Run `ifconfig` (in another terminal) and copy the MAC address of `eth0`. Paste it between the quotes in front of `MASTER0_DEVICE`.  
 ```bash
 MASTER0_DEVICE="00:05:9a:3c:7a:00"
 ```
-The field in front of DEVICE_MODULES is the name of the driver which the master modules will use. Since we compiled with --enable-r8169, we will use the modified r8169 driver for the best performance. 
+The field in front of `DEVICE_MODULES` is the name of the driver which the master modules will use. Since we compiled with `--enable-r8169`, we will use the modified r8169 driver for the best performance. 
 ```bash
 DEVICE_MODULES=“r8619"
 ```
-press ctrl+x to save and exit.
+Press ctrl+x to save and exit.
 __
-**Note:** If your network card isn't supported by EtherLab, or EtherLab doesn't support your kernel version, DEVICE_MODULES=“generic".  
+**Note:** If your network card isn't supported by EtherLab, or EtherLab doesn't support your kernel version, `DEVICE_MODULES=“generic"`.  
 ___
 Copy the initilization script,
 ```bash
@@ -103,12 +102,12 @@ Give execution permission (for starting and stopping the ethercat master module)
 ```bash
 sudo chmod a+x /etc/init.d/ethercat
 ```
-Make the ethercat command line tools (for example, $ethercat slaves) available,
+Make the ethercat command line tools (for example, `$ethercat slaves`) available,
 ```bash
 sudo ln -s /opt/etherlab/bin/ethercat /usr/local/bin/ethercat
 ```
 The ethercat command line tool communicates with the master module as a character device, and we're going to give "normal" (non-root) users access to this device (thus enabling users to use command line tools).
-Create 99-EtherCAT.rules file,
+Create `99-EtherCAT.rules`,
 ```bash
 nano /etc/udev/rules.d/99-EtherCAT.rules
 ```
@@ -122,17 +121,17 @@ At this point, you should be able to start the master,
 sudo /etc/init.d/ethercat start
 ```
 ### Extra notes
-**Note:** To view the kernel log, either open /var/log/syslog with a text editor or
+**Note:** To view the kernel log, either open `/var/log/syslog` with a text editor or
 ```bash
 tail -f -n 10 /var/log/syslog
 ```
-To view the 10 latest kernel messages (printed with printk). Additionally,
+To view the 10 latest kernel messages (printed with `printk`). Additionally,
 ```bash
 dmesg
 ```
 also outputs the last kernel messages.
 ___
-**Note:** In case you needed to reinstall the package, delete "ethercat" and "ethercat-1.5.2" in /usr/local/src and "etherlab" in /opt. Then follow the installation guide up to (and including) the "depmod" step. (Obviously, to install another version, deleting "ethercat" and "ethercat-1.5.2" is **not** required)
+**Note:** In case you needed to reinstall the package, `make mrproper` in `~/stable-1.5` and delete `etherlab` in `/opt`. Then follow the installation guide up to (and including) the `depmod` step. (Obviously, to install another version, `make mrproper` in the current version's folder is not necessary.)
 ___
 **Note:** To enable debug messages (in kernel log),
 ```bash
