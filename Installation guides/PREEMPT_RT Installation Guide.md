@@ -10,7 +10,7 @@ There are two versions to take into account when determining the kernel version:
 #### Igh EtherCAT Master
 Since we're going to write IgH EtherCAT Master (from here on called IgH Master) programs, we consider its version first and proceed accordingly. 
 The lastest stable version of the library can be downloaded from the [SourceForge repository.](https://sourceforge.net/p/etherlabmaster/code/ci/stable-1.5/tree/). 
-Looking at the "devices" folder, we can see the modified (and original) drivers and their associated kernel versions.
+Looking at the `devices` folder, we can see the modified (and original) drivers and their associated kernel versions.
 For instance,  
 ```
 r8169-3.4-ethercat.c  
@@ -24,7 +24,7 @@ Now we should look for a version of 3.4.x kernel for which a PREEMPT_RT patch is
 ```
 https://mirrors.edge.kernel.org/pub/linux/kernel/projects/rt/
 ``` 
-In '/3.4' directory, the only available patch is that of kernel 3.4.113.
+In `/3.4` directory, the only available patch is that of kernel 3.4.113.
 ```
 patch-3.4.113-rt145.patch.xz   
 ```
@@ -41,7 +41,7 @@ We use cURL for downloading the Linux kernel.
 ```bash
 apt-get install curl
 ```
-Kernels have to exist at '/usr/src', and we're going to download everything to that directory.
+Kernels have to exist at `/usr/src`, and we're going to download everything to that directory.
 ```bash
 cd /usr/src
 ```
@@ -80,15 +80,15 @@ Now we're ready to configure the kernel.
 ```bash
 make menuconfig
 ```
-1. Enable “Processor type and features > Symmetric multi-processing support"
-2. If you're using a 64-bit CPU: "Processor type and features > Processor family > Generic x86_64"
-3. Number of physical cores (i.e. not accounting for hyperthreading): "Processor type and features > Maximum number of CPU’s > 2" (My CPU was i3-4700, which has 2 physical cores)
-4. Disable “Processor type and features > SMT (Hyperthreading) scheduler support”
-5. Choose "Preemption Model > Fully Preemtible Kernel (RT)"
-6. Choose “Processor type and features > Timer frequency (1000 HZ)" (**Note:** With "Tickless System (Dynamic Ticks)" enabled, the timer interrupt frequency will be adaptive and this option only specified its maximum value)
-7. Under “Power management and ACPI options”, disable anything that you can, including "CPU Frequency Scaling", "CPU idle PM support", and anything listed under "Memory power savings".
-8. Under "Power management and ACPI options > ACPI", disable everything you're able to, except “Power Management Timer Support” and "Button".  
-9. Select "Exit" and save.  
+1. Enable `Processor type and features > Symmetric multi-processing support`
+2. If you're using a 64-bit CPU: `Processor type and features > Processor family > Generic x86_64`
+3. Number of physical cores (i.e. not accounting for hyperthreading): `Processor type and features > Maximum number of CPU’s > 2` (My CPU was i3-4700, which has 2 physical cores)
+4. Disable `Processor type and features > SMT (Hyperthreading) scheduler support`
+5. Choose `Preemption Model > Fully Preemtible Kernel (RT)`
+6. Choose `Processor type and features > Timer frequency (1000 HZ)` (**Note:** With `Tickless System (Dynamic Ticks)` enabled, the timer interrupt frequency will be adaptive and this option only specified its maximum value)
+7. Under `Power management and ACPI options`, disable anything that you can, including `CPU Frequency Scaling`, `CPU idle PM support`, and anything listed under `Memory power savings`.
+8. Under `Power management and ACPI options > ACPI`, disable everything you're able to, except `Power Management Timer Support` and `Button`.  
+9. Select `Exit` and save.  
 ___
 **Note:** Also worth checking are the various guides and recommendations for the optimal kernel configuration in linuxcnc website and forum.
 ___
@@ -107,32 +107,32 @@ dpkg -i linux-image-3.4.113-rt145_3.4.113-rt145-2_amd64.deb
 dpkg -i linux-headers-3.4.113-rt145_3.4.113-rt145-2_amd64.deb
 ```
 The bootloader should be automatically configured. Therefore, at this point, if we reboot, we can choose the RTAI kernel from Advanced Options.  
-If the new kernel is not added to the bootloader list, use the grub-customizer program,  
+If the new kernel is not added to the bootloader list, use `grub-customizer`
 ```bash
 add-apt-repository ppa:danielrichter2007/grub-customizer
 apt-get update
 apt-get install grub-customizer
 ```
-Run grub-customizer,
-In "General settings > default entry", under predefined, choose  
+Run `grub-customizer`.
+In `General settings > default entry`, under predefined, choose  
 ```
 Advanced options for Ubuntu>Ubuntu, with Linux 3.4.113-rt145
 ```
 ### 4. Run the latency test
-Install gnuplot
+Install `gnuplot`
 ```bash
 sudo apt-get install gnuplot
 ```
-Install rt-tests (for using cyclictest)  
+Install `rt-tests` (for using `cyclictest`)  
 ```bash
 sudo apt-get install rt-tests
 ```
-Download the bash script 'mklatencyplot.bash' from [here](http://www.osadl.org/Create-a-latency-plot-from-cyclictest-hi.bash-script-for-latency-plot.0.html).  
+Download the bash script `mklatencyplot.bash` from [here](http://www.osadl.org/Create-a-latency-plot-from-cyclictest-hi.bash-script-for-latency-plot.0.html).  
 As root, 
 ```bash
 bash ./mklatencyplot.bash
 ```
-You can let the test finish its run, or stop it at any time. Either way, a 'plot.png' file will be generated in the same directory as the script's, showing a histogram of the latencies of each CPU (core) and the maximum latency. 
+You can let the test finish its run, or stop it at any time. Either way, a `plot.png` file will be generated in the same directory as the script's, showing a histogram of the latencies of each CPU (core) and the maximum latency. 
 ### 5. Install IgH EtherCAT Master
 See [IgH EtherCAT Master installation guide](https://github.com/mohse-n/L7N_EtherLab/blob/master/Installation%20guides/IgH%20EtherCAT%20Master%20Installation%20Guide.md).
 ### Reinstalling the kernel
@@ -141,8 +141,8 @@ cd /usr/src/linux-3.4.113
 ````bash
 make clean
 `````
-In "usr/src", delete any folder and .deb file associated with 3.4.113-rt145.
-In "/boot", delete any file associated with 3.4.113-rt145.
+In `usr/src`, delete any folder and .deb file associated with 3.4.113-rt145.
+In `/boot`, delete any file associated with 3.4.113-rt145.
 If you would like to change the configuration, 
 ```bash
 make menuconfig
