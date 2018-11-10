@@ -68,11 +68,11 @@ apt-get install libncurses5-dev dpkg-dev libssl-dev
 ### 3. Patch, configure, and build the kernel
 Replace the default Ubuntu .config file with the configuration file of the associated Ubuntu kernel,
 ```bash
-cp /usr/src/linux-image-3.4.113-generic-amd64/boot/config-3.4.113-0304113-generic /usr/src/linux-4.4.162/.config
+cp /usr/src/linux-image-4.4.162-generic-amd64/boot/config-4.4.162-0404162-generic /usr/src/linux-4.4.162/.config
 ```
 Apply the PREEMPT_RT patch to the kernel source files,
 ```bash
-cd /usr/src/linux-3.4.113
+cd /usr/src/linux-4.4.162
 ```
 ```bash
 patch -p1 < ~/Downloads/patch-4.4.162-rt175.patch
