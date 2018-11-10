@@ -97,6 +97,10 @@ cat /proc/interrupts
 ``` 
 should be 0 -or at least constant- for all entries corresponding the CPU 1. However, in my setup there has been two exceptions, namely `Local timer interrupt` (discussed above) and `Function call interrupt`. The latter case is strange, as the number of instances increased for CPU 1 and stayed constant at 0 for CPU 0.    
 `Function call interrupt` is seemingly an (Intel) architecture-specific interrupt, and there might not be much we can do about it.
+It's also possilbe to monitor `/proc/interrupts` using `watch`,            
+```bash
+watch -n 1 "cat /proc/interrupts"
+```
 ___
 **References**    
 * [Red Hat: Interrupt and Process Binding](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/interrupt_and_process_binding)
