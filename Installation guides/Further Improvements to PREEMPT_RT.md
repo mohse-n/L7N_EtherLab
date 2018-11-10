@@ -65,6 +65,7 @@ One possiblity: maybe it's due to 3.4.113 not having a `CONFIG_NO_HZ_FULL` optio
 * for `CONFIG_NO_HZ_FULL=y`, which is not available on 3.4: "Omit scheduling-clock ticks on CPUs that are either idle **or that have only one runnable task.**"  
 
 **References**   
+* [nohz_full=godmode ?](https://jeremyeder.com/2013/11/15/nohz_fullgodmode/) discusses various parameters that affect tickless operation.
 * [Red Hat: Addional info on the parameters used for system partitioning](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/system_partitioning)
 * [Red Hat: Offloading RCU Callbacks](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/offloading_rcu_callbacks)
 * [Kernel NO_HZ documentation](https://www.kernel.org/doc/Documentation/timers/NO_HZ.txt). The interesting part (for us) starts from "OMIT SCHEDULING-CLOCK TICKS FOR IDLE CPUs".
