@@ -4,7 +4,7 @@ commented to facilitate the conversion process to accommodate different setups.
 Additionally, in [Installation guides](https://github.com/mohse-n/L7N_EtherLab/tree/master/Installation%20guides) folder, you will find step-by-step procedures for installing:
 
 * [kernel with RTAI patch](https://github.com/mohse-n/L7N_EtherLab/blob/master/Installation%20guides/RTAI%20Installation%20Guide.md)
-* [kernel with PREEMPT_RT patch](https://github.com/mohse-n/L7N_EtherLab/blob/master/Installation%20guides/PREEMPT_RT%20Installation%20Guide.md)
+* kernel with PREEMPT_RT patch, [3.4.113](https://github.com/mohse-n/L7N_EtherLab/blob/master/Installation%20guides/PREEMPT_RT%20Installation%20Guide%20(3.4.113).md) and [4.4.162](https://github.com/mohse-n/L7N_EtherLab/blob/master/Installation%20guides/PREEMPT_RT%20Installation%20Guide%20(4.4.162).md).
 * [Igh EtherCAT master library](https://github.com/mohse-n/L7N_EtherLab/blob/master/Installation%20guides/IgH%20EtherCAT%20Master%20Installation%20Guide.md)   
 
 and a few [suggestions for optimizing the performance of PREEMPT_RT](https://github.com/mohse-n/L7N_EtherLab/blob/master/Installation%20guides/Further%20Improvements%20to%20PREEMPT_RT.md).    
