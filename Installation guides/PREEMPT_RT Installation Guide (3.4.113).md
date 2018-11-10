@@ -86,7 +86,7 @@ make menuconfig
 4. Disable `Processor type and features > SMT (Hyperthreading) scheduler support`
 5. Choose `Preemption Model > Fully Preemtible Kernel (RT)`
 6. Choose `Processor type and features > Timer frequency (1000 HZ)` (**Note:** With `Tickless System (Dynamic Ticks)` enabled, the timer interrupt frequency will be adaptive and this option only specified its maximum value)
-7. Under `Power management and ACPI options`, disable anything that you can, including `CPU Frequency Scaling`, `CPU idle PM support`, and anything listed under `Memory power savings`.
+7. Under `Power management and ACPI options`, starting from the top of the list, disable anything that you can, including `CPU Frequency Scaling`, `CPU idle PM support`, and anything listed under `Memory power savings`.
 8. Under `Power management and ACPI options > ACPI`, disable everything you're able to, except `Power Management Timer Support` and `Button`.  
 9. Select `Exit` and save.  
 ___
