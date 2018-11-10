@@ -74,7 +74,7 @@ Apply the PREEMPT_RT patch to the kernel source files,
 cd /usr/src/linux-3.4.113
 ```
 ```bash
-patch -p1 < /usr/src/patch-3.4.113-rt145.patch
+patch -p1 < ~/Downloads/patch-3.4.113-rt145.patch
 ```
 Now we're ready to configure the kernel.
 ```bash
