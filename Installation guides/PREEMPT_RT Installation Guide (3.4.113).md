@@ -30,7 +30,7 @@ patch-3.4.113-rt145.patch.xz
 ```
 Therefore, we choose 3.4.113 as our kernel.
 ### 2. Download the required files
-Download and extract the patch in your home folder,
+Download and extract the patch in `~/Downloads` directory,
 ```bash
 https://mirrors.edge.kernel.org/pub/linux/kernel/projects/rt/3.4/patch-3.4.113-rt145.patch.xz
 ```
