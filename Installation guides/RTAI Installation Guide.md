@@ -65,18 +65,12 @@ Extract the .deb package.
 ```bash
 dpkg-deb -x linux-image-3.4.6-generic-amd64.deb linux-image-3.4.6-generic-amd64
 ```
-Install the dependencies. I'm not certain if this is the minimal set of dependencies -perhaps some could be removed- but these worked for me.
+Install the packges needed for building the kernel.
 ```bash
 apt-get update
 ```
 ```bash
-apt-get install cvs subversion build-essential git-core g++-multilib gcc-multilib
-```
-```bash
-apt-get install libtool automake libncurses5-dev kernel-package
-```
-```bash
-apt-get install docbook-xsl fop libncurses5 libpcre3 libpvm3 libquadmath0 libsaxon-java libskinlf-java libstdc++6 libtinfo5 libxml2 tcl8.5 tk8.5 zlib1g libgcc1 libc6 libblas-dev gfortran liblapack-dev libssl-dev portaudio19-dev portaudio19-doc
+apt-get install libncurses5-dev dpkg-dev
 ```
 
 ### 3. Patch, configure, and build the kernel
