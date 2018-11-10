@@ -40,14 +40,18 @@ ___
 cat /proc/cmdline
 ``` 
 ___
-**Note:** The `C` column in the output of these commands shows on which CPU the process is running. The first command displays that for userspace processes only, whereas the second command also lists kernel space threads.
+**Note:** The `PID` column in the output of these commands is the process' ID. The first command displays that for userspace processes only, whereas the second command also lists kernel space processes.
 ```bash
 ps -aF
 ``` 
 ```bash
 ps -eF
 ``` 
-Therefore, with the parameters of this section in effect, there shouldn't be any process listed by the command above with `C` = 1.
+To get the CPU affinity mask of a process with ID PID,
+```bash
+taskset -p PID
+``` 
+Note that the output of the command above is the CPU affnity mask of the processs, which is described as a hexadecimal number, for instance 0x1 = 01b. Thereforce, the process is bound to CPU 0.
 ___
 **Note:** We can check whether the isolated CPU is running in tickless mode by looking at the number of `Local timer interrupts` that it handles. Either that figure should not increase at all (ideal) or it should increase by 1 per second ([turns out achieving the ideal rate of zero is not trivial](https://lwn.net/Articles/659490/)) . To list the total number of interrupts handled by each CPU,
 ```bash
