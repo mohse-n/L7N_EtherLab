@@ -31,7 +31,7 @@ patch-4.4.162-rt175.patch.xz
 ```
 Therefore, we choose 4.4.162 as our kernel.
 ### 2. Download the required files
-Download and extract the patch in your home folder,
+Download and extract the patch in `~/Downloads` directory,
 ```bash
 https://mirrors.edge.kernel.org/pub/linux/kernel/projects/rt/4.4/patch-4.4.162-rt175.patch.xz
 ```
