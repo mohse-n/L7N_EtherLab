@@ -25,7 +25,7 @@ Now we should look for a version of 4.4.x kernel for which a PREEMPT_RT patch is
 ```
 https://mirrors.edge.kernel.org/pub/linux/kernel/projects/rt/
 ``` 
-In `/3.4` directory, the only available patch is that of kernel 3.4.113.
+In `/4.4` directory, the only available patch is that of kernel 4.4.162.
 ```
 patch-4.4.162-rt175.patch.xz     
 ```
@@ -86,7 +86,7 @@ make menuconfig
 3. Number of physical cores (i.e. not accounting for hyperthreading): `Processor type and features > Maximum number of CPU’s > 2` (My CPU was i3-4700, which has 2 physical cores)
 4. Disable `Processor type and features > SMT (Hyperthreading) scheduler support`
 5. Choose `Preemption Model > Fully Preemtible Kernel (RT)`
-6. Choose `Processor type and features > Timer frequency (1000 HZ)` (**Note:** With `Tickless System (Dynamic Ticks)` enabled, the timer interrupt frequency will be adaptive and this option only specified its maximum value)
+6. Choose `Processor type and features > Timer frequency (1000 HZ)` (**Note:** By setting this setting in conjuntion with the first configuration on this list, when only one task is running on an isolated core, there will be no scheduler ticks. Otherwise timer interrupts will be firing at 1 kHz. See [nohz_full=godmode?](https://jeremyeder.com/2013/11/15/nohz_fullgodmode/))
 7. Under `Power management and ACPI options`, starting from the top of the list, disable anything that you can, including `CPU Frequency Scaling`, `CPU idle PM support`, and anything listed under `Memory power savings`.
 8. Under `Power management and ACPI options > ACPI`, disable everything you're able to, except `Power Management Timer Support` and `Button`.  
 9. Select `Exit` and save.  
