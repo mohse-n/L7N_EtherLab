@@ -141,7 +141,7 @@ cd /usr/src/linux-3.4.113
 ````bash
 make clean
 `````
-In `usr/src`, delete any folder and .deb file associated with 3.4.113-rt145.
+In `usr/src`, delete any folder and .deb file with "3.4.113-rt145" in its name.
 In `/boot`, delete any file associated with 3.4.113-rt145.
 If you would like to change the configuration, 
 ```bash
