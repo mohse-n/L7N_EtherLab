@@ -52,6 +52,9 @@ ___
 ```bash
 ./configure --enable-generic --disable-8139too --enable-r8169 --enable-cycles --enable-rtdm --with-rtai-dir=/usr/realtime
 ```
+```bash
+cp ~/stable-1.5/master/ioctl.c ~/stable-1.5/master/rtdm-ioctl.c
+```
 Compile and install the modules,  
 ```bash
 make
