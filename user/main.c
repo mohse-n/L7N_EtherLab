@@ -611,8 +611,6 @@ int main(int argc, char **argv)
 		
 		#ifdef MEASURE_PERF
 		ecrt_master_reference_clock_time(master, &t_cur);
-		printf("Timestamp diff: %" PRIu32 " ns\n\n", t_cur - t_prev);
-		t_prev = t_cur;
 		#endif
 		
 		/********************************************************************************/
@@ -665,6 +663,11 @@ int main(int argc, char **argv)
      		// Note: called after ecrt_master_send() to reduce time
                 // jitter in the sync_distributed_clocks() call
                 update_master_clock();
+		#endif
+		
+		#ifdef MEASURE_PERF
+		printf("Timestamp diff: %" PRIu32 " ns\n\n", t_cur - t_prev);
+		t_prev = t_cur;
 		#endif
 	
 	}
