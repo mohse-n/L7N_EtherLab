@@ -177,7 +177,16 @@ export LD_BIND_NOW
 ``` 
 **References**    
 * [Red Hat: Loading Dynamic Libraries](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/loading_dynamic_libraries)
-
+### Modify the Run-time Kernel Parameters at Startup
+Some of the aforementioned configurations are reset after a reboot, so it's handy to apply them automatically at startup.
+Add to `/etc/rc.local`, before `exit 0`,
+```
+echo 1 > /proc/irq/default_smp_affinity
+echo 1 > /sys/bus/workqueue/devices/writeback/cpumask
+echo 1 >  /sys/devices/system/machinecheck/machinecheck1/ignore_ce 
+LD_BIND_NOW=1
+export LD_BIND_NOW
+``` 
 
 
 
