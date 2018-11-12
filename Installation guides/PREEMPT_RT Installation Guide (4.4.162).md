@@ -102,10 +102,10 @@ Extract RTAI-patched kernel's image and headers. (Note that the name of the debi
 cd /usr/src
 ```
 ```bash
-dpkg -i linux-image-3.4.113-rt145_3.4.113-rt145-2_amd64.deb
+dpkg -i linux-image-4.4.162-rt175_4.4.162-rt175-2_amd64.deb
 ```
 ```bash
-dpkg -i linux-headers-3.4.113-rt145_3.4.113-rt145-2_amd64.deb
+dpkg -i linux-headers-4.4.162-rt175_4.4.162-rt175-2_amd64.deb 
 ```
 The bootloader should be automatically configured. Therefore, at this point, if we reboot, we can choose the RTAI kernel from Advanced Options.  
 If the new kernel is not added to the bootloader list, use `grub-customizer`
@@ -117,7 +117,7 @@ apt-get install grub-customizer
 Run `grub-customizer`.
 In `General settings > default entry`, under predefined, choose  
 ```
-Advanced options for Ubuntu>Ubuntu, with Linux 3.4.113-rt145
+Advanced options for Ubuntu>Ubuntu, with Linux 4.4.162-rt175
 ```
 ### 4. Run the latency test
 Install `gnuplot`
@@ -138,12 +138,12 @@ You can let the test finish its run, or stop it at any time. Either way, a `plot
 See [IgH EtherCAT Master installation guide](https://github.com/mohse-n/L7N_EtherLab/blob/master/Installation%20guides/IgH%20EtherCAT%20Master%20Installation%20Guide.md).
 ### Reinstalling the kernel
 ```bash
-cd /usr/src/linux-3.4.113
+cd /usr/src/linux-4.4.162
 ````bash
 make clean
 `````
-In `usr/src`, delete any folder and .deb file associated with 3.4.113-rt145.
-In `/boot`, delete any file associated with 3.4.113-rt145.
+In `usr/src`, delete any folder and .deb file with "4.4.162-rt175" in its name.
+In `/boot`, delete any file with "4.4.162-rt175" in its name.
 If you would like to change the configuration, 
 ```bash
 make menuconfig
