@@ -1,5 +1,5 @@
 ## IgH EtherCAT Master Installation Guide 
-**Note:** This guide is basically [the one by Thomas Bitsky](http://lists.etherlab.org/pipermail/etherlab-users/2015/002820.html), with some comments added and some removed.  
+**Note:** This guide is basically [the one by Thomas Bitsky](http://lists.etherlab.org/pipermail/etherlab-users/2015/002820.html), with slight modifications.  
 ___
 **Note:** The installation sequence is   
 1. kernel-RTAI    
