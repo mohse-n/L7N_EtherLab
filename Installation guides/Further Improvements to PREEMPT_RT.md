@@ -104,7 +104,7 @@ It's also possilbe to monitor `/proc/interrupts` using `watch`
 ```bash
 watch -n 1 "cat /proc/interrupts"
 ```
-If the configurations above are applied, the number of interrupts handled by CPU 1 should be 0 -or at least constant- for all entries. However, in my setup there has been three exceptions, namely `Local timer interrupt` (discussed above), `Machine check polls` and `Function call interrupts`. The latter case is strange, as the number of instances increased for CPU 1 and stayed constant at 0 for CPU 0. Disabling `Machine check polls` is describd later in this guide.  
+If all the configurations up to this point are applied, the number of interrupts handled by CPU 1 should be 0 -or at least constant- for all entries. However, in my setup there has been three exceptions, namely `Local timer interrupt` (discussed above), `Machine check polls` and `Function call interrupts`. The latter case is strange, as the number of instances increased for CPU 1 and stayed constant at 0 for CPU 0. Disabling `Machine check polls` is describd later in this guide.  
 `Function call interrupt` is seemingly an (Intel) architecture-specific interrupt, and there might not be much we can do about it.
             
 ___
