@@ -80,7 +80,7 @@ skew_tick=1
 **References**   
 * [Red Hat: Suggests skew_tick=1](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/reduce_cpu_performance_spikes)
 * [Also on Red Hat's Bugzilla](https://bugzilla.redhat.com/show_bug.cgi?id=1451073)
-### Prevent IRQ Handling
+### Prevent IRQ Handling by CPU 1
 Continuing along the CPU isolation patch, we can delegate interrupt handling to our CPU of choice.
 Disable `irqbalance` daemon, which distributes IRQ handling among CPUs.
 ```bash
@@ -105,13 +105,22 @@ It's also possilbe to monitor `/proc/interrupts` using `watch`
 watch -n 1 "cat /proc/interrupts"
 ```
 If all the configurations up to this point are applied, the number of interrupts handled by CPU 1 should be 0 -or at least constant- for all entries. However, in my setup there has been three exceptions, namely `Local timer interrupt` (discussed above), `Machine check polls` and `Function call interrupts`. The latter case is strange, as the number of instances increased for CPU 1 and stayed constant at 0 for CPU 0. Disabling `Machine check polls` is describd later in this guide.  
-`Function call interrupt` is seemingly an (Intel) architecture-specific interrupt, and there might not be much we can do about it.
-            
+`Function call interrupt` is seemingly an architecture-specific interrupt, and there might not be much we can do about it.
+    
 ___
 **References**    
 * [Red Hat: Interrupt and Process Binding](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/interrupt_and_process_binding)
 * [IRQBALANCE_BANNED_CPUS explained](https://fordodone.com/2015/04/30/irqbalance_banned_cpus-explained-and-working-on-ubuntu-14-04/)
 * [Function call interrupts are an example of inter-processor interrupts.](https://wiki.linaro.org/WorkingGroups/PowerManagement/Doc/WakeUpSources#IPI4_:_Single_function_call_interrupts)
+### Set the default CPU for handling IRQs
+*I don't think this and the previous configuration are not necessarily mutually exclusive.*
+Write CPU 0's mask to `/proc/irq/default_smp_affinity`.
+```bash
+echo 1 > /proc/irq/default_smp_affinity
+``` 
+**References**
+* [Improving the Real-Time Properties](http://linuxrealtime.org/index.php/Improving_the_Real-Time_Properties#Restart_real-time_CPUs_with_CPU_hotplug) suggests setting `default_smp_affinity`.
+* [Red Hat: Interrupts and IRQ Tuning](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/performance_tuning_guide/s-cpu-irq) and [Red Hat: Interrupts and Process Binding](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/interrupt_and_process_binding) demonstrate the steps so that a particular set of CPUs handle specific interrupts.
 ### Set Various Kernel Parameters in /etc/sysctl.conf  
 The sysctl command is used to modify kernel parameters at runtime. `/etc/sysctl.conf` is a text file containing sysctl values to be read in and set by sysct at boot time. ([Source](https://www.cyberciti.biz/faq/linux-kernel-etcsysctl-conf-security-hardening/))
 We set the value of the following parameters, as recommended by Red Hat.
