@@ -134,6 +134,22 @@ vm.stat_interval = 10
 * [What does an NMI watchdog do?](https://unix.stackexchange.com/questions/353895/should-i-disable-nmi-watchdog-permanently-or-not)
 * [Real-time Linux from a Basic Perspective: Real-time Throttling](http://linuxrealtime.org/index.php/Basic_Linux_from_a_Real-Time_Perspective)
 * [Kernel documentation: vm](https://www.kernel.org/doc/Documentation/sysctl/vm.txt)
+### Affine the bdi-flush Threads to CPU 0 
+This configuration has be appiled at startup.
+```bash
+echo 1 > /sys/bus/workqueue/devices/writeback/cpumask
+``` 
+**References** 
+* [nohz_full=godmode?](https://jeremyeder.com/2013/11/15/nohz_fullgodmode/)
+* [Red Hat: System Partitioning](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/system_partitioning)
+### Disable Machine Check Polls
+This configuration has be appiled at startup. For CPU 1,  
+```bash
+echo 1 >  /sys/devices/system/machinecheck/machinecheck1/ignore_ce 
+``` 
+**References** 
+* [nohz_full=godmode?](https://jeremyeder.com/2013/11/15/nohz_fullgodmode/)
+* [Red Hat: System Partitioning](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/system_partitioning)
 ### Load Dynamic Libraries at Application Startup
 Although it can slow down program initialization, it is one way to avoid non-deterministic latencies during program execution.
 ```bash
