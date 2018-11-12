@@ -126,7 +126,7 @@ echo 1 > /proc/irq/default_smp_affinity
 The sysctl command is used to modify kernel parameters at runtime. `/etc/sysctl.conf` is a text file containing sysctl values to be read in and set by sysct at boot time. ([Source](https://www.cyberciti.biz/faq/linux-kernel-etcsysctl-conf-security-hardening/))
 We set the value of the following parameters, as recommended by Red Hat.
 * `kernel.hung_task_timeout_secs = 600`: Sets timeout after a task is considered hanging to 600 seconds.
-* `kernel.nmi_watchdog = 0`: Disables NMI's (non-maskabled interrupts) watchdog
+* `kernel.nmi_watchdog = 0`: Disables NMI's (non-maskabled interrupts) watchdog, which is used to detect and recover from hardware hangings.
 * `kernel.sched_rt_runtime_us = 1000000`: Disable real-time throttling. In other words, dedicate 100% of CPU time to the real-time tasks, until the finish or yield. This is OK as long as the RT task are running on isolated cores.
 * `vm.stat_interval = 10`: Increase the time interval between which vm (virtual memory) statistics are updated to 10 seconds. The default
 is 1 second.
@@ -140,12 +140,17 @@ kernel.nmi_watchdog = 0
 kernel.sched_rt_runtime_us = 1000000
 vm.stat_interval = 10
 ``` 
+An additional configurations is disabling watchdog timer, which generates a hardware interrupts for detecting software lockups in the kernel. For more info, see the help of LOCKUP_DETECTOR parameter.  
+```
+kernel.watchdog = 0
+``` 
 **References**   
 * [Red Hat: System Partitioning](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/system_partitioning) is where these settings are recommended.
 * [Explains kernel timeout](https://www.nico.schottelius.org/blog/reboot-linux-if-task-blocked-for-more-than-n-seconds/)
 * [What does an NMI watchdog do?](https://unix.stackexchange.com/questions/353895/should-i-disable-nmi-watchdog-permanently-or-not)
 * [Real-time Linux from a Basic Perspective: Real-time Throttling](http://linuxrealtime.org/index.php/Basic_Linux_from_a_Real-Time_Perspective)
 * [Kernel documentation: vm](https://www.kernel.org/doc/Documentation/sysctl/vm.txt)
+* [Improving the Real-Time Properties: disable the watchdog and NMI watchdog](http://linuxrealtime.org/index.php/Improving_the_Real-Time_Properties#Disable_the_watchdog)
 ### Affine the bdi-flush Threads to CPU 0 
 This configuration has be appiled at startup.
 ```bash
