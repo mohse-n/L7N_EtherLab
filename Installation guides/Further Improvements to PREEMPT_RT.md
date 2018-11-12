@@ -1,9 +1,16 @@
 ## Table of contents
-[General Resources](#GeneralResources)   
-[1. Ubuntu Installation](#UbuntuInstallation)
-    1. [Sub paragraph](#subparagraph1)
-3. [Another paragraph](#paragraph2)
-
+[General Resources](#GeneralResources)     
+[1. Ubuntu Installation](#UbuntuInstallation)    
+[2. BIOS Settings](#BIOSSettings)  
+[3. Kernel Boot Parameters](#KernelBootParameters)  
+[4. Prevent IRQ Handling by CPU 1](#PreventIRQHandling)  
+[5. Set the default CPU for handling IRQs ](#SetTheDefaultCPU)  
+[6. Set Various Kernel Parameters in /etc/sysctl.conf](#SetVariousParameters)  
+[7. Affine the bdi-flush Threads to CPU 0](#AffineTheThreads)  
+[8. Disable Machine Check Polls](#DisableMachineCheck)  
+[9. Load Dynamic Libraries at Application Startup](#LoadDynamicsLibraries)  
+[Set the Run-time Kernel Parameters at Startup](#SetStartup)  
+___
 ### General Resources <a name="GeneralResources"></a>
 I've found [the documentation for "Red Hat Enterprise Linux for Real Time"](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/) to be extremely well-organized and useful.   
 The documentation consists of:  
@@ -15,14 +22,14 @@ Install Ubuntu with `ext2` file system.
 
 **References**    
 * [Red Hat: File System Determinism Tips](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/file_system_determinism_tips)  
-### BIOS Settings
+### 2. BIOS Settings <a name="BIOSSettings"></a>
 Disable any power saving features.   
 
 **References**     
 * [Red Hat: Setting BIOS parameters](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_MRG/1.3/html/Realtime_Tuning_Guide/sect-Realtime_Tuning_Guide-General_System_Tuning-Setting_BIOS_parameters.html)
-### Kernel Boot Parameters
+### 3. Kernel Boot Parameters <a name="KernelBootParameters"></a>
 Certain operating system configuration options are only tunable via the kernel command line.  
-#### 2. Disable CPU power saving mode
+#### Disable CPU power saving mode
 ```
 idle=poll processor.max_cstate=1
 ``` 
@@ -32,7 +39,7 @@ idle=poll processor.max_cstate=1
 * [Red Hat: Describes what RCU does in one sentence](https://access.redhat.com/solutions/2260151)   
 * [Red Hat: Recommends above parameters](https://access.redhat.com/articles/65410)  
 * [UT Blog: Briefly mentions processor.max_cstate](https://utcc.utoronto.ca/~cks/space/blog/linux/KernelRcuNocbsMeaning) 
-#### 3. Parameters for CPU Isolation
+#### Parameters for CPU Isolation
 Isolate a core (here core 1) for running only one task and offload housekeeping tasks from that CPU. 
 ```
 isolcpus=1 nohz=on nohz_full=1 rcu_nocbs=1 rcu_nocb_poll intel_pstate=disable nosoftlockup 
@@ -86,7 +93,7 @@ skew_tick=1
 **References**   
 * [Red Hat: Suggests skew_tick=1](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/reduce_cpu_performance_spikes)
 * [Also on Red Hat's Bugzilla](https://bugzilla.redhat.com/show_bug.cgi?id=1451073)
-### Prevent IRQ Handling by CPU 1
+### 4. Prevent IRQ Handling by CPU 1 <a name="PreventIRQHandling"></a>
 Continuing along the CPU isolation patch, we can delegate interrupt handling to our CPU of choice.
 Disable `irqbalance` daemon, which distributes IRQ handling among CPUs.
 ```bash
@@ -118,7 +125,7 @@ ___
 * [Red Hat: Interrupt and Process Binding](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/interrupt_and_process_binding)
 * [IRQBALANCE_BANNED_CPUS explained](https://fordodone.com/2015/04/30/irqbalance_banned_cpus-explained-and-working-on-ubuntu-14-04/)
 * [Function call interrupts are an example of inter-processor interrupts.](https://wiki.linaro.org/WorkingGroups/PowerManagement/Doc/WakeUpSources#IPI4_:_Single_function_call_interrupts)
-### 4. Set the default CPU for handling IRQs
+### 5. Set the default CPU for handling IRQs <a name="SetTheDefaultCPU"></a>
 *I don't think this and the previous configuration are not necessarily mutually exclusive.*
 Unwanted interrupts introduce jitter and can have serious negative impact on real-time performance. They should be handled on the general purpose CPUs whenever possible. The affinity of these interrupts can be controlled using the `/proc` file system.  
 Write CPU 0's mask to `/proc/irq/default_smp_affinity`.
@@ -128,7 +135,7 @@ echo 1 > /proc/irq/default_smp_affinity
 **References**
 * [Improving the Real-Time Properties](http://linuxrealtime.org/index.php/Improving_the_Real-Time_Properties#Restart_real-time_CPUs_with_CPU_hotplug) suggests setting `default_smp_affinity`.
 * [Red Hat: Interrupts and IRQ Tuning](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/performance_tuning_guide/s-cpu-irq) and [Red Hat: Interrupts and Process Binding](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/interrupt_and_process_binding) demonstrate the steps so that a particular set of CPUs handle specific interrupts.
-### 5. Set Various Kernel Parameters in /etc/sysctl.conf  
+### 6. Set Various Kernel Parameters in /etc/sysctl.conf  <a name="SetVariousParameters"></a>
 The sysctl command is used to modify kernel parameters at runtime. `/etc/sysctl.conf` is a text file containing sysctl values to be read in and set by sysct at boot time. ([Source](https://www.cyberciti.biz/faq/linux-kernel-etcsysctl-conf-security-hardening/))
 We set the value of the following parameters, as recommended by Red Hat.
 * `kernel.hung_task_timeout_secs = 600`: Sets timeout after a task is considered hanging to 600 seconds.
@@ -157,7 +164,7 @@ kernel.watchdog = 0
 * [Real-time Linux from a Basic Perspective: Real-time Throttling](http://linuxrealtime.org/index.php/Basic_Linux_from_a_Real-Time_Perspective)
 * [Kernel documentation: vm](https://www.kernel.org/doc/Documentation/sysctl/vm.txt)
 * [Improving the Real-Time Properties: disable the watchdog and NMI watchdog](http://linuxrealtime.org/index.php/Improving_the_Real-Time_Properties#Disable_the_watchdog)
-### Affine the bdi-flush Threads to CPU 0 
+### 7. Affine the bdi-flush Threads to CPU 0 <a name="AffineTheThreads"></a>
 This configuration has be appiled at startup.
 ```bash
 echo 1 > /sys/bus/workqueue/devices/writeback/cpumask
@@ -165,7 +172,7 @@ echo 1 > /sys/bus/workqueue/devices/writeback/cpumask
 **References** 
 * [nohz_full=godmode?](https://jeremyeder.com/2013/11/15/nohz_fullgodmode/)
 * [Red Hat: System Partitioning](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/system_partitioning)
-### 6. Disable Machine Check Polls
+### 8. Disable Machine Check Polls <a name="DisableMachineCheck"></a>
 This configuration has be appiled at startup. For CPU 1,  
 ```bash
 echo 1 >  /sys/devices/system/machinecheck/machinecheck1/ignore_ce 
@@ -173,7 +180,7 @@ echo 1 >  /sys/devices/system/machinecheck/machinecheck1/ignore_ce
 **References** 
 * [nohz_full=godmode?](https://jeremyeder.com/2013/11/15/nohz_fullgodmode/)
 * [Red Hat: System Partitioning](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/system_partitioning)
-### 7. Load Dynamic Libraries at Application Startup
+### 9. Load Dynamic Libraries at Application Startup <a name="LoadDynamicsLibraries"></a>
 Although it can slow down program initialization, it is one way to avoid non-deterministic latencies during program execution.
 ```bash
 LD_BIND_NOW=1
@@ -183,7 +190,7 @@ export LD_BIND_NOW
 ``` 
 **References**    
 * [Red Hat: Loading Dynamic Libraries](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/loading_dynamic_libraries)
-### Modify the Run-time Kernel Parameters at Startup
+### Set the Run-time Kernel Parameters at Startup <a name="SetStartup"></a>
 Some of the aforementioned configurations are reset after a reboot, so it's handy to apply them automatically at startup.
 Add to `/etc/rc.local`, before `exit 0`,
 ```
