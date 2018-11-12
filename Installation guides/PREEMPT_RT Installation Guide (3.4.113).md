@@ -142,7 +142,7 @@ cd /usr/src/linux-3.4.113
 make clean
 `````
 In `usr/src`, delete any folder and .deb file with "3.4.113-rt145" in its name.
-In `/boot`, delete any file associated with 3.4.113-rt145.
+In `/boot`, delete any file with "3.4.113-rt145" in its name.
 If you would like to change the configuration, 
 ```bash
 make menuconfig
