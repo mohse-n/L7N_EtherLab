@@ -139,6 +139,7 @@ See [IgH EtherCAT Master installation guide](https://github.com/mohse-n/L7N_Ethe
 ### Reinstalling the kernel
 ```bash
 cd /usr/src/linux-4.4.162
+```
 ````bash
 make clean
 `````
