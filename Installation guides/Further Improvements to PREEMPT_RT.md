@@ -51,7 +51,7 @@ To get the CPU affinity mask of a process with ID PID,
 ```bash
 taskset -p PID
 ``` 
-Note that the output of the command above is the CPU affnity mask of the processs, which is described as a hexadecimal number, and should be interpreted as a binary number. For instance if the output is (1=) 0x1 = 01b. Thereforce, the process is bound to CPU 0.
+Note that the output of the command above is the CPU affnity mask of the processs, which is described as a hexadecimal number, and should be interpreted as a binary number. For instance if the output is (1=) 0x1 = 01b, the process is bound to CPU 0.
 ___
 **Note:** We can check whether the isolated CPU is running in tickless mode by looking at the number of `Local timer interrupts` that it handles. Either that figure should not increase at all (ideal) or it should increase by 1 per second ([turns out achieving the ideal rate of zero is not trivial](https://lwn.net/Articles/659490/)) . To list the total number of interrupts handled by each CPU,
 ```bash
