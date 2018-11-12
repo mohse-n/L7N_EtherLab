@@ -96,20 +96,22 @@ IRQ_BALANCE_BANNED_CPUS="2"
 ```
 The second reference explains for why we set the value to "2".
 ___
-**Note:** With the setting above,
+**Note:** Interrupts handled by each CPU are listed in `/proc/interrupts`
 ```bash
 cat /proc/interrupts
 ``` 
-should be 0 -or at least constant- for all entries corresponding the CPU 1. However, in my setup there has been two exceptions, namely `Local timer interrupt` (discussed above) and `Function call interrupt`. The latter case is strange, as the number of instances increased for CPU 1 and stayed constant at 0 for CPU 0.    
-`Function call interrupt` is seemingly an (Intel) architecture-specific interrupt, and there might not be much we can do about it.
-It's also possilbe to monitor `/proc/interrupts` using `watch`,            
+It's also possilbe to monitor `/proc/interrupts` using `watch`
 ```bash
 watch -n 1 "cat /proc/interrupts"
 ```
+If the configurations above are applied, the number of interrupts handled by CPU 1 should be 0 -or at least constant- for all entries. However, in my setup there has been three exceptions, namely `Local timer interrupt` (discussed above), `Machine check polls` and `Function call interrupts`. The latter case is strange, as the number of instances increased for CPU 1 and stayed constant at 0 for CPU 0. Disabling `Machine check polls` is describd later in this guide.  
+`Function call interrupt` is seemingly an (Intel) architecture-specific interrupt, and there might not be much we can do about it.
+            
 ___
 **References**    
 * [Red Hat: Interrupt and Process Binding](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/interrupt_and_process_binding)
 * [IRQBALANCE_BANNED_CPUS explained](https://fordodone.com/2015/04/30/irqbalance_banned_cpus-explained-and-working-on-ubuntu-14-04/)
+* [Function call interrupts are an example of inter-processor interrupts.](https://wiki.linaro.org/WorkingGroups/PowerManagement/Doc/WakeUpSources#IPI4_:_Single_function_call_interrupts)
 ### Set Various Kernel Parameters in /etc/sysctl.conf  
 The sysctl command is used to modify kernel parameters at runtime. `/etc/sysctl.conf` is a text file containing sysctl values to be read in and set by sysct at boot time. ([Source](https://www.cyberciti.biz/faq/linux-kernel-etcsysctl-conf-security-hardening/))
 We set the value of the following parameters, as recommended by Red Hat.
