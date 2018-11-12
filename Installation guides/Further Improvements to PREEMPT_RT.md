@@ -1,6 +1,6 @@
 ## Table of contents
-1. [General Resources](#GeneralResources)
-2. [Some paragraph](#paragraph1)
+[General Resources](#GeneralResources)   
+[1. Ubuntu Installation](#UbuntuInstallation)
     1. [Sub paragraph](#subparagraph1)
 3. [Another paragraph](#paragraph2)
 
@@ -10,7 +10,7 @@ The documentation consists of:
 * [Red Hat's guide to real-time programming](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/reference_guide/pref-preface).
 * A guide to tuning aspects of a real-time linux system is [Red Hat Tuning Guide](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/). In particular, the entirety of [chapter 2](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/chap-general_system_tuning#Using_the_Tuna_interface) is definitely worth a look.
 * [Improving the Real-Time Properties](http://linuxrealtime.org/index.php/Improving_the_Real-Time_Properties) is a collection of best practices that covers much of the same ground as the tuning guide by Red Hat (and perhaps a bit more), but it does recommend different values for a few parameters.
-### 1. Ubuntu Installation
+### 1. Ubuntu Installation <a name="UbuntuInstallation"></a>
 Install Ubuntu with `ext2` file system.   
 
 **References**    
