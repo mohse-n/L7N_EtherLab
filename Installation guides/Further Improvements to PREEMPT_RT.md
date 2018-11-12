@@ -114,6 +114,7 @@ ___
 * [Function call interrupts are an example of inter-processor interrupts.](https://wiki.linaro.org/WorkingGroups/PowerManagement/Doc/WakeUpSources#IPI4_:_Single_function_call_interrupts)
 ### Set the default CPU for handling IRQs
 *I don't think this and the previous configuration are not necessarily mutually exclusive.*
+Unwanted interrupts introduce jitter and can have serious negative impact on real-time performance. They should be handled on the general purpose CPUs whenever possible. The affinity of these interrupts can be controlled using the `/proc` file system.  
 Write CPU 0's mask to `/proc/irq/default_smp_affinity`.
 ```bash
 echo 1 > /proc/irq/default_smp_affinity
