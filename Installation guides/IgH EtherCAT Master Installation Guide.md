@@ -23,6 +23,10 @@ Move into the source directory,
 ```bash
 cd ~/stable-1.5
 ```
+In the source on SourceForge, for some reason rtdm-ioctl.c is basically empty (the only line is `ioctl.c`). To avoid running into error when building the library,
+```bash
+cp ~/stable-1.5/master/ioctl.c ~/stable-1.5/master/rtdm-ioctl.c
+```
 ### 2. Install the library
 Install a few build tools
 ```bash
@@ -51,9 +55,6 @@ ___
 ___
 ```bash
 ./configure --enable-generic --disable-8139too --enable-r8169 --enable-cycles --enable-rtdm --with-rtai-dir=/usr/realtime
-```
-```bash
-cp ~/stable-1.5/master/ioctl.c ~/stable-1.5/master/rtdm-ioctl.c
 ```
 Compile and install the modules,  
 ```bash
