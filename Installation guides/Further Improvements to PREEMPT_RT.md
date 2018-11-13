@@ -197,8 +197,7 @@ Add to `/etc/rc.local`, before `exit 0`,
 echo 1 > /proc/irq/default_smp_affinity
 echo 1 > /sys/bus/workqueue/devices/writeback/cpumask
 echo 1 >  /sys/devices/system/machinecheck/machinecheck1/ignore_ce 
-LD_BIND_NOW=1
-export LD_BIND_NOW
+export LD_BIND_NOW=1
 ``` 
 
 
