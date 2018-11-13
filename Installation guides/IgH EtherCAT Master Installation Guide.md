@@ -23,7 +23,7 @@ Move into the source directory,
 ```bash
 cd ~/stable-1.5
 ```
-In the source on SourceForge, for some reason rtdm-ioctl.c is basically empty (the only line is `ioctl.c`). To avoid running into error when building the library,
+In the source on SourceForge, for some reason rtdm-ioctl.c is basically empty (the only line is `ioctl.c`). To avoid running into errors when building the library,
 ```bash
 cp ~/stable-1.5/master/ioctl.c ~/stable-1.5/master/rtdm-ioctl.c
 ```
