@@ -3,6 +3,6 @@
 ___
 In case of defining SYNC_REF_TO_MASTER, run the command below in terminal to monitor (at 10 Hz) the deviation of the reference slave's clock from the master's.
 ```bash
-watch -n0 "ethercat reg read -p0 -tsm32 0x92c" 
+watch -n0 "ethercat reg_read -p0 -tsm32 0x92c" 
 ```
 
