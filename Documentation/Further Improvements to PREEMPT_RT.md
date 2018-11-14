@@ -10,7 +10,7 @@
 [8. Disable Machine Check Polls](#DisableMachineCheck)  
 [9. Load Dynamic Libraries at Application Startup](#LoadDynamicsLibraries)  
 [10. Disable Swapping](#DisableSwap)  
-[11. Disable the Default cronjobs](#DisableCron)
+[11. Disable the Default cronjobs](#DisableCron)  
 [Set the Run-time Kernel Parameters at Startup](#SetStartup)  
 ___
 ### General Resources <a name="GeneralResources"></a>
