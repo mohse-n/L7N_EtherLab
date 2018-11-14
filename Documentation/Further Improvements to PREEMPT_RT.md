@@ -9,6 +9,7 @@
 [7. Affine the bdi-flush Threads to CPU 0](#AffineTheThreads)  
 [8. Disable Machine Check Polls](#DisableMachineCheck)  
 [9. Load Dynamic Libraries at Application Startup](#LoadDynamicsLibraries)  
+[10. Disable Swapping](#DisableSwap)  
 [Set the Run-time Kernel Parameters at Startup](#SetStartup)  
 ___
 ### General Resources <a name="GeneralResources"></a>
@@ -192,6 +193,12 @@ export LD_BIND_NOW
 ``` 
 **References**    
 * [Red Hat: Loading Dynamic Libraries](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/tuning_guide/loading_dynamic_libraries)
+### 10. Disable Swapping <a name="DisableSwap"></a>
+Prevent the operating system's access to the swap partition by adding to `/etc/rc.local`,
+```bash
+swapoff -a
+``` 
+Alternatively, one could remove the line corresponding to the swap partition from `/etc/fstab`.  
 ### Set the Run-time Kernel Parameters at Startup <a name="SetStartup"></a>
 Some of the aforementioned configurations are reset after a reboot, so it's handy to apply them automatically at startup.
 Add to `/etc/rc.local`, before `exit 0`,
@@ -200,6 +207,7 @@ echo 1 > /proc/irq/default_smp_affinity
 echo 1 > /sys/bus/workqueue/devices/writeback/cpumask
 echo 1 >  /sys/devices/system/machinecheck/machinecheck1/ignore_ce 
 export LD_BIND_NOW=1
+swapoff -a
 ``` 
 
 
