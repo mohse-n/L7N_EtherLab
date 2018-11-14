@@ -135,7 +135,7 @@ bash ./mklatencyplot.bash
 ```
 You can let the test finish its run, or stop it at any time. Either way, a `plot.png` file will be generated in the same directory as the script's, showing a histogram of the latencies of each CPU (core) and the maximum latency. 
 ### 5. Install IgH EtherCAT Master
-See [IgH EtherCAT Master installation guide](https://github.com/mohse-n/L7N_EtherLab/blob/master/Installation%20guides/IgH%20EtherCAT%20Master%20Installation%20Guide.md).
+See [IgH EtherCAT Master installation guide](https://github.com/mohse-n/L7N_EtherLab/blob/master/Documentation/IgH%20EtherCAT%20Master%20Installation%20Guide.md).
 ### Reinstalling the kernel
 ```bash
 cd /usr/src/linux-4.4.162
