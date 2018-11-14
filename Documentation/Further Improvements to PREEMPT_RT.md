@@ -10,6 +10,7 @@
 [8. Disable Machine Check Polls](#DisableMachineCheck)  
 [9. Load Dynamic Libraries at Application Startup](#LoadDynamicsLibraries)  
 [10. Disable Swapping](#DisableSwap)  
+[11. Disable the Default cronjobs](#DisableCron)
 [Set the Run-time Kernel Parameters at Startup](#SetStartup)  
 ___
 ### General Resources <a name="GeneralResources"></a>
@@ -199,6 +200,7 @@ Prevent the operating system's access to the swap partition by adding to `/etc/r
 swapoff -a
 ``` 
 Alternatively, one could remove the line corresponding to the swap partition from `/etc/fstab`.  
+### 11. Disable the Default cronjobs <a name="DisableCron"></a>
 ### Set the Run-time Kernel Parameters at Startup <a name="SetStartup"></a>
 Some of the aforementioned configurations are reset after a reboot, so it's handy to apply them automatically at startup.
 Add to `/etc/rc.local`, before `exit 0`,
