@@ -76,6 +76,7 @@ One possiblity: maybe it's due to 3.4.113 not having a `CONFIG_NO_HZ_FULL` optio
 
 * for `CONFIG_NO_HZ=y`, which is the only option on 3.4: "Omit scheduling-clock ticks on idle CPUs"
 * for `CONFIG_NO_HZ_FULL=y`, which is not available on 3.4: "Omit scheduling-clock ticks on CPUs that are either idle **or that have only one runnable task.**"  
+
 **Update:** The timer interrupts fire in 4.4.162, too. See the [related issue](https://github.com/mohse-n/L7N_EtherLab/issues/7).
 
 **References**   
