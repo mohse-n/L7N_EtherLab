@@ -596,8 +596,8 @@ int main(int argc, char **argv)
 		timespec_add(&wakeupTime, &wakeupTime, &sleepTime);
 		/* Sleep to adjust the update frequency */
 		/* Note: TIMER_ABSTIME flag is key in ensuring the execution with the desire frequency.
-		   Even if we don't apply LOOP_COMPENSATION, the sleep ends cycleTime (=1 msecs)
-		   after the start of the previous loop.
+		   We don't have to conider the loop's execution time (as long as it doesn't get too close to 1 ms), 
+		   as the sleep ends cycleTime (=1 msecs) *after the start of the previous loop*.
 		*/
 		clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &wakeupTime, NULL);
 		/* Fetches received frames from the newtork device and processes the datagrams. */
