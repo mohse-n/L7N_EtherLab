@@ -33,7 +33,7 @@
 /* Choose the syncronization method: The reference clock can be either master's, or the reference slave's (slave 0 by default) */
 #ifdef DC
 
-/* Slave0's clock is the reference: no drift. */
+/* Slave0's clock is the reference: no drift. More sensitive to jitter in master? */
 #define SYNC_MASTER_TO_REF
 /* Master's clock (CPU) is the reference: lower overhead. */
 //#define SYNC_REF_TO_MASTER
