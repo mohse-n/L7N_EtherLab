@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 	
 	typedef struct myMsgType 
 	{
-		/* Mandatory, must be a positive number. */
+		/* Mandatory */
 		long       mtype;
 		/* Data */
 		#ifdef MEASURE_PERF
