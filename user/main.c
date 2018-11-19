@@ -534,8 +534,9 @@ int main(int argc, char **argv)
 	int qID;
 	/* key is specified by the process which creates the queue (receiver). */
 	key_t qKey = 1234;
-	/* 0666: Access permission to the memory segment, as determined by the queue-creator process (receiver). */
-	int qFlag = 0666;
+	
+	/* When qFlag is zero, msgget obtains the identifier of a previously created message queue. */
+	int qFlag = 0;
 	
 	/* msgget returns the System V message queue identifier associated with the value of the key argument. */
 	if ((qID = msgget(qKey, qFlag)) < 0) 
