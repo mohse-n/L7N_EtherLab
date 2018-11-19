@@ -26,6 +26,10 @@
 #include <inttypes.h>
 
 /*****************************************************************************/
+/* Comment to disable PDO configuration (i.e. in case the PDO configuration saved in EEPROM is our 
+   desired configuration.)
+*/
+#define CONFIG_PDOS
 
 /* Comment to disable distributed clocks. */
 #define DC
@@ -386,6 +390,7 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	
+	#ifdef CONFIG_PDOS
 	/***************************************************/
 	/* Slave 0's structures, obtained from $ethercat cstruct -p 0 */ 
 	ec_pdo_entry_info_t slave_0_pdo_entries[] = 
@@ -448,6 +453,7 @@ int main(int argc, char **argv)
 		printf("Failed to configure slave 1 PDOs\n");
 		return -1;
 	}
+	#endif
 
 	unsigned int offset_controlWord0, offset_targetPos0, offset_statusWord0, offset_actPos0;
 	unsigned int offset_controlWord1, offset_targetPos1, offset_statusWord1, offset_actPos1;
