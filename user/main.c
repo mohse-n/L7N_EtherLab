@@ -35,6 +35,8 @@
 /* Comment to disable distributed clocks. */
 #define DC
 
+/* Comment to disable interprocess communication with queues. */
+#define IPC
 
 /* Choose the syncronization method: The reference clock can be either master's, or the reference slave's (slave 0 by default) */
 #ifdef DC
@@ -526,6 +528,43 @@ int main(int argc, char **argv)
 	struct timespec cycleTime = {0, PERIOD_NS};
 	clock_gettime(CLOCK_MONOTONIC, &wakeupTime);
 	
+	/***************************************************/
+	#ifdef IPC
+	
+	int msqid;
+	/* key is specified by the process which creates the queue (receiver). */
+	key_t key = 1234;
+	/* 0666: Access permission to the memory segment, as determined by the queue-creator process (receiver). */
+	int msgflg = 0666;
+	
+	if ((msqid = msgget(key, msgflag)) < 0) 
+	{
+		printf("Failed to access the queue with key = %d\n", key);
+		return -1;
+	}
+	
+	
+	typedef struct myMsgType 
+	{
+		/* Mandatory, must be a positive number. */
+		long       mtype;
+		/* Data */
+		#ifdef MEASURE_PERF
+		long       updatePeriod;
+		#endif
+		int32_t    actPos[2];
+		int32_t    targetPos[2];
+       	} myMsg;
+	
+	myMsg msg;
+	
+	/* mtype must be a positive number. */
+	msg.mtype = 1;
+	
+	#endif
+	/***************************************************/
+	
+	
 	/* The slaves (drives) enter OP mode after exchanging a few frames. */
 	/* We exchange frames with no RPDOs (targetPos) untill all slaves have 
 	   reached OP state, and then we break out of the loop.
@@ -675,9 +714,24 @@ int main(int argc, char **argv)
                 update_master_clock();
 		#endif
 		
+		#ifdef IPC
+		msg.actPos[0] = actPos0;
+		msg.actPos[1] = actPos1;
+	
+		msg.targetPos[0] = targetPos0;
+		msg.targetPos[1] = targetPos1;
+		
 		#ifdef MEASURE_PERF
-		printf("Timestamp diff: %" PRIu32 " ns\n\n", t_cur - t_prev);
+		msg.updatePeriod = t_cur - t_prev;
 		t_prev = t_cur;
+		#endif
+		
+		/* Send the message to the queue. */
+		if (msgsnd(msqid, &msg, msgSize, IPC_NOWAIT) < 0) 
+		{
+			printf("Error sending message to the queue. Terminating the process...\n");
+			return -1;
+		}
 		#endif
 	
 	}
