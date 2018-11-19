@@ -50,7 +50,7 @@ int main(int argc, char **argv)
 	/* size of data = size of structure - size of mtype */
 	msgSize = sizeof(struct myMsgType) - sizeof(long);
 	
-	/* Pick messages of type 1. (msg.mtype = 1 in the producer) */
+	/* Pick messages with type = 1. (msg.mtype = 1 in the producer) */
 	msgType = 1;
 	
 	/* No flag for receiving the message. */
@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 		*/
 		if (msgrcv(qID, &recvdMsg, msgSize, msgType, msgFlag) < 0) 
 		{
-			printf("Error receving message from the queue. Terminating the process...\n");
+			printf("Error picking a message from the queue. Terminating the process...\n");
 			return -1;
 		}
 		
