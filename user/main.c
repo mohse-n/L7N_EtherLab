@@ -558,6 +558,10 @@ int main(int argc, char **argv)
 	
 	myMsg msg;
 	
+	size_t msgSize;
+	/* size of data = size of structure - size of mtype */
+	msgSize = sizeof(struct myMsgType) - sizeof(long);
+	    
 	/* mtype must be a positive number. */
 	msg.mtype = 1;
 	

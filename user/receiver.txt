@@ -1,0 +1,81 @@
+
+#include <stdio.h>
+/* For IPC_CREAT */
+#include <sys/msg.h>
+
+#define MEASURE_PERF
+
+
+
+int main(int argc, char **argv)
+{
+
+	int qID;
+	
+	/* key is specified by the process which creates the queue (receiver). */
+	key_t qKey = 1234;
+	
+	/* IPC_CREAT: Create a new memory segment for the shared memory. */
+        /* 0666: Set access permission to the memory segment. */
+	int qFlag = IPC_CREAT | 0666;
+	
+        printf("Creating a queue with key = %ld\n", key, qFlag);
+
+	if ((qID = msgget(qKey, qFlag)) < 0) 
+	{
+		printf("Queue creation failed. Terminating the process...\n");
+		return -1;
+	}
+	else 
+		printf("Queue creation successful.\n");
+	
+	
+	typedef struct myMsgType 
+	{
+		/* Mandatory, must be a positive number. */
+		long       mtype;
+		/* Data */
+		#ifdef MEASURE_PERF
+		long       updatePeriod;
+		#endif
+		int32_t    actPos[2];
+		int32_t    targetPos[2];
+       	} myMsg;
+	
+	/* Received message. */
+	myMsg recvdMsg;
+	
+	size_t msgSize;
+	
+	/* size of data = size of structure - size of mtype */
+	msgSize = sizeof(struct myMsgType) - sizeof(long);
+	
+	/* Pick messages of type 1. (msg.mtype = 1 in the producer) */
+	msgType = 1;
+	
+	/* No flag for receiving the message. */
+	msgFlag = 0;
+	
+	while (1)
+	{
+	
+		/* Removes a message from the queue specified by qID and 
+		   places it in the buffer pointed to by recvdMsg. 
+		*/
+		if (msgrcv(qID, &recvdMsg, msgSize, msgType, msgFlag) < 0) 
+		{
+			printf("Error receving message from the queue. Terminating the process...\n");
+			return -1;
+		}
+		
+	        /* Print the message's data. */
+		printf("Motor 0 actPos: %d\n", recvdMsg.actPos[0]);
+		printf("Motor 1 actPos: %d\n", recvdMsg.actPos[1]);
+		#ifdef MEASURE_PERF
+		printf("Update period: %ld\n", recvdMsg.updatePeriod);
+		#endif
+	
+	}
+	
+	
+}
