@@ -25,11 +25,10 @@ int main(int argc, char **argv)
 	/* key is specified by the process which creates the queue (receiver). */
 	key_t qKey = 1234;
 	
-	/* IPC_CREAT: Create a new memory queue.*/
-        /* 0666: Set access permission to the queue. */
+	/* IPC_CREAT: Create a new queue.*/
 	int qFlag = IPC_CREAT;
 	
-        printf("Creating a queue with key = %ld\n", key, qFlag);
+        printf("Creating a queue with key = %ld\n", key);
 
 	if ((qID = msgget(qKey, qFlag)) < 0) 
 	{
