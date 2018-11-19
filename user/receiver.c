@@ -5,19 +5,29 @@
 
 #define MEASURE_PERF
 
+/* Queue ID */
+int qID;
 
+void signal_handler(int sig)
+{
+	printf("\Removing the queue...\n");
+	if (!(msgctl(qID, IPC_RMID, NULL))
+	    printf("Could not remove the queue.\n");
+	pid_t pid = getpid();
+	kill(pid, SIGKILL);
+}
 
 int main(int argc, char **argv)
 {
 
-	int qID;
+	signal(SIGINT, signal_handler);
 	
 	/* key is specified by the process which creates the queue (receiver). */
 	key_t qKey = 1234;
 	
-	/* IPC_CREAT: Create a new memory segment for the shared memory. */
-        /* 0666: Set access permission to the memory segment. */
-	int qFlag = IPC_CREAT | 0666;
+	/* IPC_CREAT: Create a new memory queue.*/
+        /* 0666: Set access permission to the queue. */
+	int qFlag = IPC_CREAT;
 	
         printf("Creating a queue with key = %ld\n", key, qFlag);
 
