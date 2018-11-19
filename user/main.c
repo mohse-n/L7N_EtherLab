@@ -531,13 +531,14 @@ int main(int argc, char **argv)
 	/***************************************************/
 	#ifdef IPC
 	
-	int msqid;
+	int qID;
 	/* key is specified by the process which creates the queue (receiver). */
-	key_t key = 1234;
+	key_t qKey = 1234;
 	/* 0666: Access permission to the memory segment, as determined by the queue-creator process (receiver). */
-	int msgflg = 0666;
+	int qFlag = 0666;
 	
-	if ((msqid = msgget(key, msgflag)) < 0) 
+	/* msgget returns the System V message queue identifier associated with the value of the key argument. */
+	if ((qID = msgget(qKey, qFlag)) < 0) 
 	{
 		printf("Failed to access the queue with key = %d\n", key);
 		return -1;
@@ -730,8 +731,10 @@ int main(int argc, char **argv)
 		t_prev = t_cur;
 		#endif
 		
-		/* Send the message to the queue. */
-		if (msgsnd(msqid, &msg, msgSize, IPC_NOWAIT) < 0) 
+		/*  msgsnd appends a copy of the message pointed to by msg to the message queue 
+		    whose identifier is specified by msqid.
+		*/
+		if (msgsnd(qID, &msg, msgSize, IPC_NOWAIT) < 0) 
 		{
 			printf("Error sending message to the queue. Terminating the process...\n");
 			return -1;
