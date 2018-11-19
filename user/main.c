@@ -542,6 +542,7 @@ int main(int argc, char **argv)
 	
 		ecrt_domain_queue(domain1);
 		
+		#ifdef DC
 		/* Syncing reference slave to master:
                    1- The master's (PC) clock is the reference.
 		   2- Sync the reference slave's clock to the master's.
@@ -559,6 +560,7 @@ int main(int argc, char **argv)
 		   All slave clocks will be synchronized to the reference slave clock.
 		*/
 		ecrt_master_sync_slave_clocks(master);
+		#endif
 		
 		ecrt_master_send(master);
 	
