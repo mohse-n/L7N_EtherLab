@@ -135,8 +135,8 @@ uint64_t system_time_ns(void)
 	if (system_time_base > time.tv_nsec) 
 	{
 		printf("%s() error: system_time_base greater than"
-		       " system time (system_time_base: %lld, time: %llu\n",
-			__func__, system_time_base, time);
+		       " system time (system_time_base: %ld, time: %lu\n",
+			__func__, system_time_base, TIMESPEC2NS(time));
 		return time.tv_nsec;
 	}
 	else 
@@ -279,7 +279,7 @@ inline void timespec_add(struct timespec* result, struct timespec* time1, struct
 }
 
 #ifdef MEASURE_TIMING
-/* Substract two timespec structures (time1 and time2), store the the result in result.
+/* Substract two timespec structures (time1 and time2), store the the result in result. */
 /* result = time1 - time2 */
 inline void timespec_sub(struct timespec* result, struct timespec* time1, struct timespec* time2)
 {

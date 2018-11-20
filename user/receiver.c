@@ -2,6 +2,13 @@
 #include <stdio.h>
 /* For IPC_CREAT */
 #include <sys/msg.h>
+/* For int32_t */
+#include <stdint.h>
+/* Header for handling signals (definition of SIGINT) */
+#include <signal.h>
+/* For pid_t and getpid() */
+#include <unistd.h>
+#include <sys/types.h>
 
 #define MEASURE_PERF
 
@@ -11,7 +18,7 @@ int qID;
 void signal_handler(int sig)
 {
 	printf("Removing the queue...\n");
-	if (!(msgctl(qID, IPC_RMID, NULL))
+	if (!(msgctl(qID, IPC_RMID, NULL)))
 	    printf("Could not remove the queue.\n");
 	pid_t pid = getpid();
 	kill(pid, SIGKILL);
@@ -28,7 +35,7 @@ int main(int argc, char **argv)
 	/* IPC_CREAT: Create a new queue.*/
 	int qFlag = IPC_CREAT;
 	
-        printf("Creating a queue with key = %ld\n", qKey);
+        printf("Creating a queue with key = %d\n", qKey);
 
 	if ((qID = msgget(qKey, qFlag)) < 0) 
 	{
@@ -60,10 +67,10 @@ int main(int argc, char **argv)
 	msgSize = sizeof(struct myMsgType) - sizeof(long);
 	
 	/* Pick messages with type = 1. (msg.mtype = 1 in the producer) */
-	msgType = 1;
+	int msgType = 1;
 	
 	/* No flag for receiving the message. */
-	msgFlag = 0;
+	int msgFlag = 0;
 	
 	while (1)
 	{
