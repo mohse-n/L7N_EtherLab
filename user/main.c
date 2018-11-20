@@ -32,7 +32,7 @@
 /* Comment to disable PDO configuration (i.e. in case the PDO configuration saved in EEPROM is our 
    desired configuration.)
 */
-#define CONFIG_PDOS
+//#define CONFIG_PDOS
 
 /* Comment to disable distributed clocks. */
 #define DC
