@@ -28,7 +28,7 @@ int main(int argc, char **argv)
 	/* IPC_CREAT: Create a new queue.*/
 	int qFlag = IPC_CREAT;
 	
-        printf("Creating a queue with key = %ld\n", key);
+        printf("Creating a queue with key = %ld\n", qKey);
 
 	if ((qID = msgget(qKey, qFlag)) < 0) 
 	{

@@ -24,6 +24,8 @@
 #include <sched.h>
 /* For using uint32_t format specifier, PRIu32 */
 #include <inttypes.h>
+/* For msgget and IPC_NOWAIT */
+#include <sys/msg.h>
 
 /*****************************************************************************/
 
@@ -62,7 +64,7 @@
 #define MEASURE_PERF
 
 /* Calculate the time it took to complete the loop. */
-#define MEASURE_TIMING 
+//#define MEASURE_TIMING 
 
 #define SET_CPU_AFFINITY
 
@@ -541,7 +543,7 @@ int main(int argc, char **argv)
 	/* msgget returns the System V message queue identifier associated with the value of the key argument. */
 	if ((qID = msgget(qKey, qFlag)) < 0) 
 	{
-		printf("Failed to access the queue with key = %d\n", key);
+		printf("Failed to access the queue with key = %d\n", qKey);
 		return -1;
 	}
 	
@@ -564,7 +566,7 @@ int main(int argc, char **argv)
 	/* size of data = size of structure - size of mtype */
 	msgSize = sizeof(struct myMsgType) - sizeof(long);
 	    
-	/* mtype must be a positive number. */
+	/* mtype must be a positive number. The receiver picks messages with a specific mtype.*/
 	msg.mtype = 1;
 	
 	#endif
