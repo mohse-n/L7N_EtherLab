@@ -37,10 +37,10 @@
 /* Choose the syncronization method: The reference clock can be either master's, or the reference slave's (slave 0 by default) */
 #ifdef DC
 
-/* Slave0's clock is the reference: no drift. More sensitive to jitter in master? */
-#define SYNC_MASTER_TO_REF
+/* Slave0's clock is the reference: no drift. Algorithm from rtai_rtdm_dc example. Work in progress. */
+//#define SYNC_MASTER_TO_REF
 /* Master's clock (CPU) is the reference: lower overhead. */
-//#define SYNC_REF_TO_MASTER
+#define SYNC_REF_TO_MASTER
 
 #endif
 
@@ -124,18 +124,20 @@ ec_master_t* master;
 uint64_t system_time_ns(void)
 {
 	struct timespec time;
+	uint64_t time_ns;
 	clock_gettime(CLOCK_MONOTONIC, &time);
-
+	time_ns = TIMESPEC2NS(time);
+	
 	if (system_time_base > time.tv_nsec) 
 	{
 		printf("%s() error: system_time_base greater than"
-		       " system time (system_time_base: %lld, time: %llu\n",
-			__func__, system_time_base, time);
-		return time.tv_nsec;
+		       " system time (system_time_base: %ld, time: %lu\n",
+			__func__, system_time_base, time_ns);
+		return time_ns;
 	}
 	else 
 	{
-		return time.tv_nsec - system_time_base;
+		return time_ns - system_time_base;
 	}
 }
 
