@@ -32,8 +32,10 @@
 #define LOG
 
 #ifdef LOG
+
 /* Assuming an update rate of exactly 1 ms, number of cycles for 24h = 24*3600*1000. */
 #define NUMBER_OF_CYCLES 86400000
+
 #endif
 
 /* Comment to disable configuring PDOs (i.e. in case the PDO configuration saved in EEPROM is our 
