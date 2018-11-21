@@ -130,7 +130,7 @@ ec_master_t* master;
 uint64_t system_time_ns(void)
 {
 	struct timespec time;
-	uint64_t time_ns;
+	int64_t time_ns;
 	clock_gettime(CLOCK_MONOTONIC, &time);
 	time_ns = TIMESPEC2NS(time);
 
