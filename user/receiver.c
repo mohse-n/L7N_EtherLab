@@ -10,7 +10,9 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#define MEASURE_PERF
+#define LOG
+/* Assuming an update rate of exactly 1 ms, number of cycles for 24h = 24*3600*1000. */
+#define NUMBER_OF_CYCLES 86400000
 
 /* Queue ID */
 int qID;
@@ -19,7 +21,12 @@ void signal_handler(int sig)
 {
 	printf("Removing the queue...\n");
 	if (!(msgctl(qID, IPC_RMID, NULL)))
-	    printf("The queue was successfully removed.\n");
+		printf("The queue was successfully removed.\n");
+	#ifdef LOG
+	/* close the file */
+        if (!fclose(fp))
+		printf("The log file was successfully closed.\n");
+	#endif
 	pid_t pid = getpid();
 	kill(pid, SIGKILL);
 }
@@ -28,6 +35,13 @@ int main(int argc, char **argv)
 {
 
 	signal(SIGINT, signal_handler);
+	
+	#ifdef LOG
+	FILE *fp;
+	
+	/* open the file */
+        fp = fopen("log.txt", "w");
+	#endif
 	
 	/* key is specified by the process which creates the queue (receiver). */
 	key_t qKey = 1234;
@@ -72,7 +86,13 @@ int main(int argc, char **argv)
 	/* No flag for receiving the message. */
 	int msgFlag = 0;
 	
+	int i;
+	
+	#ifdef LOG
+	while (i != NUMBER_OF_CYCLES)
+	#else
 	while (1)
+	#endif
 	{
 	
 		/* Removes a message from the queue specified by qID and 
@@ -84,14 +104,27 @@ int main(int argc, char **argv)
 			return -1;
 		}
 		
-	        /* Print the message's data. */
-		printf("Motor 0 actPos: %d\n", recvdMsg.actPos[0]);
-		printf("Motor 1 actPos: %d\n", recvdMsg.actPos[1]);
-		#ifdef MEASURE_PERF
-		printf("Update period: %ld\n", recvdMsg.updatePeriod);
+		#ifdef LOG
+	        /* Write data to the log. */
+		fprintf(fp, %ld\n, recvdMsg.updatePeriod);
+		#else
+		/* Print the message's data. */
+		printf("Motor 0 actual position: %d\n", recvdMsg.actPos[0]);
+		printf("Motor 1 actual position: %d\n", recvdMsg.actPos[1]);
+		printf("Update period:           %ld\n", recvdMsg.updatePeriod);
 		#endif
-	
+		
+		#ifdef LOG
+		i = i + 1;
+		#endif
+		
 	}
 	
+	#ifdef LOG
+	/* close the file */
+        if (!fclose(fp))
+		printf("The log file was successfully closed.\n");
+	#endif
 	
+	return 0;	
 }
