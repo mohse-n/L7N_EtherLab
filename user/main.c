@@ -371,6 +371,48 @@ int main(int argc, char **argv)
 	/* Register the signal handler function. */
 	signal(SIGINT, signal_handler);
 	
+	/***************************************************/
+	#ifdef IPC
+	
+	int qID;
+	/* key is specified by the process which creates the queue (receiver). */
+	key_t qKey = 1234;
+	
+	/* When qFlag is zero, msgget obtains the identifier of a previously created message queue. */
+	int qFlag = 0;
+	
+	/* msgget returns the System V message queue identifier associated with the value of the key argument. */
+	if ((qID = msgget(qKey, qFlag)) < 0) 
+	{
+		printf("Failed to access the queue with key = %d\n", qKey);
+		return -1;
+	}
+	
+	
+	typedef struct myMsgType 
+	{
+		/* Mandatory, must be a positive number. */
+		long       mtype;
+		/* Data */
+		#ifdef MEASURE_PERF
+		long       updatePeriod;
+		#endif
+		int32_t    actPos[2];
+		int32_t    targetPos[2];
+       	} myMsg;
+	
+	myMsg msg;
+	
+	size_t msgSize;
+	/* size of data = size of structure - size of mtype */
+	msgSize = sizeof(struct myMsgType) - sizeof(long);
+	    
+	/* mtype must be a positive number. The receiver picks messages with a specific mtype.*/
+	msg.mtype = 1;
+	
+	#endif
+	/***************************************************/
+	
 	/* Reserve the first master (0) (/etc/init.d/ethercat start) for this program */
 	master = ecrt_request_master(0);
 	if (!master)
@@ -530,48 +572,6 @@ int main(int argc, char **argv)
 	#endif
 	
 	struct timespec cycleTime = {0, PERIOD_NS};
-	
-	/***************************************************/
-	#ifdef IPC
-	
-	int qID;
-	/* key is specified by the process which creates the queue (receiver). */
-	key_t qKey = 1234;
-	
-	/* When qFlag is zero, msgget obtains the identifier of a previously created message queue. */
-	int qFlag = 0;
-	
-	/* msgget returns the System V message queue identifier associated with the value of the key argument. */
-	if ((qID = msgget(qKey, qFlag)) < 0) 
-	{
-		printf("Failed to access the queue with key = %d\n", qKey);
-		return -1;
-	}
-	
-	
-	typedef struct myMsgType 
-	{
-		/* Mandatory, must be a positive number. */
-		long       mtype;
-		/* Data */
-		#ifdef MEASURE_PERF
-		long       updatePeriod;
-		#endif
-		int32_t    actPos[2];
-		int32_t    targetPos[2];
-       	} myMsg;
-	
-	myMsg msg;
-	
-	size_t msgSize;
-	/* size of data = size of structure - size of mtype */
-	msgSize = sizeof(struct myMsgType) - sizeof(long);
-	    
-	/* mtype must be a positive number. The receiver picks messages with a specific mtype.*/
-	msg.mtype = 1;
-	
-	#endif
-	/***************************************************/
 	
 	clock_gettime(CLOCK_MONOTONIC, &wakeupTime);
 	
