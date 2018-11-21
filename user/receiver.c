@@ -38,9 +38,11 @@ int main(int argc, char **argv)
 	
 	#ifdef LOG
 	FILE *fp;
-	
 	/* open the file */
         fp = fopen("log.txt", "w");
+	
+	/* Cycle number. */
+	int i;
 	#endif
 	
 	/* key is specified by the process which creates the queue (receiver). */
@@ -85,8 +87,6 @@ int main(int argc, char **argv)
 	
 	/* No flag for receiving the message. */
 	int msgFlag = 0;
-	
-	int i;
 	
 	#ifdef LOG
 	while (i != NUMBER_OF_CYCLES)
