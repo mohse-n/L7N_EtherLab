@@ -134,7 +134,7 @@ uint64_t system_time_ns(void)
 	clock_gettime(CLOCK_MONOTONIC, &time);
 	time_ns = TIMESPEC2NS(time);
 
-	if (system_time_base > time.tv_nsec) 
+	if (system_time_base > time_ns) 
 	{
 		printf("%s() error: system_time_base greater than"
 		       " system time (system_time_base: %ld, time: %lu\n",
@@ -530,7 +530,6 @@ int main(int argc, char **argv)
 	#endif
 	
 	struct timespec cycleTime = {0, PERIOD_NS};
-	clock_gettime(CLOCK_MONOTONIC, &wakeupTime);
 	
 	/***************************************************/
 	#ifdef IPC
@@ -574,6 +573,7 @@ int main(int argc, char **argv)
 	#endif
 	/***************************************************/
 	
+	clock_gettime(CLOCK_MONOTONIC, &wakeupTime);
 	
 	/* The slaves (drives) enter OP mode after exchanging a few frames. */
 	/* We exchange frames with no RPDOs (targetPos) untill all slaves have 
