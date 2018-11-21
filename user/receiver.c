@@ -19,7 +19,7 @@ void signal_handler(int sig)
 {
 	printf("Removing the queue...\n");
 	if (!(msgctl(qID, IPC_RMID, NULL)))
-	    printf("Could not remove the queue.\n");
+	    printf("The queue was successfully removed.\n");
 	pid_t pid = getpid();
 	kill(pid, SIGKILL);
 }
