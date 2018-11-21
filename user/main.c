@@ -34,9 +34,6 @@
 */
 #define CONFIG_PDOS
 
-/* Comment to disable configuring slave's DC specification (shift time & cycle time) */
-#define CONFIG_DC
-
 /* Comment to disable distributed clocks. */
 #define DC
 
@@ -50,6 +47,13 @@
 //#define SYNC_MASTER_TO_REF
 /* Master's clock (CPU) is the reference: lower overhead. */
 #define SYNC_REF_TO_MASTER
+
+#endif
+
+#ifdef DC
+
+/* Comment to disable configuring slave's DC specification (shift time & cycle time) */
+#define CONFIG_DC
 
 #endif
 
