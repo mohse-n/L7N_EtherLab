@@ -28,6 +28,13 @@
 #include <sys/msg.h>
 
 /*****************************************************************************/
+/* Uncomment to execute the motion loop for a predetermined number of cycles (= NUMBER_OF_CYCLES). */
+#define LOG
+
+#ifdef LOG
+/* Assuming an update rate of exactly 1 ms, number of cycles for 24h = 24*3600*1000. */
+#define NUMBER_OF_CYCLES 86400000
+#endif
 
 /* Comment to disable configuring PDOs (i.e. in case the PDO configuration saved in EEPROM is our 
    desired configuration.)
@@ -683,12 +690,21 @@ int main(int argc, char **argv)
 	struct timespec execTime, endTime;
 	#endif 	
 	
+	#ifdef LOG
+	/* Cycle number. */
+	int i;
+	#endif
+	
 	/* Wake up 1 msec after the start of the previous loop. */
 	sleepTime = cycleTime;
 	/* Update wakeupTime = current time */
 	clock_gettime(CLOCK_MONOTONIC, &wakeupTime);
 	
+	#ifdef LOG
+	while (i != NUMBER_OF_CYCLES)
+	#else
 	while (1)
+	#endif
 	{
 		#ifdef MEASURE_TIMING
 		clock_gettime(CLOCK_MONOTONIC, &endTime);
@@ -791,6 +807,10 @@ int main(int argc, char **argv)
 			printf("Error sending message to the queue. Terminating the process...\n");
 			return -1;
 		}
+		#endif
+		
+		#ifdef LOG
+		i = i + 1;
 		#endif
 	
 	}
