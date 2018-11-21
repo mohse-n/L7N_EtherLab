@@ -128,7 +128,7 @@ uint64_t system_time_ns(void)
 	clock_gettime(CLOCK_MONOTONIC, &time);
 	time_ns = TIMESPEC2NS(time);
 	
-	if (system_time_base > time.tv_nsec) 
+	if (system_time_base > time_nsec) 
 	{
 		printf("%s() error: system_time_base greater than"
 		       " system time (system_time_base: %ld, time: %lu\n",
