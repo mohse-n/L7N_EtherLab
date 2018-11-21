@@ -44,6 +44,13 @@
 
 #endif
 
+#ifdef DC
+
+/* Comment to disable configuring slave's DC specification (shift time & cycle time) */
+#define CONFIG_DC
+
+#endif
+
 /*****************************************************************************/
 
 /* One motor revolution increments the encoder by 2^19 -1. */
@@ -69,9 +76,14 @@
 
 #ifdef DC
 
+#define TIMESPEC2NS(T) ((uint64_t) (T).tv_sec * NSEC_PER_SEC + (T).tv_nsec)
+
+#endif
+
+#ifdef CONFIG_DC
+
 /* SYNC0 event happens halfway through the cycle */
 #define SHIFT0 (PERIOD_NS/2)
-#define TIMESPEC2NS(T) ((uint64_t) (T).tv_sec * NSEC_PER_SEC + (T).tv_nsec)
 
 #endif
 
@@ -486,10 +498,30 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	
-	#ifdef DC
+	#ifdef CONFIG_DC
 	/* Do not enable Sync1 */
 	ecrt_slave_config_dc(drive0, 0x0300, PERIOD_NS, SHIFT0, 0, 0);
 	ecrt_slave_config_dc(drive1, 0x0300, PERIOD_NS, SHIFT0, 0, 0);
+	#endif
+	
+	#ifdef SYNC_REF_TO_MASTER
+	/* Initialize master application time. */
+	struct timespec masterInitTime;
+	clock_gettime(CLOCK_MONOTONIC, &masterInitTime);
+	ecrt_master_application_time(master, TIMESPEC2NS(masterInitTime));
+	#endif
+	
+	#ifdef SYNC_MASTER_TO_REF
+	/* Initialize master application time. */
+	dc_start_time_ns = system_time_ns();
+	dc_time_ns = dc_start_time_ns;
+	ecrt_master_application_time(master, dc_start_time_ns);
+	
+	if (ecrt_master_select_reference_clock(master, drive0))
+	{
+		printf("Selecting slave 0 as reference clock failed!\n");
+		return -1;
+	}
 	#endif
 	
 	/* Up to this point, we have only requested the master. See log messages */
