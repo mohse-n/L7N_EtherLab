@@ -172,9 +172,9 @@ uint64_t system_time_ns(void)
 
 /** Synchronise the distributed clocks
  */
-#ifdef MEASURE_PERF
+#if defined(MEASURE_PERF) && defined(SYNC_MASTER_TO_REF)
 void sync_distributed_clocks(uint32_t* t_cur)
-#else
+#elif SYNC_MASTER_TO_REF
 void sync_distributed_clocks(void)	
 #endif
 {
@@ -469,8 +469,10 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	
-	#ifdef CONFIG_PDOS
+	
 	/***************************************************/
+	#ifdef CONFIG_PDOS
+	
 	/* Slave 0's structures, obtained from $ethercat cstruct -p 0 */ 
 	ec_pdo_entry_info_t slave_0_pdo_entries[] = 
 	{
@@ -519,7 +521,7 @@ int main(int argc, char **argv)
 	{0xFF}
 	};
 	
-	/***************************************************/
+	
 	
 	if (ecrt_slave_config_pdos(drive0, EC_END, slave_0_syncs))
 	{
@@ -532,7 +534,9 @@ int main(int argc, char **argv)
 		printf("Failed to configure slave 1 PDOs\n");
 		return -1;
 	}
+	
 	#endif
+	/***************************************************/
 
 	unsigned int offset_controlWord0, offset_targetPos0, offset_statusWord0, offset_actPos0;
 	unsigned int offset_controlWord1, offset_targetPos1, offset_statusWord1, offset_actPos1;
@@ -582,6 +586,10 @@ int main(int argc, char **argv)
 	dc_time_ns = dc_start_time_ns;
 	ecrt_master_application_time(master, dc_start_time_ns);
 	
+	/* If this method is not called for a certain master, then the first slave with DC functionality
+	   will provide the reference clock.
+	*/
+	/* But we call this function anyway, just for emphasis. */
 	if (ecrt_master_select_reference_clock(master, drive0))
 	{
 		printf("Selecting slave 0 as reference clock failed!\n");
@@ -617,7 +625,7 @@ int main(int argc, char **argv)
 	ec_slave_config_state_t slaveState1;
 	struct timespec wakeupTime;
 	
-	#ifdef DC
+	#ifdef SYNC_REF_TO_MASTER
 	struct timespec	time;
 	#endif
 	
@@ -741,7 +749,7 @@ int main(int argc, char **argv)
 		ecrt_domain_process(domain1);
 		
 		
-		#ifdef MEASURE_PERF	
+		#if defined(MEASURE_PERF) && defined(SYNC_REF_TO_MASTER)
 		ecrt_master_reference_clock_time(master, &t_cur);	
 		#endif
 		
