@@ -172,9 +172,12 @@ uint64_t system_time_ns(void)
 
 /** Synchronise the distributed clocks
  */
-#if defined(MEASURE_PERF) && defined(SYNC_MASTER_TO_REF)
+
+/* If SYNC_MASTER_TO_REF and MEASURE_PERF are both defined. */
+#ifdef MEASURE_PERF
 void sync_distributed_clocks(uint32_t* t_cur)
-#elif SYNC_MASTER_TO_REF
+/* If only SYNC_MASTER_TO_REF is defined. */
+#else
 void sync_distributed_clocks(void)	
 #endif
 {
@@ -381,7 +384,7 @@ int main(int argc, char **argv)
 	printf("Using priority %i.\n", param.sched_priority);
 	if (sched_setscheduler(0, SCHED_FIFO, &param) == -1) 
 	{
-		perror("sched_setscheduler failed\n");
+		printf("sched_setscheduler failed\n");
 	}
 	
 	/* Lock the program into RAM to prevent page faults and swapping */
