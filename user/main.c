@@ -64,6 +64,12 @@
 /* Comment to disable configuring slave's DC specification (shift time & cycle time) */
 #define CONFIG_DC
 
+/* Uncomment to enable performance measurement. */
+/* Measure the difference in reference slave's clock timstamp each cycle, and print the result,
+   which should be as close to cycleTime as possible. */
+/* Note: Only works with DC enabled. */
+#define MEASURE_PERF
+
 #endif
 
 /*****************************************************************************/
@@ -72,12 +78,6 @@
 #define ENCODER_RES 524287
 /* The maximum stack size which is guranteed safe to access without faulting. */       
 #define MAX_SAFE_STACK (8 * 1024) 
-
-/* Uncomment to enable performance measurement. */
-/* Measure the difference in reference slave's clock timstamp each cycle, and print the result,
-   which should be as close to cycleTime as possible. */
-/* Note: Only works with DC enabled. */
-#define MEASURE_PERF
 
 /* Calculate the time it took to complete the loop. */
 //#define MEASURE_TIMING 
@@ -190,7 +190,7 @@ void sync_distributed_clocks(void)
 	// get reference clock time to synchronize master cycle
 	ecrt_master_reference_clock_time(master, &ref_time);
 	#ifdef MEASURE_PERF
-	*t_cur = *ref_time;
+	*t_cur = ref_time;
 	#endif
 	dc_diff_ns = (uint32_t) prev_app_time - ref_time;
 
@@ -739,6 +739,11 @@ int main(int argc, char **argv)
 		   commented out 
 		*/
 		ecrt_domain_process(domain1);
+		
+		
+		#ifdef MEASURE_PERF	
+		ecrt_master_reference_clock_time(master, &t_cur);	
+		#endif
 		
 		/********************************************************************************/
 		
