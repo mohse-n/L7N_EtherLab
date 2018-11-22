@@ -172,7 +172,11 @@ uint64_t system_time_ns(void)
 
 /** Synchronise the distributed clocks
  */
-void sync_distributed_clocks(void)
+#ifdef MEASURE_PERF
+void sync_distributed_clocks(uint32_t* t_cur)
+#else
+void sync_distributed_clocks(void)	
+#endif
 {
 
 	uint32_t ref_time = 0;
@@ -185,6 +189,9 @@ void sync_distributed_clocks(void)
 
 	// get reference clock time to synchronize master cycle
 	ecrt_master_reference_clock_time(master, &ref_time);
+	#ifdef MEASURE_PERF
+	*t_cur = *ref_time;
+	#endif
 	dc_diff_ns = (uint32_t) prev_app_time - ref_time;
 
 	// call to sync slaves to ref slave
@@ -733,10 +740,6 @@ int main(int argc, char **argv)
 		*/
 		ecrt_domain_process(domain1);
 		
-		#ifdef MEASURE_PERF
-		ecrt_master_reference_clock_time(master, &t_cur);
-		#endif
-		
 		/********************************************************************************/
 		
 		/* Read PDOs from the datagram */
@@ -771,9 +774,15 @@ int main(int argc, char **argv)
 		#endif
 		
 		#ifdef SYNC_MASTER_TO_REF
+		
 		// sync distributed clock just before master_send to set
      	        // most accurate master clock time
-                sync_distributed_clocks();
+		#ifdef MEASURE_PERF
+                sync_distributed_clocks(&t_cur);
+		#else
+		sync_distributed_clocks();
+		#endif
+		
 		#endif
 		
 		/* Sends all datagrams in the queue.
