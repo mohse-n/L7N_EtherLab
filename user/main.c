@@ -53,9 +53,9 @@
 #ifdef DC
 
 /* Slave0's clock is the reference: no drift. Algorithm from rtai_rtdm_dc example. Work in progress.*/
-//#define SYNC_MASTER_TO_REF
+#define SYNC_MASTER_TO_REF
 /* Master's clock (CPU) is the reference: lower overhead. */
-#define SYNC_REF_TO_MASTER
+//#define SYNC_REF_TO_MASTER
 
 #endif
 
@@ -102,6 +102,65 @@
 
 #endif
 
+/*****************************************************************************/
+
+void print_config(void)
+{
+
+	printf("**********\n");
+
+	#ifdef LOG
+	printf("LOG. NUMBER_OF_CYCLES = %d\n", NUMBER_OF_CYCLES);
+	#endif
+
+	#ifdef CONFIG_PDOS
+	printf("CONFIG_PDOS\n");
+	#endif
+
+	#ifdef DC
+
+
+	printf("\nDC. ");
+
+	#ifdef SYNC_MASTER_TO_REF
+	printf("Mode: SYNC_MASTER_TO_REF\n");
+	#endif
+
+	#ifdef SYNC_REF_TO_MASTER
+	printf("Mode: SYNC_REF_TO_MASTER\n");
+	#endif
+
+	#ifdef CONFIG_DC 
+	printf("CONFIG_DC\n");
+	#endif
+
+	#ifdef MEASURE_PERF 
+	printf("MEASURE_PERF\n");
+	#endif
+
+
+	#endif
+
+	#ifdef IPC
+	printf("\nIPC\n");
+	#endif
+
+	#ifdef SET_CPU_AFFINITY
+	printf("SET_CPU_AFFINITY\n");
+	#endif
+
+
+	#ifdef MEASURE_TIMING
+	printf("MEASURE_TIMING\n");
+	#endif
+
+	#ifdef FREQUENCY
+	printf("FREQUENCY = %d\n", FREQUENCY);
+	#endif
+
+	printf("**********\n");
+
+}
 
 /*****************************************************************************/
 /* Note: Anything relying on definition of SYNC_MASTER_TO_REF is essentially copy-pasted from /rtdm_rtai_dc/main.c */
@@ -358,6 +417,8 @@ void stack_prefault(void)
 
 int main(int argc, char **argv)
 {
+	
+	print_config();
 	
 	#ifdef SET_CPU_AFFINITY
 	cpu_set_t set;
@@ -632,6 +693,11 @@ int main(int argc, char **argv)
 	struct timespec	time;
 	#endif
 	
+	#ifdef MEASURE_PERF
+	/* The slave time received in the current and the previous cycle */
+	uint32_t t_cur, t_prev;
+	#endif
+	
 	struct timespec cycleTime = {0, PERIOD_NS};
 	
 	clock_gettime(CLOCK_MONOTONIC, &wakeupTime);
@@ -681,9 +747,15 @@ int main(int argc, char **argv)
 		#endif
 		
 		#ifdef SYNC_MASTER_TO_REF
+		
 		// sync distributed clock just before master_send to set
      	        // most accurate master clock time
-                sync_distributed_clocks();
+		#ifdef MEASURE_PERF
+                sync_distributed_clocks(&t_cur);
+		#else
+		sync_distributed_clocks();
+		#endif
+		
 		#endif
 		
 		ecrt_master_send(master);
@@ -699,10 +771,6 @@ int main(int argc, char **argv)
 	
 	int32_t actPos0, targetPos0;
 	int32_t actPos1, targetPos1;
-	#ifdef MEASURE_PERF
-	/* The slave time received in the current and the previous cycle */
-	uint32_t t_cur, t_prev;
-	#endif
 	
 	/* Sleep is how long we should sleep each loop to keep the cycle's frequency as close to cycleTime as possible. */ 
 	struct timespec sleepTime;
@@ -712,7 +780,7 @@ int main(int argc, char **argv)
 	
 	#ifdef LOG
 	/* Cycle number. */
-	int i;
+	int i = 0;
 	#endif
 	
 	/* Wake up 1 msec after the start of the previous loop. */
@@ -750,7 +818,6 @@ int main(int argc, char **argv)
 		   commented out 
 		*/
 		ecrt_domain_process(domain1);
-		
 		
 		#if defined(MEASURE_PERF) && defined(SYNC_REF_TO_MASTER)
 		ecrt_master_reference_clock_time(master, &t_cur);	
@@ -841,6 +908,8 @@ int main(int argc, char **argv)
 		#endif
 	
 	}
+	
+	ecrt_release_master(master);
 	
 	return 0;
 }
