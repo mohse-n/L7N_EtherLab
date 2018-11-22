@@ -146,7 +146,6 @@ int main(int argc, char **argv)
 		#ifdef LOG
 		i = i + 1;
 		
-		/* Flush the buffer every 1 minute. */
 		if (i % FLUSH_CYCLE == 0)
 		{
 			if (fflush(fp))
