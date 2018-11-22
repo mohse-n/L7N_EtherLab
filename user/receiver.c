@@ -17,6 +17,10 @@
 /* Queue ID */
 int qID;
 
+#ifdef LOG
+FILE *fp;
+#endif
+
 void signal_handler(int sig)
 {
 	printf("Removing the queue...\n");
@@ -37,7 +41,6 @@ int main(int argc, char **argv)
 	signal(SIGINT, signal_handler);
 	
 	#ifdef LOG
-	FILE *fp;
 	/* open the file */
         fp = fopen("log.txt", "w");
 	
@@ -110,7 +113,7 @@ int main(int argc, char **argv)
 		
 		#ifdef LOG
 	        /* Write data to the log. */
-		fprintf(fp, %ld\n, recvdMsg.updatePeriod);
+		fprintf(fp, "%ld\n", recvdMsg.updatePeriod);
 		#else
 		/* Print the message's data. */
 		printf("Motor 0 actual position: %d\n", recvdMsg.actPos[0]);
