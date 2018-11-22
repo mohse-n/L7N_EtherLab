@@ -12,8 +12,15 @@
 
 /* #define LOG depends on #define MEASURE_PERF in main.c, so the latter should be defined in main.c if LOG is defined here. */
 #define LOG
+
+#ifdef LOG
+
 /* Assuming an update rate of exactly 1 ms, number of cycles for 24h = 24*3600*1000. */
 #define NUMBER_OF_CYCLES 86400000
+/* Flush the data every ... cycle */
+#define FLUSH_CYCLE 60000
+
+#endif
 
 /* Queue ID */
 int qID;
@@ -21,6 +28,18 @@ int qID;
 #ifdef LOG
 FILE *fp;
 #endif
+
+void print_config(void)
+{
+
+#ifdef LOG
+
+printf("\nLOG is defined. Number of cycles = %d\n", NUMBER_OF_CYCLES);
+printf("FLUSH_CYCLE = %d\n\n", FLUSH_CYCLE);
+
+#endif
+
+}
 
 void signal_handler(int sig)
 {
@@ -41,6 +60,8 @@ int main(int argc, char **argv)
 
 	signal(SIGINT, signal_handler);
 	
+	print_config();
+	
 	#ifdef LOG
 	/* open the file */
         fp = fopen("log.txt", "w");
@@ -52,7 +73,7 @@ int main(int argc, char **argv)
 	}
 	
 	/* Cycle number. */
-	int i;
+	int i = 0;
 	#endif
 	
 	/* key is specified by the process which creates the queue (receiver). */
@@ -97,7 +118,7 @@ int main(int argc, char **argv)
 	int msgFlag = 0;
 	
 	#ifdef LOG
-	while (i != NUMBER_OF_CYCLES)
+	while (i != NUMBER_OF_CYCLES - 1)
 	#else
 	while (1)
 	#endif
@@ -124,6 +145,14 @@ int main(int argc, char **argv)
 		
 		#ifdef LOG
 		i = i + 1;
+		
+		/* Flush the buffer every 1 minute. */
+		if (i % FLUSH_CYCLE == 0)
+		{
+			if (fflush(fp))
+				printf("Flushing output stream buffer failed! %d\n", i);
+			
+		}
 		#endif
 		
 	}
