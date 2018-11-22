@@ -73,9 +73,7 @@ int main(int argc, char **argv)
 		/* Mandatory */
 		long       mtype;
 		/* Data */
-		#ifdef MEASURE_PERF
 		long       updatePeriod;
-		#endif
 		int32_t    actPos[2];
 		int32_t    targetPos[2];
        	} myMsg;
