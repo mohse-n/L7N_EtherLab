@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 	
 	if (fp == NULL)
 	{
-		printf("Failed to open the file log.txt\n");
+		printf("Failed to open file log.txt\n");
 		return -1;
 	}
 	
