@@ -41,6 +41,12 @@ int main(int argc, char **argv)
 	/* open the file */
         fp = fopen("log.txt", "w");
 	
+	if (fp == NULL)
+	{
+		printf("Failed to open the file log.txt\n");
+		return -1;
+	}
+	
 	/* Cycle number. */
 	int i;
 	#endif
