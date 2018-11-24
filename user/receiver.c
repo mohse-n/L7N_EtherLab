@@ -9,6 +9,8 @@
 /* For pid_t and getpid() */
 #include <unistd.h>
 #include <sys/types.h>
+/* For definition of errno. */
+#include <errno.h>
 
 /* #define LOG depends on #define MEASURE_PERF in main.c, so the latter should be defined in main.c if LOG is defined here. */
 #define LOG
@@ -84,9 +86,10 @@ int main(int argc, char **argv)
 	
         printf("Creating a queue with key = %d\n", qKey);
 
-	if ((qID = msgget(qKey, qFlag)) < 0) 
+	if ((qID = msgget(qKey, qFlag))) 
 	{
-		printf("Queue creation failed. Terminating the process...\n");
+		printf("Queue creation failed: %s\n", strerror(errno));
+		printf("Terminating the process...\n");
 		return -1;
 	}
 	else 
@@ -149,7 +152,7 @@ int main(int argc, char **argv)
 		if (i % FLUSH_CYCLE == 0)
 		{
 			if (fflush(fp))
-				printf("Flushing output stream buffer failed! %d\n", i);
+				printf("Flushing output stream buffer failed in cycle %d : %s\n", i, strerror(errno));
 			
 		}
 		#endif
