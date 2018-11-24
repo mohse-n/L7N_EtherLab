@@ -26,7 +26,8 @@
 #include <inttypes.h>
 /* For msgget and IPC_NOWAIT */
 #include <sys/msg.h>
-
+/* For definition of errno. */
+#include <errno.h>
 /*****************************************************************************/
 /* Uncomment to execute the motion loop for a predetermined number of cycles (= NUMBER_OF_CYCLES). */
 #define LOG
@@ -475,9 +476,9 @@ int main(int argc, char **argv)
 	int qFlag = 0;
 	
 	/* msgget returns the System V message queue identifier associated with the value of the key argument. */
-	if ((qID = msgget(qKey, qFlag)) < 0) 
+	if ((qID = msgget(qKey, qFlag))) 
 	{
-		printf("Failed to access the queue with key = %d\n", qKey);
+		printf("Failed to access the queue with key = %d : %s\n", qKey, strerror(errno));
 		return -1;
 	}
 	
@@ -896,9 +897,10 @@ int main(int argc, char **argv)
 		/*  msgsnd appends a copy of the message pointed to by msg to the message queue 
 		    whose identifier is specified by msqid.
 		*/
-		if (msgsnd(qID, &msg, msgSize, IPC_NOWAIT) < 0) 
+		if (msgsnd(qID, &msg, msgSize, IPC_NOWAIT)) 
 		{
-			printf("Error sending message to the queue. Terminating the process...\n");
+			printf("Error sending message to the queue: %s\n", strerror(errno));
+			printf("Terminating the process...\n");
 			return -1;
 		}
 		#endif
