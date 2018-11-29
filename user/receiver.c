@@ -9,8 +9,10 @@
 /* For pid_t and getpid() */
 #include <unistd.h>
 #include <sys/types.h>
-/* For definition of errno. */
-#include <errno.h>
+/* For using real-time scheduling policy (FIFO) and sched_setaffinity */
+#include <sched.h>
+/* For locking the program in RAM (mlockall) to prevent swapping */
+#include <sys/mman.h>
 
 /* #define LOG depends on #define MEASURE_PERF in main.c, so the latter should be defined in main.c if LOG is defined here. */
 #define LOG
@@ -35,13 +37,16 @@ void print_config(void)
 {
 
 #ifdef LOG
-
 printf("\nLOG is defined. Number of cycles = %d\n", NUMBER_OF_CYCLES);
 printf("FLUSH_CYCLE = %d\n\n", FLUSH_CYCLE);
 
 #endif
 
 }
+
+
+
+
 
 void signal_handler(int sig)
 {
@@ -64,6 +69,29 @@ int main(int argc, char **argv)
 	
 	print_config();
 	
+	/* SCHED_FIFO tasks are allowed to run until they have completed their work or voluntarily yield. */
+	/* Note that even the lowest priority realtime thread will be scheduled ahead of any thread with a non-realtime policy; 
+	   if only one realtime thread exists, the SCHED_FIFO priority value does not matter.
+	*/  
+	struct sched_param param = {};
+	param.sched_priority = 20;
+	printf("Using priority %i.\n", param.sched_priority);
+	if (sched_setscheduler(0, SCHED_FIFO, &param) == -1) 
+	{
+		printf("sched_setscheduler failed\n");
+	}
+	
+	/* Lock the program into RAM to prevent page faults and swapping */
+	/* MCL_CURRENT: Lock in all current pages.
+	   MCL_FUTURE:  Lock in pages for heap and stack and shared memory.
+	*/
+	if (mlockall(MCL_CURRENT | MCL_FUTURE) == -1)
+	{
+		printf("mlockall failed\n");
+		return -1;
+	}
+
+
 	#ifdef LOG
 	/* open the file */
         fp = fopen("log.txt", "w");
@@ -86,10 +114,9 @@ int main(int argc, char **argv)
 	
         printf("Creating a queue with key = %d\n", qKey);
 
-	if ((qID = msgget(qKey, qFlag))) 
+	if ((qID = msgget(qKey, qFlag)) < 0) 
 	{
-		printf("Queue creation failed: %s\n", strerror(errno));
-		printf("Terminating the process...\n");
+		printf("Queue creation failed. Terminating the process...\n");
 		return -1;
 	}
 	else 
@@ -148,14 +175,15 @@ int main(int argc, char **argv)
 		
 		#ifdef LOG
 		i = i + 1;
-		
+		#endif
+
+		/* Flush the buffer every 1 minute. */
 		if (i % FLUSH_CYCLE == 0)
 		{
 			if (fflush(fp))
-				printf("Flushing output stream buffer failed in cycle %d : %s\n", i, strerror(errno));
+				printf("Flushing output stream buffer failed! %d\n", i);
 			
 		}
-		#endif
 		
 	}
 	
