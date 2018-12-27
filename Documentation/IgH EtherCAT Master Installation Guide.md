@@ -89,7 +89,7 @@ MASTER0_DEVICE="00:05:9a:3c:7a:00"
 ```
 The field in front of `DEVICE_MODULES` is the name of the driver which the master modules will use. Since we compiled with `--enable-r8169`, we will use the modified r8169 driver for the best performance. 
 ```bash
-DEVICE_MODULES=“r8619"
+DEVICE_MODULES=“r8169"
 ```
 Press ctrl+x to save and exit.
 __
